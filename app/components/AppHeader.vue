@@ -1,7 +1,7 @@
 <template>
-  <div class="flex justify-end m-10 items-center gap-4">
+  <div class="flex justify-end m-10 items-center !gap-4">
     <LanguageSwitcher />
-    <UColorModeButton />
+    <UColorModeButton :ui="{ base: 'ml-4' }" />
   </div>
 </template>
 
