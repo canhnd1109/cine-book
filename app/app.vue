@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+const { t } = useI18n()
 useHead({
   meta: [
     { name: 'viewport', content: 'width=device-width, initial-scale=1' }
@@ -11,8 +12,8 @@ useHead({
   }
 })
 
-const title = 'Nuxt Changelog Template'
-const description = 'Display GitHub release notes as a beautiful changelog for any repository with this Nuxt UI template.'
+const title = 'CineBook – Đặt Vé Xem Phim Trực Tuyến Nhanh Chóng & Tiện Lợi'
+const description = t('app.description')
 
 useSeoMeta({
   title,
