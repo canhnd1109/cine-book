@@ -1,0 +1,16 @@
+{
+  "app": {
+    "title": "CineBook",
+    "description": "Track and discover movies"
+  },
+  "nav": {
+    "home": "Home"
+  },
+  "common": {
+    "language": "Language",
+    "save": "Save",
+    "cancel": "Cancel"
+  }
+}
+
+

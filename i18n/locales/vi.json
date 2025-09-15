@@ -1,0 +1,16 @@
+{
+  "app": {
+    "title": "CineBook",
+    "description": "Theo dõi và khám phá phim"
+  },
+  "nav": {
+    "home": "Trang chủ"
+  },
+  "common": {
+    "language": "Ngôn ngữ",
+    "save": "Lưu",
+    "cancel": "Hủy"
+  }
+}
+
+
