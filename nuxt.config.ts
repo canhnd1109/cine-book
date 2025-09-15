@@ -3,10 +3,7 @@ export default defineNuxtConfig({
   modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxtjs/mdc', '@nuxtjs/i18n'],
 
   devtools: {
-    enabled: true,
-    timeline: {
-      enabled: true
-    }
+    enabled: true
   },
 
   app: {
@@ -14,7 +11,7 @@ export default defineNuxtConfig({
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
       title: 'Nuxt i18n App',
-      meta: [{ name: 'description', content: 'Nuxt 3 app with i18n support' }]
+      meta: [{ name: 'description', content: 'Nuxt app with internationalization' }]
     }
   },
 
@@ -22,11 +19,7 @@ export default defineNuxtConfig({
 
   mdc: {
     highlight: {
-      langs: ['diff', 'ts', 'vue', 'css', 'javascript', 'json'],
-      theme: {
-        default: 'github-light',
-        dark: 'github-dark'
-      }
+      langs: ['diff', 'ts', 'vue', 'css', 'javascript', 'json', 'bash']
     },
     remarkPlugins: {
       'remark-github': {
@@ -48,40 +41,23 @@ export default defineNuxtConfig({
   runtimeConfig: {
     // Private keys (only available on server-side)
     apiSecret: process.env.API_SECRET,
-    // Public keys (exposed to client-side)
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE || '/api',
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000'
     }
   },
 
-  build: {
-    transpile: ['@nuxtjs/i18n']
-  },
-
   routeRules: {
     '/': { prerender: true },
     '/api/**': { cors: true },
-    '/about': { prerender: true },
-    '/contact': { prerender: true },
-    '/blog/**': { isr: 60 }
-  },
-
-  experimental: {
-    payloadExtraction: false,
-    typedPages: true
+    '/admin/**': { ssr: false }
   },
 
   compatibilityDate: '2025-01-15',
 
-  vite: {
-    css: {
-      preprocessorOptions: {
-        scss: {
-          additionalData: '@use "~/assets/scss/variables.scss" as *;'
-        }
-      }
-    }
+  nitro: {
+    compressPublicAssets: true,
+    minify: true
   },
 
   eslint: {
@@ -89,9 +65,8 @@ export default defineNuxtConfig({
       stylistic: {
         commaDangle: 'never',
         braceStyle: '1tbs',
-        indent: 2,
-        quotes: 'single',
-        semi: false
+        semi: false,
+        quotes: 'single'
       }
     }
   },
@@ -115,15 +90,15 @@ export default defineNuxtConfig({
     ],
     defaultLocale: 'en',
     strategy: 'no_prefix',
-    langDir: 'locales/',
+    langDir: 'locales',
     detectBrowserLanguage: {
       useCookie: true,
       cookieKey: 'i18n_redirected',
       redirectOn: 'root',
       alwaysRedirect: false,
       fallbackLocale: 'en',
-      cookieSecure: true,
-      cookieCrossOrigin: false
+      cookieCrossOrigin: false,
+      cookieSecure: true
     },
     baseUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000'
   }
