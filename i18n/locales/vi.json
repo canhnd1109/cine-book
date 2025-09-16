@@ -3,13 +3,9 @@
     "title": "CineBook",
     "description": "CineBook là nền tảng đặt vé xem phim trực tuyến nhanh chóng và tiện lợi. Xem lịch chiếu, chọn ghế yêu thích, săn nhiều ưu đãi hấp dẫn và trải nghiệm điện ảnh hiện đại mọi lúc, mọi nơi."
   },
-  "nav": {
-    "home": "Trang chủ"
-  },
-  "common": {
-    "language": "Ngôn ngữ",
-    "save": "Lưu",
-    "cancel": "Hủy"
+  "home": {
+    "content-1":"CineBook đã thiết kế ứng dụng đặt vé xem phim lấy người dùng làm trung tâm như thế nào?",
+    "content-2":"Trải nghiệm phim hành động, hài kịch, lãng mạn và tất cả những gì liên quan đến sân khấu chỉ với một cú nhấp chuột. Hãy nhanh tay đặt vé trước khi chương trình hết vé!"
   }
 }
 

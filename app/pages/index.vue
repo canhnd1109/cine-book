@@ -17,29 +17,47 @@
         class="w-full h-auto mx-auto"
       >
     </UCarousel>
-    <div class="marquee-wrapper bookmt-90 w-full">
-      <div class="marquee-inner w-full">
-        <div class="common-slider w-full">
-          <div class="marquee-items">
-            <div
-              v-for="n in 2"
-              :key="n"
-              class="flex"
-            >
+    <div class="bg-[#111] rounded-[50px] py-24 m-12">
+      <div class="px-10 space-y-10">
+        <div class="title-wrap bookmb-15 text-center">
+          <p class="small-title bookfont-100 text-center">
+            {{ t('home.content-1') }}
+          </p>
+          <p class="title-bg bookfont-100 text-center">
+            {{ t('home.content-1') }}
+          </p>
+        </div>
+        <div class="text-center w-full flex justify-center ">
+          <p class="text-center text-[#999] text-2xl w-1/2">
+            {{ t('home.content-2') }}
+          </p>
+        </div>
+      </div>
+
+      <div class="marquee-wrapper bookmt-90 w-full">
+        <div class="marquee-inner w-full">
+          <div class="common-slider w-full">
+            <div class="marquee-items">
               <div
-                v-for="(item, index) in imagesList"
-                :key="index"
-                class="item"
+                v-for="n in 2"
+                :key="n"
+                class="flex"
               >
-                <div class="img-wrap">
-                  <img
-                    :src="item"
-                    width="220"
-                    height="220"
-                    loading="lazy"
-                    alt="movie"
-                    class="img-fluid"
-                  >
+                <div
+                  v-for="(item, index) in imagesList"
+                  :key="index"
+                  class="item"
+                >
+                  <div class="img-wrap">
+                    <img
+                      :src="item"
+                      width="220"
+                      height="220"
+                      loading="lazy"
+                      alt="movie"
+                      class="img-fluid"
+                    >
+                  </div>
                 </div>
               </div>
             </div>
@@ -51,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-// const { t } = useI18n()
+const { t } = useI18n()
 const items = [
   '/images/phim-8.png',
   '/images/phim-7.png',
@@ -81,7 +99,7 @@ const imagesList = [
   line-height: 0;
 }
 
-.bookmyticket-wrapper .bookmt-90 {
+.bookmt-90 {
   margin-top: 90px;
 }
 
@@ -134,6 +152,57 @@ const imagesList = [
 
 .marquee-items .item:hover .img-wrap img {
   filter: none;
+}
+.title-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.title-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.title-wrap .small-title {
+  font-weight: 900;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, #f3dd68, #ffef9b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+
+  position: relative;
+  z-index: 2;
+  display: inline-block;
+  word-break: break-word;
+}
+
+.bookfont-100 {
+  font-size: 3.208vw;
+  line-height: 4.677vw;
+}
+
+.title-wrap .title-bg {
+  font-weight: 900;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, #f3dd68, #ffef9b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+
+  /* bóng chữ đen phía sau */
+  color: #111;
+  -webkit-text-stroke: 1px #111;
+  opacity: 0.5;
+
+  position: absolute;
+  top: 5px;   /* dịch bóng xuống chút */
+  left: 5px;  /* dịch bóng sang phải chút */
+  right: 0;
+  margin: 0 auto;
+  z-index: 1;
 }
 
 @keyframes moviemarqueeLeft {
