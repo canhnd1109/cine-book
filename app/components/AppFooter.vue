@@ -1,28 +1,29 @@
 <template>
   <div class="dark:bg-[#0B0D13] p-8 mx-auto space-y-6">
-    <p class="flex justify-center items-center gap-8 text-base ">
-      <span class="hover:cursor-pointer hover:font-semibold">
+    <p class="flex justify-center items-center gap-8 text-base">
+      <span class="hover:cursor-pointer hover:scale-110 hover:font-semibold transition-transform duration-200 inline-block">
         {{ t("footer.policy") }}
       </span>
-      <span class="hover:cursor-pointer hover:font-semibold">
+      <span class="hover:cursor-pointer hover:scale-110 hover:font-semibold transition-transform duration-200 inline-block">
         {{ t("footer.showtime") }}
       </span>
-      <span class="hover:cursor-pointer hover:font-semibold">
+      <span class="hover:cursor-pointer hover:scale-110 hover:font-semibold transition-transform duration-200 inline-block">
         {{ t("footer.news") }}
       </span>
-      <span class="hover:cursor-pointer hover:font-semibold">
+      <span class="hover:cursor-pointer hover:scale-110 hover:font-semibold transition-transform duration-200 inline-block">
         {{ t("footer.ticket-price") }}
       </span>
-      <span class="hover:cursor-pointer hover:font-semibold">
+      <span class="hover:cursor-pointer hover:scale-110 hover:font-semibold transition-transform duration-200 inline-block">
         {{ t("footer.faq") }}
       </span>
-      <span class="hover:cursor-pointer hover:font-semibold">
+      <span class="hover:cursor-pointer hover:scale-110 hover:font-semibold transition-transform duration-200 inline-block">
         {{ t("footer.group-booking") }}
       </span>
-      <span class="hover:cursor-pointer hover:font-semibold">
+      <span class="hover:cursor-pointer hover:scale-110 hover:font-semibold transition-transform duration-200 inline-block">
         {{ t("footer.contact") }}
       </span>
     </p>
+
     <div class="flex justify-center gap-6">
       <img
         src="/images/fb-logo.png"

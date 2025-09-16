@@ -55,7 +55,7 @@
                       height="220"
                       loading="lazy"
                       alt="movie"
-                      class="img-fluid"
+                      class="img-fluid hover:scale-105 duration-500 cursor-pointer transition"
                     >
                   </div>
                 </div>
