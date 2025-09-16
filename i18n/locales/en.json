@@ -6,6 +6,20 @@
   "home": {
     "content-1":"How MindInventory Designed a User-Centric Movie Ticket Booking App",
     "content-2":" Experience Action Drama, Comedy, Romance, & all-in-all theater experience in just one click. Grab your tickets before the show gets sold out!"
+  },
+   "footer":{
+    "policy":"Policy",
+    "showtime":"Showtime",
+    "news":"News",
+    "ticket-price":"Ticket price",
+    "faq":"FAQ",
+    "group-booking":"Group booking",
+    "contact":"Contact",
+    "line-1":"Managing agency: MINISTRY OF CULTURE, SPORTS AND TOURISM",
+    "line-2":"Copyright belongs to National Cinema Center.",
+    "line-3":"License No: 224/GP-TTDT dated August 31, 2010 - Responsible person: Ngo Duc Canh - Director.",
+    "line-4":"Address: No. 87 Lang Ha, O Cho Dua Ward, Hanoi City - Phone: 024.35141791",
+    "line-5":"Copyright 2023. NCC All Rights Reservered. Dev by Ngo Duc Canh"
   }
 }
 

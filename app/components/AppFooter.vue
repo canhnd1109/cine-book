@@ -2,25 +2,25 @@
   <div class="dark:bg-[#0B0D13] p-8 mx-auto space-y-6">
     <p class="flex justify-center items-center gap-8 text-base ">
       <span class="hover:cursor-pointer hover:font-semibold">
-        Chính sách
+        {{ t("footer.policy") }}
       </span>
       <span class="hover:cursor-pointer hover:font-semibold">
-        Lịch chiếu
+        {{ t("footer.showtime") }}
       </span>
       <span class="hover:cursor-pointer hover:font-semibold">
-        Tin tức
+        {{ t("footer.news") }}
       </span>
       <span class="hover:cursor-pointer hover:font-semibold">
-        Giá vé
+        {{ t("footer.ticket-price") }}
       </span>
       <span class="hover:cursor-pointer hover:font-semibold">
-        Hỏi đáp
+        {{ t("footer.faq") }}
       </span>
       <span class="hover:cursor-pointer hover:font-semibold">
-        Đặt vé nhóm, tập thể
+        {{ t("footer.group-booking") }}
       </span>
       <span class="hover:cursor-pointer hover:font-semibold">
-        Liên hệ
+        {{ t("footer.contact") }}
       </span>
     </p>
     <div class="flex justify-center gap-6">
@@ -63,26 +63,26 @@
     </div>
     <div class="space-y-2">
       <p class="text-center">
-        Cơ quan chủ quản: BỘ VĂN HÓA, THỂ THAO VÀ DU LỊCH
+        {{ t("footer.line-1") }}
       </p>
       <p class="text-center">
-        Bản quyền thuộc Trung tâm Chiếu phim Quốc gia.
+        {{ t("footer.line-2") }}
       </p>
       <p class="text-center">
-        Giấy phép số: 224/GP- TTĐT ngày 31/8/2010 - Chịu trách nhiệm: Vũ Đức Tùng – Giám đốc.
+        {{ t("footer.line-3") }}
       </p>
       <p class="text-center">
-        Địa chỉ: Số 87 Láng Hạ, Phường Ô Chợ Dừa, TP.Hà Nội - Điện thoại: 024.35141791
+        {{ t("footer.line-4") }}
       </p>
       <p class="text-center text-sm">
-        Copyright 2023. NCC All Rights Reservered. Dev by Anvui.vn
+        {{ t("footer.line-5") }}
       </p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-
+const { t } = useI18n()
 </script>
 
 <style scoped>

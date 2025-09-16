@@ -6,6 +6,20 @@
   "home": {
     "content-1":"CineBook đã thiết kế ứng dụng đặt vé xem phim lấy người dùng làm trung tâm như thế nào?",
     "content-2":"Trải nghiệm phim hành động, hài kịch, lãng mạn và tất cả những gì liên quan đến sân khấu chỉ với một cú nhấp chuột. Hãy nhanh tay đặt vé trước khi chương trình hết vé!"
+  },
+  "footer":{
+    "policy":"Chính sách",
+    "showtime":"Lịch chiếu",
+    "news":"Tin tức",
+    "ticket-price":"Giá vé",
+    "faq":"Hỏi đáp",
+    "group-booking":"Đặt vé nhóm, tập thể",
+    "contact":"Liên hệ",
+    "line-1":"Cơ quan chủ quản: BỘ VĂN HÓA, THỂ THAO VÀ DU LỊCH",
+    "line-2":"Bản quyền thuộc Trung tâm Chiếu phim Quốc gia.",
+    "line-3":"Giấy phép số: 224/GP- TTĐT ngày 31/8/2010 - Chịu trách nhiệm: Ngọ Đức Cảnh – Giám đốc.",
+    "line-4":"Địa chỉ: Số 87 Láng Hạ, Phường Ô Chợ Dừa, TP.Hà Nội - Điện thoại: 024.35141791",
+    "line-5":"Bản quyền 2023. NCC Bảo lưu mọi quyền. Phát triển bởi Ngọ Đức Cảnh"
   }
 }
 
