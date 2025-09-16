@@ -1,0 +1,255 @@
+name: Automated Code Review
+
+on:
+  pull_request:
+    branches: [ develop, production ]
+    types: [ opened, synchronize, reopened ]
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  # Automated code review using AI (complexity analysis)
+  code-review:
+    runs-on: ubuntu-latest
+    name: AI Code Review
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Run complexity analysis with madge (TS/JS only)
+        shell: bash
+        run: |
+          set -e
+          DIRS=()
+          for d in app components composables plugins utils lib; do
+            [ -d "$d" ] && DIRS+=("$d")
+          done
+          if [ ${#DIRS[@]} -gt 0 ]; then
+            echo "Analyzing directories: ${DIRS[*]}"
+            npx madge --circular --extensions ts,tsx,js,jsx "${DIRS[@]}" || true
+            npx madge --summary "${DIRS[@]}" || true
+          else
+            echo "No JS/TS directories found for madge."
+          fi
+
+  # Check for common issues (TODOs, console logs, unused imports, component names)
+  code-quality-checks:
+    runs-on: ubuntu-latest
+    name: Quality Checks
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Check for TODO/FIXME comments
+        shell: bash
+        run: |
+          echo "## TODO/FIXME Comments Found:" >> $GITHUB_STEP_SUMMARY
+          FOUND=$(grep -R -n -E "TODO|FIXME" \
+            --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" --include="*.vue" \
+            app components pages layouts composables plugins server utils lib 2>/dev/null || true)
+          if [ -z "$FOUND" ]; then
+            echo "No TODO/FIXME comments found" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "$FOUND" | head -100 >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Check for console statements
+        shell: bash
+        run: |
+          echo "## Console.* Statements:" >> $GITHUB_STEP_SUMMARY
+          FOUND=$(grep -R -n -E "console\." \
+            --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" --include="*.vue" \
+            app components pages layouts composables plugins server utils lib 2>/dev/null || true)
+          if [ -z "$FOUND" ]; then
+            echo "No console statements found" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "$FOUND" | head -100 >> $GITHUB_STEP_SUMMARY
+          fi
+
+      # Replace unimported (which assumes ./src) with knip (best-effort)
+      - name: Check for unused exports/imports (best-effort)
+        run: npx knip --reporter summary || true
+
+      - name: Check component naming (components/*.vue)
+        shell: bash
+        run: |
+          echo "## Component Files (.vue in components/):" >> $GITHUB_STEP_SUMMARY
+          if [ -d components ]; then
+            find components -maxdepth 2 -type f -name "*.vue" | sed 's|.*/||' | sort >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No components directory" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # Performance analysis
+  performance-check:
+    runs-on: ubuntu-latest
+    name: Performance Analysis
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build (Nuxt)
+        run: pnpm build
+
+      - name: Analyze build output sizes
+        shell: bash
+        run: |
+          echo "## Build Output Sizes:" >> $GITHUB_STEP_SUMMARY
+          if [ -d ".output/public" ]; then
+            du -sh .output .output/public >> $GITHUB_STEP_SUMMARY
+            echo "### Sample JS assets:" >> $GITHUB_STEP_SUMMARY
+            find .output/public -type f -name "*.js" | head -20 >> $GITHUB_STEP_SUMMARY
+          elif [ -d "dist" ]; then
+            du -sh dist >> $GITHUB_STEP_SUMMARY
+            echo "### Sample JS assets:" >> $GITHUB_STEP_SUMMARY
+            find dist -type f -name "*.js" | head -20 >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No recognized Nuxt output directory (.output/ or dist/) found." >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Check image optimization candidates
+        shell: bash
+        run: |
+          echo "## Image Files (public/ and assets/):" >> $GITHUB_STEP_SUMMARY
+          if [ -d public ] || [ -d assets ]; then
+            find public assets -type f \
+              $$ -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.webp" $$ 2>/dev/null \
+              | head -20 >> $GITHUB_STEP_SUMMARY || true
+          else
+            echo "No image directories (public/ or assets/) found" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # Security checks
+  security-analysis:
+    runs-on: ubuntu-latest
+    name: Security Analysis
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Check for hardcoded secrets
+        shell: bash
+        run: |
+          echo "## Security Check Results:" >> $GITHUB_STEP_SUMMARY
+          FOUND=$(grep -R -n -i -E "password|secret|api[_-]?key|token|bearer\s+[A-Za-z0-9\._\-]+" \
+            --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" --include="*.vue" \
+            app components pages layouts composables plugins server utils lib 2>/dev/null | grep -v "placeholder" || true)
+          if [ -z "$FOUND" ]; then
+            echo "No hardcoded secrets found" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "$FOUND" | head -100 >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Run pnpm audit (best-effort)
+        run: pnpm audit --audit-level moderate || true
+
+  # Accessibility checks
+  accessibility-check:
+    runs-on: ubuntu-latest
+    name: Accessibility Check
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Check for accessibility issues
+        shell: bash
+        run: |
+          echo "## Accessibility Analysis:" >> $GITHUB_STEP_SUMMARY
+          echo "Checking for common accessibility patterns in .vue and TS/JS files..." >> $GITHUB_STEP_SUMMARY
+
+          # Check alt attributes for <img> and <NuxtImg>
+          MISSING_ALT=$(grep -R -n -E "<img|<NuxtImg" \
+            --include="*.vue" --include="*.tsx" --include="*.ts" --include="*.jsx" --include="*.js" \
+            app components pages layouts 2>/dev/null | grep -v "alt=" || true)
+          if [ -z "$MISSING_ALT" ]; then
+            echo "All images likely have alt attributes (heuristic)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Potential missing alt attributes (first 10):" >> $GITHUB_STEP_SUMMARY
+            echo "$MISSING_ALT" | head -10 >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Check form inputs for labels/aria-label
+          MISSING_LABEL=$(grep -R -n -E "<input|<select|<textarea" \
+            --include="*.vue" --include="*.tsx" --include="*.ts" --include="*.jsx" --include="*.js" \
+            app components pages layouts 2>/dev/null | grep -v -E "label|aria-label" || true)
+          if [ -z "$MISSING_LABEL" ]; then
+            echo "All inputs likely have labels (heuristic)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Potential unlabeled inputs (first 5):" >> $GITHUB_STEP_SUMMARY
+            echo "$MISSING_LABEL" | head -5 >> $GITHUB_STEP_SUMMARY
+          fi
