@@ -170,8 +170,6 @@ const imagesList = [
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-fill-color: transparent;
-
   position: relative;
   z-index: 2;
   display: inline-block;
@@ -190,16 +188,12 @@ const imagesList = [
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-fill-color: transparent;
-
-  /* bóng chữ đen phía sau */
   color: #111;
   -webkit-text-stroke: 1px #111;
   opacity: 0.5;
-
   position: absolute;
-  top: 5px;   /* dịch bóng xuống chút */
-  left: 5px;  /* dịch bóng sang phải chút */
+  top: 5px;
+  left: 5px;
   right: 0;
   margin: 0 auto;
   z-index: 1;
