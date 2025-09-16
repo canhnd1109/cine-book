@@ -4,7 +4,11 @@
     :items="items"
     value-key="value"
     :avatar="avatar"
-    :ui="{ base: 'w-36 h-10 cursor-pointer', value: '!ml-2 ', content: 'cursor-pointer' }"
+    :ui="{
+      base: 'w-36 h-10 hover:cursor-pointer',
+      value: 'ml-2 hover:cursor-pointer',
+      content: 'hover:cursor-pointer'
+    }"
     @change="setLocale(locale)"
   />
 </template>
