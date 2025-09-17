@@ -13,5 +13,7 @@ export default defineAppConfig({
         base: 'break-words'
       }
     }
-  }
+  },
+  title: 'CineBook – Đặt Vé Xem Phim Trực Tuyến Nhanh Chóng & Tiện Lợi',
+  description: 'app.description'
 })

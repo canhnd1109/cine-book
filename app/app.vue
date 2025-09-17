@@ -1,5 +1,7 @@
 <script setup lang="ts">
+const appConfig = useAppConfig()
 const { t } = useI18n()
+
 useHead({
   meta: [
     { name: 'viewport', content: 'width=device-width, initial-scale=1' }
@@ -12,23 +14,19 @@ useHead({
   }
 })
 
-const title = 'CineBook – Đặt Vé Xem Phim Trực Tuyến Nhanh Chóng & Tiện Lợi'
-const description = t('app.description')
-
 useSeoMeta({
-  title,
-  description,
-  ogTitle: title,
-  ogDescription: description
-
+  title: appConfig.title,
+  description: t(`${appConfig.description}`),
+  ogTitle: appConfig.title,
+  ogDescription: t(`${appConfig.description}`)
 })
 </script>
 
 <template>
   <UApp>
-    <AppHeader />
-    <NuxtPage />
-    <AppFooter />
+    <NuxtLayout>
+      <NuxtPage keep-alive />
+    </NuxtLayout>
   </UApp>
 </template>
 <!-- https://www.mindinventory.com/portfolio/movie-ticket-booking-app/?utm_source=chatgpt.com -->
