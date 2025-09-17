@@ -1,0 +1,25 @@
+/* Outline */
+/* .outline-primary {
+  box-sizing: none;
+  --tw-ring-shadow: none !important;
+  color: #314158;
+  border: 1px solid #eaecf0;
+}
+.dark .outline-primary {
+  color: #fff;
+}
+.outline-primary:hover {
+  background-color: transparent;
+  transform: scale(1.05);
+  transition: 0.2s ease-in-out 0s;
+  border-color: #fe6969;
+} */
+
+/* Solid */
+/* .solid-primary {
+  background-image: linear-gradient(210deg, #fe6969, #e30713);
+}
+.solid-primary:hover {
+  transform: scale(1.05);
+  transition: 0.2s ease-in-out 0s;
+} */

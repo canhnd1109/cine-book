@@ -2,11 +2,15 @@
   <UButton
     :loading="isLoading"
     :loading-icon="loadingIcon"
-    :class="className"
+    :class="`cursor-pointer rounded-full py-[10px] px-4 ${className}`"
     :variant
     :color
     :trailing-icon="trailingIcon"
     :to
+    :type
+    :disabled="isDisable"
+    :target
+    :ui
   >
     {{ text }}
   </UButton>
@@ -19,7 +23,18 @@ import type {
 } from 'vue-router'
 import type { ClassNameValue } from 'tailwind-merge'
 
-const { isLoading = false, loadingIcon = 'i-lucide-loader', className = '', variant = 'outline', color = 'info', trailingIcon = '', to = '' } = defineProps<{
+const {
+  isLoading = false,
+  loadingIcon = 'i-lucide-loader',
+  className = '', variant = 'outline',
+  color = 'success',
+  trailingIcon = '',
+  to = '',
+  type = 'button',
+  isDisable = false,
+  target = null,
+  ui = {}
+} = defineProps<{
   text?: string
   isLoading?: boolean
   loadingIcon?: string
