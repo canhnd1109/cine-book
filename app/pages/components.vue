@@ -3,13 +3,13 @@ useSeoMeta({ title: 'Components' })
 </script>
 
 <template>
-  <div>
+  <div class="flex">
+    <!-- Sidebar -->
     <aside
-      class="flex  items-start justify-center w-64 h-screen overflow-y-auto  border-r rtl:border-r-0 rtl:border-l fixed"
+      class="flex items-start justify-center w-64 overflow-y-auto border-r rtl:border-r-0 rtl:border-l"
     >
       <div class="flex flex-col justify-start items-start">
         <span class="text-2xl font-bold">Components</span>
-
         <div class="flex flex-col justify-between flex-1 mt-6">
           <nav class="-mx-3 space-y-6">
             <div class="space-y-3">
@@ -24,7 +24,9 @@ useSeoMeta({ title: 'Components' })
         </div>
       </div>
     </aside>
-    <div class="ml-56 h-screen overflow-y-auto ">
+
+    <!-- Content -->
+    <div class="flex-1 h-screen overflow-y-auto">
       <NuxtPage />
     </div>
   </div>

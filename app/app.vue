@@ -3,6 +3,7 @@ const appConfig = useAppConfig()
 const { t } = useI18n()
 
 useHead({
+  title: 'CineBook – Đặt Vé Xem Phim Trực Tuyến Nhanh Chóng & Tiện Lợi',
   meta: [
     { name: 'viewport', content: 'width=device-width, initial-scale=1' }
   ],
