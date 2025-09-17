@@ -1,5 +1,5 @@
 <template>
-  <div class="dark:bg-[#0B0D13] p-8 mx-auto space-y-6">
+  <div class="dark:bg-[#0B0D13] bg-[#f9fafc] p-8 mx-auto space-y-6">
     <p class="flex justify-center items-center gap-8 text-base">
       <span class="hover:cursor-pointer hover:scale-110 hover:font-semibold transition-transform duration-200 inline-block">
         {{ t("footer.policy") }}
