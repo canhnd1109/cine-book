@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mx-20 my-10">
     <h1 class="font-bold text-2xl mb-5">
       Button
     </h1>

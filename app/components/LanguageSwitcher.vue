@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import type { SelectItem } from '@nuxt/ui';
+import type { SelectItem } from '@nuxt/ui'
 
 const { locale, setLocale } = useI18n()
 
@@ -23,7 +23,7 @@ const items = ref([
     label: 'English',
     value: 'en',
     avatar: {
-      src: '/images/united-kingdom.png',
+      src: 'https://res.cloudinary.com/dbjqbfjfr/image/upload/v1758096672/uploads/mzqqfyga3v5qg0gy78z8.png',
       alt: 'English',
       size: 'xs'
     }
@@ -32,16 +32,14 @@ const items = ref([
     label: 'Việt Nam',
     value: 'vi',
     avatar: {
-      src: '/images/vietnam.png',
+      src: 'https://res.cloudinary.com/dbjqbfjfr/image/upload/v1758096672/uploads/orjvqbo00gr2dbct47hg.png',
       alt: 'Việt Nam',
       size: 'xs'
     }
   }
 ] satisfies SelectItem[])
 
-const avatar = computed(() => items.value.find(item => item.value === locale.value)?.avatar)
+const avatar = computed(() =>
+  items.value.find(item => item.value === locale.value)?.avatar
+)
 </script>
-
-<style scoped>
-
-</style>
