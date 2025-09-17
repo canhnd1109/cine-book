@@ -3,6 +3,10 @@
     "title": "CineBook",
     "description": "CineBook is your online movie ticket booking platform. Check showtimes, choose your favorite seats, enjoy special offers, and experience cinema in the most convenient way."
   },
+  "header" :{
+    "signin":"Sign in",
+    "signup":"Sign up"
+  },
   "home": {
     "content-1":"How MindInventory Designed a User-Centric Movie Ticket Booking App",
     "content-2":" Experience Action Drama, Comedy, Romance, & all-in-all theater experience in just one click. Grab your tickets before the show gets sold out!"
