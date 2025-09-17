@@ -5,7 +5,7 @@ definePageMeta({ layout: 'blank' })
 </script>
 
 <template>
-  <div class="h-screen w-screen overflow-hidden relative flex justify-center">
+  <div class="h-screen w-screen overflow-hidden relative flex justify-center dark:bg-white">
     <div class="page-not-found" />
     <div class="flex h-screen w-screen items-center justify-center space-x-8 max-lg:block max-lg:px-6 max-sm:pt-20">
       <img

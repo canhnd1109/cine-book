@@ -1,11 +1,15 @@
 <template>
-  <div class="mx-20 my-10">
+  <div class="mx-20">
     <h1 class="font-bold text-2xl mb-5 shadow-none">
       Button
     </h1>
     <div class="flex gap-5">
       <BaseButton
         text="Button"
+      />
+      <BaseButton
+        text="Button"
+        color="warning"
       />
       <BaseButton
         text="Button"
