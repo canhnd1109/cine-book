@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const appConfig = useAppConfig()
 useSeoMeta({ title: appConfig.pages['not-found'].title })
+definePageMeta({ layout: 'blank' })
 </script>
 
 <template>

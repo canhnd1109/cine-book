@@ -4,6 +4,9 @@
   "prettier.enable": false,
   "editor.formatOnSave": false,
 
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.suggest.autoImports": true,
+
   // Auto fix
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",

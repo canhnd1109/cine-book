@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxtjs/mdc', '@nuxtjs/i18n'],
+  modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxtjs/mdc', '@nuxtjs/i18n', '@nuxt/image', 'nuxt-security'],
 
   devtools: {
     enabled: true
@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     head: {
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
-      title: 'Nuxt i18n App',
+      title: 'CineBook – Đặt Vé Xem Phim Trực Tuyến Nhanh Chóng & Tiện Lợi',
       meta: [{ name: 'description', content: 'Nuxt app with internationalization' }]
     }
   },
@@ -101,5 +101,21 @@ export default defineNuxtConfig({
       cookieSecure: true
     },
     baseUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  },
+  security: {
+    headers: {
+      crossOriginEmbedderPolicy: false,
+      // contentSecurityPolicy: {
+      //   'default-src': ['\'self\''],
+      //   'img-src': ['\'self\'', 'data:', 'https:'],
+      //   'script-src': ['\'self\''],
+      //   'style-src': ['\'self\'', '\'unsafe-inline\'']
+      // }
+      contentSecurityPolicy: false
+    },
+    csrf: true,
+    corsHandler: {
+      origin: '*'
+    }
   }
 })

@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import type { SelectItem } from '@nuxt/ui'
+import type { SelectItem } from '@nuxt/ui';
 
 const { locale, setLocale } = useI18n()
 

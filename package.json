@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-ui-template-changelog",
+  "name": "cina-book",
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,11 +14,12 @@
   "dependencies": {
     "@iconify-json/lucide": "^1.2.66",
     "@iconify-json/simple-icons": "^1.2.50",
+    "@nuxt/image": "^1.11.0",
     "@nuxt/ui": "^4.0.0-alpha.1",
     "@nuxtjs/i18n": "^10.1.0",
     "@nuxtjs/mdc": "0.17.3",
-    "nuxt": "^4.0.3",
-    "remark-github": "^12.0.0"
+    "nuxt": "^4.1.2",
+    "nuxt-security": "^2.4.0"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.9.0",
