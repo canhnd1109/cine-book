@@ -1,8 +1,10 @@
 <template>
-  <div>
+  <div class="min-h-screen flex flex-col">
     <AppHeader />
-    <NuxtPage />
-    <AppFooter />
+    <main class="flex-1">
+      <NuxtPage />
+    </main>
+    <AppFooter class="w-full" />
   </div>
 </template>
 
