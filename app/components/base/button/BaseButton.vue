@@ -1,27 +1,10 @@
-<template>
-  <UButton
-    :loading="isLoading"
-    :loading-icon="loadingIcon"
-    :class="`cursor-pointer rounded-full py-[10px] px-4 ${className}`"
-    :variant
-    :color
-    :trailing-icon="trailingIcon"
-    :to
-    :type
-    :disabled="isDisable"
-    :target
-    :ui
-  >
-    {{ text }}
-  </UButton>
-</template>
-
 <script setup lang="ts">
 import type {
   RouteLocationAsRelativeGeneric,
   RouteLocationAsPathGeneric
 } from 'vue-router'
 import type { ClassNameValue } from 'tailwind-merge'
+import { debounce } from 'lodash-es'
 
 const {
   isLoading = false,
@@ -49,7 +32,37 @@ const {
   target?: null | '_blank' | '_parent' | '_self' | '_top' | string & {}
   ui?: { base?: ClassNameValue, label?: ClassNameValue, leadingIcon?: ClassNameValue, leadingAvatar?: ClassNameValue, leadingAvatarSize?: ClassNameValue, trailingIcon?: ClassNameValue }
 }>()
+
+const emit = defineEmits<{
+  click: []
+}>()
+
+const handleClick = debounce(() => {
+  if (isLoading) {
+    return
+  }
+  emit('click')
+}, 300)
 </script>
+
+<template>
+  <UButton
+    :loading="isLoading"
+    :loading-icon="loadingIcon"
+    :class="`cursor-pointer rounded-full py-[10px] px-4 ${className}`"
+    :variant
+    :color
+    :trailing-icon="trailingIcon"
+    :to
+    :type
+    :disabled="isDisable"
+    :target
+    :ui
+    @click="handleClick"
+  >
+    {{ text }}
+  </UButton>
+</template>
 
 <style scoped>
 

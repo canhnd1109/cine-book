@@ -18,11 +18,13 @@
     "@nuxt/ui": "^4.0.0-alpha.1",
     "@nuxtjs/i18n": "^10.1.0",
     "@nuxtjs/mdc": "0.17.3",
+    "lodash-es": "^4.17.21",
     "nuxt": "^4.1.2",
     "nuxt-security": "^2.4.0"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.9.0",
+    "@types/lodash-es": "^4.17.12",
     "eslint": "^9.35.0",
     "typescript": "^5.9.2",
     "vue-tsc": "^3.0.6"
