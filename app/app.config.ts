@@ -1,6 +1,7 @@
 export default defineAppConfig({
   repository: 'nuxt/ui',
   title: 'CineBook – Đặt Vé Xem Phim Trực Tuyến Nhanh Chóng & Tiện Lợi',
+  baseUrl: 'https://cinebookmovie.vercel.app',
   description: 'app.description',
   pages: {
     'home': {
