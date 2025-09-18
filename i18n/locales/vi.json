@@ -29,10 +29,15 @@
     "first-name-is-required": "Tên là bắt buộc",
     "last-name-is-required": "Họ là bắt buộc",
     "phone-number-is-required": "Số điện thoại là bắt buộc",
+    "phone-number-invalid":"Số điện thoại không hợp lệ",
+    "email-is-required":"Email là bắt buộc",
     "invalid-email": "Email không hợp lệ",
     "password-must-be-at-least-8-characters-include-uppercase-lowercase-number-and-special-character": "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt",
     "confirm-password-is-required": "Xác nhận mật khẩu là bắt buộc",
-    "passwords-do-not-match": "Mật khẩu không khớp"
+    "passwords-do-not-match": "Mật khẩu không khớp",
+    "forgot-password":"Quên mật khẩu?",
+    "don-not-have-an-account?":"Bạn chưa có tài khoản?"
+
   },
   "home": {
     "content-1":"CineBook đã thiết kế ứng dụng đặt vé xem phim lấy người dùng làm trung tâm như thế nào?",

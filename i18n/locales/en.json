@@ -29,11 +29,14 @@
     "first-name-is-required":"First name is required",
     "last-name-is-required":"Last name is required",
     "phone-number-is-required":"Phone number is required",
-    "invalid-email":"Invalid email",
+    "phone-number-invalid":"Invalid phone number format",
+    "email-is-required":"Email is required",
+    "invalid-email":"Invalid email address",
     "password-must-be-at-least-8-characters-include-uppercase-lowercase-number-and-special-character":"Password must be at least 8 characters, include uppercase, lowercase, number, and special character",
     "confirm-password-is-required":"Confirm password is required",
-    "passwords-do-not-match":"Passwords do not match"
-
+    "passwords-do-not-match":"Passwords do not match",
+    "forgot-password":"Forgot password?",
+    "don-not-have-an-account?":"Don't have an account?"
   },
   "home": {
     "content-1":"How MindInventory Designed a User-Centric Movie Ticket Booking App",
