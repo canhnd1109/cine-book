@@ -5,6 +5,11 @@ import { createSignInSchema, type IFormSignIn } from '~/schemas/auth.schema'
 const { t } = useI18n()
 const showPass = ref(false)
 const { schema: signInSchema } = useSchema(createSignInSchema)
+const isOpen = defineModel('isOpen', { type: Boolean, default: false })
+
+const emits = defineEmits<{
+  'sign-up': []
+}>()
 
 const form = reactive<Partial<IFormSignIn>>({
   email: '',
@@ -19,11 +24,10 @@ async function onSubmit(event: FormSubmitEvent<IFormSignIn>) {
 </script>
 
 <template>
-  <UModal :title="t('header.signin')">
-    <BaseButton
-      :text="t('header.signin')"
-      variant="solid"
-    />
+  <UModal
+    v-model:open="isOpen"
+    :title="t('header.signin')"
+  >
     <template #body>
       <UForm
         :schema="signInSchema"
@@ -77,7 +81,10 @@ async function onSubmit(event: FormSubmitEvent<IFormSignIn>) {
       />
       <p class="text-center mt-4">
         {{ t('auth.don-not-have-an-account?') }}
-        <span class="underline text-primary hover:cursor-pointer">{{ t('header.signup') }}</span>
+        <span
+          class="underline text-primary hover:cursor-pointer"
+          @click="emits('sign-up')"
+        >{{ t('header.signup') }}</span>
       </p>
     </template>
   </UModal>

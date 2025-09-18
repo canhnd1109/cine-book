@@ -6,9 +6,14 @@ const { t } = useI18n()
 
 const { schema: signUpSchema } = useSchema(createSignUpSchema)
 
+const emits = defineEmits<{
+  'sign-in': []
+}>()
+
 const showPass = ref(false)
 const showConfirmPass = ref(false)
 const passwordFocused = ref(false)
+const isOpen = defineModel('isOpen', { type: Boolean, default: false })
 
 const form = reactive<Partial<IFormSignUp>>({
   lastName: '',
@@ -56,11 +61,10 @@ const text = computed(() => {
 </script>
 
 <template>
-  <UModal :title="t('header.signup')">
-    <BaseButton
-      :text="t('header.signup')"
-    />
-
+  <UModal
+    v-model:open="isOpen"
+    :title="t('header.signup')"
+  >
     <template #body>
       <UForm
         :schema="signUpSchema"
@@ -219,7 +223,10 @@ const text = computed(() => {
       />
       <p class="text-center mt-4">
         {{ t('auth.already-have-an-account?') }}
-        <span class="underline text-primary hover:cursor-pointer">{{ t('header.signin') }}</span>
+        <span
+          class="underline text-primary hover:cursor-pointer"
+          @click="emits('sign-in')"
+        >{{ t('header.signin') }}</span>
       </p>
     </template>
   </UModal>

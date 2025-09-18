@@ -1,20 +1,70 @@
 <script setup lang="ts">
+const { t } = useI18n()
+const modalSignUp = ref(false)
+const modalSignIn = ref(false)
+const openModalSignIn = () => {
+  if (modalSignUp.value) {
+    modalSignUp.value = false
+  }
+  modalSignIn.value = true
+}
+const openModalSignUp = () => {
+  if (modalSignIn.value) {
+    modalSignIn.value = false
+  }
+  modalSignUp.value = true
+}
 </script>
 
 <template>
-  <div class="flex justify-between m-6 items-center mx-10">
-    <div>logo</div>
-    <div class="flex justify-end gap-x-6">
-      <AuthModalSignUp />
-      <AuthModalSignIn />
+  <header class="m-6 mx-10">
+    <div class="flex justify-between items-center">
+      <div class="text-xl font-semibold">
+        logo
+      </div>
+      <nav
+        aria-label="Primary"
+        class="flex justify-end items-center gap-x-8 text-lg"
+      >
+        <NuxtLink
+          to="/"
+          class="hover:text-primary"
+        >Trang chủ</NuxtLink>
+        <NuxtLink
+          to="/movie-schedules"
+          class="hover:text-primary"
+        >Lịch chiếu</NuxtLink>
+      </nav>
+      <div class="flex justify-end items-center !gap-x-4">
+        <BaseButton
+          :text="t('header.signup')"
+          title="Sign up"
+          @click="modalSignUp = true"
+        />
+        <BaseButton
+          :text="t('header.signin')"
+          variant="solid"
+          title="Sign in"
+          @click="modalSignIn = true"
+        />
+        <BaseLanguagesLanguageSwitcher />
+        <UColorModeButton :ui="{ base: 'cursor-pointer' }" />
+      </div>
     </div>
-    <div class="flex justify-end items-center !gap-x-4">
-      <BaseLanguagesLanguageSwitcher />
-      <UColorModeButton :ui="{ base: 'cursor-pointer' }" />
-    </div>
-  </div>
+  </header>
+  <AuthModalSignUp
+    v-model:is-open="modalSignUp"
+    @sign-in="openModalSignIn"
+  />
+  <AuthModalSignIn
+    v-model:is-open="modalSignIn"
+    @sign-up="openModalSignUp"
+  />
 </template>
 
 <style scoped>
-
+.router-link-active {
+  font-weight: 600;
+  color: var(--color-primary);
+}
 </style>
