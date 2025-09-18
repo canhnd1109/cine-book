@@ -1,3 +1,7 @@
+<script setup lang="ts">
+useSeoMeta({ title: 'Components - Button' })
+</script>
+
 <template>
   <div class="mx-20">
     <h1 class="font-bold text-2xl mb-5 shadow-none">
@@ -33,10 +37,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-useSeoMeta({ title: 'Components - Button' })
-</script>
 
 <style scoped>
 

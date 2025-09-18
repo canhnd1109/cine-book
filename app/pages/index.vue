@@ -1,3 +1,27 @@
+<script setup lang="ts">
+const { t } = useI18n()
+const items = [
+  '/images/phim-8.png',
+  '/images/phim-7.png',
+  '/images/phim-6.png',
+  '/images/phim-5.png',
+  '/images/phim-4.png',
+  '/images/phim-3.png',
+  '/images/phim-2.png',
+  '/images/phim-1.png'
+]
+const imagesList = [
+  '/images/img-1.png',
+  '/images/img-2.png',
+  '/images/img-3.png',
+  '/images/img-4.png',
+  '/images/img-5.png',
+  '/images/img-6.png',
+  '/images/img-7.png',
+  '/images/img-8.png'
+]
+</script>
+
 <template>
   <div>
     <UCarousel
@@ -67,30 +91,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-const { t } = useI18n()
-const items = [
-  '/images/phim-8.png',
-  '/images/phim-7.png',
-  '/images/phim-6.png',
-  '/images/phim-5.png',
-  '/images/phim-4.png',
-  '/images/phim-3.png',
-  '/images/phim-2.png',
-  '/images/phim-1.png'
-]
-const imagesList = [
-  '/images/img-1.png',
-  '/images/img-2.png',
-  '/images/img-3.png',
-  '/images/img-4.png',
-  '/images/img-5.png',
-  '/images/img-6.png',
-  '/images/img-7.png',
-  '/images/img-8.png'
-]
-</script>
 
 <style scoped>
 .marquee-wrapper {
