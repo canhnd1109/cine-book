@@ -25,23 +25,7 @@ const imagesList = [
 <template>
   <div>
     <ClientOnly>
-      <UCarousel
-        v-slot="{ item }"
-        dots
-        autoplay
-        loop
-        :auto-height="true"
-        :items="items"
-        :ui="{
-          dots: '!bottom-0 !-mt-32',
-          dot: '!bottom-0 !-mt-32'
-        }"
-      >
-        <img
-          :src="item"
-          class="w-full h-auto mx-auto rounded-2xl"
-        >
-      </UCarousel>
+      <AppCarousel :items="items" />
     </ClientOnly>
     <div class="dark:bg-[#111]  bg-light-bg rounded-[50px] py-24 mx-12 my-6 ">
       <div class="px-10 space-y-10">
