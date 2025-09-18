@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxtjs/mdc', '@nuxtjs/i18n', '@nuxt/image', 'nuxt-security'],
+  ssr: true,
 
   devtools: {
     enabled: true
@@ -37,7 +38,6 @@ export default defineNuxtConfig({
       }
     }
   },
-
   runtimeConfig: {
     // Private keys (only available on server-side)
     apiSecret: process.env.API_SECRET,
