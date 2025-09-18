@@ -30,8 +30,9 @@ const openModalSignUp = () => {
           to="/"
           class="hover:text-primary"
         >Trang chủ</NuxtLink>
+        <!-- /movie-schedules -->
         <NuxtLink
-          to="/movie-schedules"
+          to="/"
           class="hover:text-primary"
         >Lịch chiếu</NuxtLink>
       </nav>
@@ -47,8 +48,8 @@ const openModalSignUp = () => {
           title="Sign in"
           @click="modalSignIn = true"
         />
-        <BaseLanguagesLanguageSwitcher />
-        <UColorModeButton :ui="{ base: 'cursor-pointer' }" />
+        <BaseLanguages />
+        <BaseTheme />
       </div>
     </div>
   </header>
