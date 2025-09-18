@@ -3,7 +3,8 @@ import type { FormSubmitEvent } from '@nuxt/ui'
 import { createSignUpSchema, type IFormSignUp } from '~/schemas/auth.schema'
 
 const { t } = useI18n()
-const signUpSchema = createSignUpSchema(t)
+
+const { schema: signUpSchema } = useSchema(createSignUpSchema)
 
 const showPass = ref(false)
 const showConfirmPass = ref(false)

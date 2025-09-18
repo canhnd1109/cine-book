@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
-import { createSignInChema, type IFormSignIn } from '~/schemas/auth.schema'
+import { createSignInSchema, type IFormSignIn } from '~/schemas/auth.schema'
 
 const { t } = useI18n()
 const showPass = ref(false)
-const signInSchema = createSignInChema(t)
+const { schema: signInSchema } = useSchema(createSignInSchema)
 
 const form = reactive<Partial<IFormSignIn>>({
   email: '',
