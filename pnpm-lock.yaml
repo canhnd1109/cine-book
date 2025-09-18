@@ -38,6 +38,9 @@ importers:
       nuxt-security:
         specifier: ^2.4.0
         version: 2.4.0(magicast@0.3.5)(rollup@4.50.2)
+      swiper:
+        specifier: ^12.0.1
+        version: 12.0.1
     devDependencies:
       '@nuxt/eslint':
         specifier: ^1.9.0
@@ -5014,6 +5017,10 @@ packages:
     resolution: {integrity: sha512-VvrHQ+9uniE+Mvx3+C9IEe/lWasXCU0nXMY2kZeLrHNICuRiC8uMPyM14UEaMOFA5mhyQqEkB02VoQ16n3DLaw==}
     engines: {node: '>=16'}
     hasBin: true
+
+  swiper@12.0.1:
+    resolution: {integrity: sha512-Fi+gNw/tfc4hsGowQU5tRC/f1HFknkh4Vz8PaDI4JTinLUMTwhZyaovcH/va+iXq98BNUHN5ok0c2lEI82Fsgw==}
+    engines: {node: '>= 4.7.0'}
 
   swrv@1.1.0:
     resolution: {integrity: sha512-pjllRDr2s0iTwiE5Isvip51dZGR7GjLH1gCSVyE8bQnbAx6xackXsFdojau+1O5u98yHF5V73HQGOFxKUXO9gQ==}
@@ -11688,6 +11695,8 @@ snapshots:
       csso: 5.0.5
       picocolors: 1.1.1
       sax: 1.4.1
+
+  swiper@12.0.1: {}
 
   swrv@1.1.0(vue@3.5.21(typescript@5.9.2)):
     dependencies:

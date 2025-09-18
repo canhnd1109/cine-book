@@ -4,8 +4,26 @@
 
 @theme static {
   --color-primary:#00e080;
-
-
   /* Light */
   --color-light-bg:#f9fafc;
+}
+
+/* Swiper pagination dots */
+.swiper .swiper-pagination-bullet {
+  background-color: rgba(255, 255, 255, 0.7);
+  opacity: 0.4;
+  width: 14px;
+  height: 14px;
+}
+
+.swiper .swiper-pagination-bullet-active {
+  background: var(--color-primary);
+  opacity: 1;
+  width: 14px;
+  height: 14px;
+}
+
+/* Smoother fade/easing for slides */
+.swiper .swiper-slide {
+  transition-timing-function: ease-in-out;
 }

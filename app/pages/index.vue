@@ -1,4 +1,10 @@
 <script setup lang="ts">
+import { Swiper, SwiperSlide } from 'swiper/vue'
+import { Autoplay, EffectFade, Pagination } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/effect-fade'
+import 'swiper/css/pagination'
+
 const { t } = useI18n()
 const items = [
   '/images/phim-8.png',
@@ -25,23 +31,26 @@ const imagesList = [
 <template>
   <div>
     <ClientOnly>
-      <UCarousel
-        v-slot="{ item }"
-        dots
-        autoplay
-        loop
+      <Swiper
+        :modules="[Autoplay, EffectFade, Pagination]"
+        :loop="true"
+        :speed="1000"
+        :autoplay="{ delay: 3000, disableOnInteraction: false }"
+        effect="fade"
+        :fade-effect="{ crossFade: true }"
         :auto-height="true"
-        :items="items"
-        :ui="{
-          dots: '!bottom-0 !-mt-32',
-          dot: '!bottom-0 !-mt-32'
-        }"
+        :pagination="{ clickable: true }"
       >
-        <img
-          :src="item"
-          class="w-full h-auto mx-auto rounded-2xl"
+        <SwiperSlide
+          v-for="(img, idx) in items"
+          :key="idx"
         >
-      </UCarousel>
+          <img
+            :src="img"
+            class="w-full h-auto mx-auto"
+          >
+        </SwiperSlide>
+      </Swiper>
     </ClientOnly>
     <div class="dark:bg-[#111]  bg-light-bg rounded-[50px] py-24 mx-12 my-6 ">
       <div class="px-10 space-y-10">
