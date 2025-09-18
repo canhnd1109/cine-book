@@ -24,23 +24,25 @@ const imagesList = [
 
 <template>
   <div>
-    <UCarousel
-      v-slot="{ item }"
-      dots
-      autoplay
-      loop
-      :auto-height="true"
-      :items="items"
-      :ui="{
-        dots: '!bottom-0 !-mt-32',
-        dot: '!bottom-0 !-mt-32'
-      }"
-    >
-      <img
-        :src="item"
-        class="w-full h-auto mx-auto rounded-2xl"
+    <ClientOnly>
+      <UCarousel
+        v-slot="{ item }"
+        dots
+        autoplay
+        loop
+        :auto-height="true"
+        :items="items"
+        :ui="{
+          dots: '!bottom-0 !-mt-32',
+          dot: '!bottom-0 !-mt-32'
+        }"
       >
-    </UCarousel>
+        <img
+          :src="item"
+          class="w-full h-auto mx-auto rounded-2xl"
+        >
+      </UCarousel>
+    </ClientOnly>
     <div class="dark:bg-[#111]  bg-light-bg rounded-[50px] py-24 mx-12 my-6 ">
       <div class="px-10 space-y-10">
         <div class="title-wrap bookmb-15 text-center">
