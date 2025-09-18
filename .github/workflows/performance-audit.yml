@@ -23,8 +23,6 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       # Bật cache pnpm nếu có lockfile
       - name: Setup Node.js (with pnpm cache)
@@ -214,8 +212,6 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9
 
       - name: Setup Node.js (with pnpm cache)
         if: hashFiles('pnpm-lock.yaml') != ''
