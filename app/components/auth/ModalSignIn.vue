@@ -67,7 +67,7 @@ async function onSubmit(event: FormSubmitEvent<IFormSignIn>) {
           </UInput>
         </UFormField>
       </UForm>
-      <p class="text-end mt-4 underline text-[#00e080] hover:cursor-pointer">
+      <p class="text-end mt-4 underline text-primary hover:cursor-pointer">
         {{ t('auth.forgot-password') }}
       </p>
       <BaseButton
@@ -77,7 +77,7 @@ async function onSubmit(event: FormSubmitEvent<IFormSignIn>) {
       />
       <p class="text-center mt-4">
         {{ t('auth.don-not-have-an-account?') }}
-        <span class="underline text-[#00e080] hover:cursor-pointer">{{ t('header.signup') }}</span>
+        <span class="underline text-primary hover:cursor-pointer">{{ t('header.signup') }}</span>
       </p>
     </template>
   </UModal>

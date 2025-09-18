@@ -219,7 +219,7 @@ const text = computed(() => {
       />
       <p class="text-center mt-4">
         {{ t('auth.already-have-an-account?') }}
-        <span class="underline text-[#00e080] hover:cursor-pointer">{{ t('header.signin') }}</span>
+        <span class="underline text-primary hover:cursor-pointer">{{ t('header.signin') }}</span>
       </p>
     </template>
   </UModal>
