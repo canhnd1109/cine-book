@@ -30,28 +30,27 @@ const imagesList = [
 
 <template>
   <div>
-    <ClientOnly>
-      <Swiper
-        :modules="[Autoplay, EffectFade, Pagination]"
-        :loop="true"
-        :speed="1000"
-        :autoplay="{ delay: 3000, disableOnInteraction: false }"
-        effect="fade"
-        :fade-effect="{ crossFade: true }"
-        :auto-height="true"
-        :pagination="{ clickable: true }"
+    <Swiper
+      :modules="[Autoplay, EffectFade, Pagination]"
+      :loop="true"
+      :speed="1000"
+      :autoplay="{ delay: 3000, disableOnInteraction: false }"
+      effect="fade"
+      :fade-effect="{ crossFade: true }"
+      :auto-height="true"
+      :pagination="{ clickable: true }"
+    >
+      <SwiperSlide
+        v-for="(img, idx) in items"
+        :key="idx"
       >
-        <SwiperSlide
-          v-for="(img, idx) in items"
-          :key="idx"
+        <img
+          :src="img"
+          class="w-full h-auto mx-auto"
         >
-          <img
-            :src="img"
-            class="w-full h-auto mx-auto"
-          >
-        </SwiperSlide>
-      </Swiper>
-    </ClientOnly>
+      </SwiperSlide>
+    </Swiper>
+
     <div class="dark:bg-[#111]  bg-light-bg rounded-[50px] py-24 mx-12 my-6 ">
       <div class="px-10 space-y-10">
         <div class="title-wrap bookmb-15 text-center">
