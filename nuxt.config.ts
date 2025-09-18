@@ -86,64 +86,69 @@ export default defineNuxtConfig({
   routeRules: {
     '/': {
       ssr: true,
-      prerender: true,
       headers: {
         'cache-control': 's-maxage=31536000',
         'x-robots-tag': 'index, follow'
       }
     },
-    '/api/**': {
-      cors: true,
-      headers: {
-        'cache-control': 'max-age=300',
-        'x-robots-tag': 'noindex'
-      }
-    },
-    '/admin/**': {
-      ssr: false,
-      headers: {
-        'x-robots-tag': 'noindex, nofollow'
-      }
-    },
-    '/movies/**': {
-      ssr: true,
-      prerender: true,
-      headers: {
-        'cache-control': 's-maxage=3600',
-        'x-robots-tag': 'index, follow'
-      }
-    },
-    '/theaters/**': {
-      ssr: true,
-      prerender: true,
-      headers: {
-        'cache-control': 's-maxage=7200',
-        'x-robots-tag': 'index, follow'
-      }
-    },
-    '/static/**': {
-      headers: {
-        'cache-control': 'max-age=31536000, immutable'
-      }
-    },
-    '/sitemap.xml': {
-      prerender: true,
-      headers: {
-        'cache-control': 'max-age=86400'
-      }
-    },
-    '/robots.txt': {
-      prerender: true,
-      headers: {
-        'cache-control': 'max-age=86400'
-      }
-    },
-    '/search': {
-      ssr: false
-    },
-    '/booking/**': {
-      ssr: false
-    }
+    // '/api/**': {
+    //   cors: true,
+    //   headers: {
+    //     'cache-control': 'max-age=300',
+    //     'x-robots-tag': 'noindex'
+    //   }
+    // },
+    // '/admin/**': {
+    //   ssr: false,
+    //   headers: {
+    //     'x-robots-tag': 'noindex, nofollow'
+    //   }
+    // },
+    // '/movies/**': {
+    //   ssr: true,
+    //   headers: {
+    //     'cache-control': 's-maxage=3600',
+    //     'x-robots-tag': 'index, follow'
+    //   }
+    // },
+    // '/theaters/**': {
+    //   ssr: true,
+    //   headers: {
+    //     'cache-control': 's-maxage=7200',
+    //     'x-robots-tag': 'index, follow'
+    //   }
+    // },
+    // '/static/**': {
+    //   headers: {
+    //     'cache-control': 'max-age=31536000, immutable'
+    //   }
+    // },
+    // '/sitemap.xml': {
+    //   prerender: true,
+    //   headers: {
+    //     'cache-control': 'max-age=86400'
+    //   }
+    // },
+    // '/robots.txt': {
+    //   prerender: true,
+    //   headers: {
+    //     'cache-control': 'max-age=86400'
+    //   }
+    // },
+    // '/search': {
+    //   ssr: false
+    // },
+    // '/booking/**': {
+    //   ssr: false
+    // }
+  },
+
+  experimental: {
+    payloadExtraction: false,
+    renderJsonPayloads: true,
+    viewTransition: true,
+    headNext: true,
+    emitRouteChunkError: 'automatic'
   },
 
   compatibilityDate: '2025-01-15',
@@ -151,17 +156,6 @@ export default defineNuxtConfig({
   nitro: {
     compressPublicAssets: true,
     minify: true
-  },
-
-  eslint: {
-    config: {
-      stylistic: {
-        commaDangle: 'never',
-        braceStyle: '1tbs',
-        semi: false,
-        quotes: 'single'
-      }
-    }
   },
 
   i18n: {
@@ -181,7 +175,7 @@ export default defineNuxtConfig({
         dir: 'ltr'
       }
     ],
-    defaultLocale: 'en',
+    defaultLocale: 'vi',
     strategy: 'no_prefix',
     langDir: 'locales',
     detectBrowserLanguage: {
@@ -189,47 +183,35 @@ export default defineNuxtConfig({
       cookieKey: 'i18n_redirected',
       redirectOn: 'root',
       alwaysRedirect: false,
-      fallbackLocale: 'en',
+      fallbackLocale: 'vi',
       cookieCrossOrigin: false,
       cookieSecure: true
     },
-    baseUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+    baseUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+    pages: {
+      about: {
+        en: '/about',
+        vi: '/gioi-thieu'
+      },
+      contact: {
+        en: '/contact',
+        vi: '/lien-he'
+      }
+    }
   },
+
   security: {
     headers: {
       crossOriginEmbedderPolicy: false,
       contentSecurityPolicy: {
         'default-src': ['\'self\''],
-        'img-src': [
-          '\'self\'',
-          'data:',
-          'https:',
-          'https://images.unsplash.com',
-          'https://cdn.jsdelivr.net',
-          'https://fonts.gstatic.com',
-          'https://www.google-analytics.com',
-          'https://www.googletagmanager.com'
-        ],
-        'script-src': [
-          '\'self\'',
-          '\'unsafe-inline\'',
-          '\'unsafe-eval\'',
-          'https://www.googletagmanager.com',
-          'https://www.google-analytics.com',
-          'https://connect.facebook.net'
-        ],
-        'style-src': ['\'self\'', '\'unsafe-inline\'', 'https://fonts.googleapis.com', 'https://cdn.jsdelivr.net'],
-        'font-src': ['\'self\'', 'https://fonts.gstatic.com', 'https://cdn.jsdelivr.net'],
-        'connect-src': [
-          '\'self\'',
-          'https://www.google-analytics.com',
-          'https://analytics.google.com',
-          'https://api.cinebook.vn',
-          'wss:',
-          'ws:'
-        ],
-        'frame-src': ['\'self\'', 'https://www.youtube.com', 'https://player.vimeo.com', 'https://www.facebook.com'],
-        'media-src': ['\'self\'', 'https:', 'data:'],
+        'img-src': ['\'self\'', 'data:', 'https:', 'http:', '*'],
+        'script-src': ['\'self\'', '\'unsafe-inline\'', '\'unsafe-eval\'', 'https:', 'http:', '*'],
+        'style-src': ['\'self\'', '\'unsafe-inline\'', 'https:', 'http:', '*'],
+        'font-src': ['\'self\'', 'https:', 'http:', 'data:', '*'],
+        'connect-src': ['\'self\'', 'https:', 'http:', 'wss:', 'ws:', '*'],
+        'frame-src': ['\'self\'', 'https:', 'http:', '*'],
+        'media-src': ['\'self\'', 'https:', 'http:', 'data:', '*'],
         'object-src': ['\'none\''],
         'base-uri': ['\'self\''],
         'form-action': ['\'self\''],
@@ -274,8 +256,7 @@ export default defineNuxtConfig({
         process.env.NODE_ENV === 'production'
           ? [
               ...(process.env.NUXT_PUBLIC_SITE_URL ? [process.env.NUXT_PUBLIC_SITE_URL] : []),
-              'https://cinebook.vn',
-              'https://www.cinebook.vn'
+              'https://cinebookmovie.vercel.app'
             ]
           : '*',
       credentials: true,
