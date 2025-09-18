@@ -200,36 +200,13 @@ export default defineNuxtConfig({
       crossOriginEmbedderPolicy: false,
       contentSecurityPolicy: {
         'default-src': ['\'self\''],
-        'img-src': [
-          '\'self\'',
-          'data:',
-          'https:',
-          'https://images.unsplash.com',
-          'https://cdn.jsdelivr.net',
-          'https://fonts.gstatic.com',
-          'https://www.google-analytics.com',
-          'https://www.googletagmanager.com'
-        ],
-        'script-src': [
-          '\'self\'',
-          '\'unsafe-inline\'',
-          '\'unsafe-eval\'',
-          'https://www.googletagmanager.com',
-          'https://www.google-analytics.com',
-          'https://connect.facebook.net'
-        ],
-        'style-src': ['\'self\'', '\'unsafe-inline\'', 'https://fonts.googleapis.com', 'https://cdn.jsdelivr.net'],
-        'font-src': ['\'self\'', 'https://fonts.gstatic.com', 'https://cdn.jsdelivr.net'],
-        'connect-src': [
-          '\'self\'',
-          'https://www.google-analytics.com',
-          'https://analytics.google.com',
-          'https://api.cinebook.vn',
-          'wss:',
-          'ws:'
-        ],
-        'frame-src': ['\'self\'', 'https://www.youtube.com', 'https://player.vimeo.com', 'https://www.facebook.com'],
-        'media-src': ['\'self\'', 'https:', 'data:'],
+        'img-src': ['\'self\'', 'data:', 'https:', 'http:', '*'],
+        'script-src': ['\'self\'', '\'unsafe-inline\'', '\'unsafe-eval\'', 'https:', 'http:', '*'],
+        'style-src': ['\'self\'', '\'unsafe-inline\'', 'https:', 'http:', '*'],
+        'font-src': ['\'self\'', 'https:', 'http:', 'data:', '*'],
+        'connect-src': ['\'self\'', 'https:', 'http:', 'wss:', 'ws:', '*'],
+        'frame-src': ['\'self\'', 'https:', 'http:', '*'],
+        'media-src': ['\'self\'', 'https:', 'http:', 'data:', '*'],
         'object-src': ['\'none\''],
         'base-uri': ['\'self\''],
         'form-action': ['\'self\''],
