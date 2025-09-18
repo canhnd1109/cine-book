@@ -7,6 +7,34 @@
     "signin":"Sign in",
     "signup":"Sign up"
   },
+  "auth":{
+    "at-least-8-characters":"At least 8 characters",
+    "at-least-1-number":"At least 1 number",
+    "at-least-1-lowercase-letter":"At least 1 lowercase letter",
+    "at-least-1-uppercase-letter":"At least 1 uppercase letter",
+    "at-least-1-special-character":"At least 1 special character",
+    "email":"Email",
+    "enter-a-password":"Enter a password",
+    "weak-password":"Weak password",
+    "medium-password":"Medium password",
+    "strong-password":"Strong password",
+    "last-name":"Last name",
+    "first-name":"First name",
+    "phone-number":"Phone number",
+    "password":"Password",
+    "must-contain":"Must contain",
+    "confirm-password":"Confirm Password",
+    "password-requirements":"Password requirements",
+    "already-have-an-account?":"Already have an account?",
+    "first-name-is-required":"First name is required",
+    "last-name-is-required":"Last name is required",
+    "phone-number-is-required":"Phone number is required",
+    "invalid-email":"Invalid email",
+    "password-must-be-at-least-8-characters-include-uppercase-lowercase-number-and-special-character":"Password must be at least 8 characters, include uppercase, lowercase, number, and special character",
+    "confirm-password-is-required":"Confirm password is required",
+    "passwords-do-not-match":"Passwords do not match"
+
+  },
   "home": {
     "content-1":"How MindInventory Designed a User-Centric Movie Ticket Booking App",
     "content-2":" Experience Action Drama, Comedy, Romance, & all-in-all theater experience in just one click. Grab your tickets before the show gets sold out!"

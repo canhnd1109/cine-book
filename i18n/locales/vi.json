@@ -7,6 +7,33 @@
     "signin":"Đăng nhập",
     "signup":"Đăng kí"
   },
+  "auth": {
+    "at-least-8-characters": "Ít nhất 8 ký tự",
+    "at-least-1-number": "Ít nhất 1 chữ số",
+    "at-least-1-lowercase-letter": "Ít nhất 1 chữ thường",
+    "at-least-1-uppercase-letter": "Ít nhất 1 chữ hoa",
+    "at-least-1-special-character": "Ít nhất 1 ký tự đặc biệt",
+    "email": "Email",
+    "enter-a-password": "Nhập mật khẩu",
+    "weak-password": "Mật khẩu yếu",
+    "medium-password": "Mật khẩu trung bình",
+    "strong-password": "Mật khẩu mạnh",
+    "last-name": "Họ",
+    "first-name": "Tên",
+    "phone-number": "Số điện thoại",
+    "password": "Mật khẩu",
+    "must-contain": "Phải bao gồm",
+    "confirm-password": "Xác nhận mật khẩu",
+    "password-requirements": "Yêu cầu mật khẩu",
+    "already-have-an-account?": "Bạn đã có tài khoản?",
+    "first-name-is-required": "Tên là bắt buộc",
+    "last-name-is-required": "Họ là bắt buộc",
+    "phone-number-is-required": "Số điện thoại là bắt buộc",
+    "invalid-email": "Email không hợp lệ",
+    "password-must-be-at-least-8-characters-include-uppercase-lowercase-number-and-special-character": "Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt",
+    "confirm-password-is-required": "Xác nhận mật khẩu là bắt buộc",
+    "passwords-do-not-match": "Mật khẩu không khớp"
+  },
   "home": {
     "content-1":"CineBook đã thiết kế ứng dụng đặt vé xem phim lấy người dùng làm trung tâm như thế nào?",
     "content-2":"Trải nghiệm phim hành động, hài kịch, lãng mạn và tất cả những gì liên quan đến sân khấu chỉ với một cú nhấp chuột. Hãy nhanh tay đặt vé trước khi chương trình hết vé!"
