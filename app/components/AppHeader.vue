@@ -1,26 +1,25 @@
 <script setup lang="ts">
-import type { FormSubmitEvent } from '@nuxt/ui'
 import type { IFormSignUp } from '~/schemas/auth.schema'
 import { apiAuth } from '~/services'
 
 const toast = useToast()
 const { t } = useI18n()
 
-const modalSignUp = ref(false)
-const modalSignIn = ref(false)
+const isOpenModalSignUp = ref(false)
+const isOpenModalSignIn = ref(false)
 const isLoading = ref(false)
 
 const openModalSignIn = () => {
-  if (modalSignUp.value) {
-    modalSignUp.value = false
+  if (isOpenModalSignUp.value) {
+    isOpenModalSignUp.value = false
   }
-  modalSignIn.value = true
+  isOpenModalSignIn.value = true
 }
 const openModalSignUp = () => {
-  if (modalSignIn.value) {
-    modalSignIn.value = false
+  if (isOpenModalSignIn.value) {
+    isOpenModalSignIn.value = false
   }
-  modalSignUp.value = true
+  isOpenModalSignUp.value = true
 }
 
 async function handleSignUp(form: IFormSignUp) {
@@ -33,7 +32,8 @@ async function handleSignUp(form: IFormSignUp) {
       description: rs.message,
       color: 'success',
     })
-    modalSignUp.value = false
+    isOpenModalSignUp.value = false
+    isOpenModalSignIn.value = true
   } catch (error) {
     toast.add({
       title: 'Error',
@@ -71,13 +71,13 @@ async function handleSignUp(form: IFormSignUp) {
         <BaseButton
           :text="t('header.signup')"
           title="Sign up"
-          @click="modalSignUp = true"
+          @click="isOpenModalSignUp = true"
         />
         <BaseButton
           :text="t('header.signin')"
           variant="solid"
           title="Sign in"
-          @click="modalSignIn = true"
+          @click="isOpenModalSignIn = true"
         />
         <BaseLanguages />
         <BaseTheme />
@@ -86,12 +86,12 @@ async function handleSignUp(form: IFormSignUp) {
   </header>
   <AuthModalSignUp
     :is-loading="isLoading"
-    v-model:is-open="modalSignUp"
+    v-model:is-open="isOpenModalSignUp"
     @sign-in="openModalSignIn"
     @sign-up="handleSignUp"
   />
   <AuthModalSignIn
-    v-model:is-open="modalSignIn"
+    v-model:is-open="isOpenModalSignIn"
     @sign-up="openModalSignUp"
   />
 </template>

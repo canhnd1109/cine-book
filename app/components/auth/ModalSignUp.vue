@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import type { FormSubmitEvent } from '@nuxt/ui'
 import { createSignUpSchema, type IFormSignUp } from '~/schemas/auth.schema'
-import { apiAuth } from '~/services'
 
 const { t } = useI18n()
 
@@ -22,7 +20,6 @@ const showPass = ref(false)
 const showConfirmPass = ref(false)
 const passwordFocused = ref(false)
 const isOpen = defineModel('isOpen', { type: Boolean, default: false })
-
 const formRef = ref()
 
 const form = ref<IFormSignUp>({
@@ -34,13 +31,11 @@ const form = ref<IFormSignUp>({
   confirmPassword: ''
 })
 
-
 function submitForm() {
   if (formRef.value && !isLoading) {
     formRef.value.submit()
   }
 }
-
 
 function handleConfirmPasswordEnter() {
   if (form.value.confirmPassword && form.value.password === form.value.confirmPassword) {
@@ -157,6 +152,7 @@ const canSubmit = computed(() => {
               class="w-full"
             >
               <UInput
+                ref="passwordRef"
                 v-model="form.password"
                 :placeholder="t('auth.password')"
                 :color="color"
@@ -165,7 +161,7 @@ const canSubmit = computed(() => {
                 :ui="{ trailing: 'pe-1', base: 'h-10' }"
                 @focus="passwordFocused = true"
                 @blur="passwordFocused = false"
-              >
+                >
                 <template #trailing>
                   <UButton
                     color="neutral"
@@ -223,6 +219,7 @@ const canSubmit = computed(() => {
               class="w-full"
             >
               <UInput
+                ref="confirmPasswordRef"
                 id="confirm-password"
                 v-model="form.confirmPassword"
                 :placeholder="t('auth.confirm-password')"
@@ -249,7 +246,7 @@ const canSubmit = computed(() => {
         </div>
       </UForm>
       <BaseButton
-        :text="isLoading ? t('auth.signin-up') : t('header.signup')"
+        :text="t('header.signup')"
         variant="solid"
         class-name="w-full mt-6 flex justify-center"
         :disabled="!canSubmit"
