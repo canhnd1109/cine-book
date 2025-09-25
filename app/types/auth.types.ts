@@ -1,18 +1,16 @@
-export interface IResponseLogin {
+export interface IResponseOtpLogin {
   tokenContent: string
   expToken: string
 }
 
-export interface LoginResponse {
-  accessToken: string
+export interface IResponseLogin {
+  tokenContent: string
   refreshToken: string
-  user?: {
-    id: string
-    email: string
-    firstName?: string
-    lastName?: string
-    phoneNumber?: string
-  }
+  userId: string
+  userName: string
+  roleName: string
+  expToken: string
+  expRefreshToken: string
 }
 
 export interface RefreshTokenRequest {

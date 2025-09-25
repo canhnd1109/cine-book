@@ -1,6 +1,7 @@
 import type { NitroFetchRequest } from 'nitropack'
 import { useNuxtApp } from '#app'
 import type { ExtendedFetchOptions } from '~/types/http.type'
+type RequestBody = Record<string, unknown> | FormData | string
 
 export default class BaseService {
   prefix: string
@@ -25,11 +26,13 @@ export default class BaseService {
 
   async post<T, B extends Record<string, unknown> | FormData | string | undefined = undefined>(
     url: string,
-    body?: B
+    body?: B,
+    config?: { headers?: Record<string, string> }
   ): Promise<T> {
     return this.api<T>(`${this.prefix}${url}`, {
       method: 'post',
-      body
+      body,
+      ...config
     })
   }
 

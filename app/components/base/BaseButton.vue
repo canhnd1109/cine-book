@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import type {
-  RouteLocationAsRelativeGeneric,
-  RouteLocationAsPathGeneric
-} from 'vue-router'
+import type { RouteLocationAsRelativeGeneric, RouteLocationAsPathGeneric } from 'vue-router'
 import type { ClassNameValue } from 'tailwind-merge'
 import { debounce } from 'lodash-es'
 
 const {
   isLoading = false,
   loadingIcon = 'i-lucide-loader',
-  className = '', variant = 'outline',
+  className = '',
+  variant = 'outline',
   color = 'success',
   trailingIcon = '',
   to = '',
@@ -29,8 +27,15 @@ const {
   to?: string | RouteLocationAsRelativeGeneric | RouteLocationAsPathGeneric
   type?: 'reset' | 'submit' | 'button'
   isDisable?: boolean
-  target?: null | '_blank' | '_parent' | '_self' | '_top' | string & {}
-  ui?: { base?: ClassNameValue, label?: ClassNameValue, leadingIcon?: ClassNameValue, leadingAvatar?: ClassNameValue, leadingAvatarSize?: ClassNameValue, trailingIcon?: ClassNameValue }
+  target?: null | '_blank' | '_parent' | '_self' | '_top' | (string & {})
+  ui?: {
+    base?: ClassNameValue
+    label?: ClassNameValue
+    leadingIcon?: ClassNameValue
+    leadingAvatar?: ClassNameValue
+    leadingAvatarSize?: ClassNameValue
+    trailingIcon?: ClassNameValue
+  }
 }>()
 
 const emit = defineEmits<{
@@ -49,7 +54,7 @@ const handleClick = debounce(() => {
   <UButton
     :loading="isLoading"
     :loading-icon="loadingIcon"
-    :class="`cursor-pointer rounded-full py-[10px] px-4 ${className}`"
+    :class="`cursor-pointer flex justify-center items-center rounded-full py-[10px] px-4 ${className}`"
     :variant
     :color
     :trailing-icon="trailingIcon"
@@ -64,6 +69,4 @@ const handleClick = debounce(() => {
   </UButton>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

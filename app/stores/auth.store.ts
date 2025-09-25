@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import Cookies from 'js-cookie'
-import type { IUser, LoginResponse } from '~/types/auth.types'
+import type { IResponseLogin, IUser } from '~/types/auth.types'
 
 export const useAuthStore = defineStore('auth', () => {
   const accessToken = ref<string | null>(null)
@@ -9,37 +9,15 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = ref(false)
   const isLoading = ref(false)
 
-  function setTokens(response: LoginResponse, redirect = true) {
-    accessToken.value = response.accessToken
+  function setTokens(response: IResponseLogin) {
+    console.log('🚀 ~ setTokens ~ response:', response)
+    accessToken.value = response.tokenContent
     refreshToken.value = response.refreshToken
-    user.value = response.user ?? null
     isAuthenticated.value = true
 
     if (import.meta.client) {
-      Cookies.set('accessToken', response.accessToken, { expires: 1 }) // 1 ngày
-      Cookies.set('refreshToken', response.refreshToken, { expires: 7 }) // 7 ngày
-      if (response.user) {
-        Cookies.set('user', JSON.stringify(response.user), { expires: 1 })
-      }
-    }
-
-    if (redirect) {
-      const route = useRoute()
-      const redirectTo = (route.query.redirect as string) || '/'
-      navigateTo(redirectTo)
-    }
-  }
-
-  async function logIn(data: { email: string; password: string }, redirect = true) {
-    isLoading.value = true
-    try {
-      const response = await useNuxtApp().$api<LoginResponse>('/login', {
-        method: 'POST',
-        body: data
-      })
-      setTokens(response, redirect)
-    } finally {
-      isLoading.value = false
+      Cookies.set('access-token', response.tokenContent, { expires: 1 })
+      Cookies.set('refresh-token', response.refreshToken, { expires: 7 })
     }
   }
 
@@ -82,7 +60,6 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     isLoading,
     setTokens,
-    logIn,
     logOut,
     restoreAuth
   }

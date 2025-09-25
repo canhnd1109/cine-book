@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type { IFormSignIn, IFormSignUp } from '~/schemas/auth.schema'
 import { apiAuth } from '~/services'
+import type { IResponseLogin } from '~/types/auth.types'
+
+const { setTokens } = useAuthStore()
 
 const toast = useToast()
 const { t } = useI18n()
@@ -8,6 +11,10 @@ const { t } = useI18n()
 const isOpenModalSignUp = ref(false)
 const isOpenModalSignIn = ref(false)
 const isLoading = ref(false)
+const isOpenModalOtp = ref(false)
+const email = ref('')
+const otp = ref([])
+const tokenOtp = ref('')
 
 const openModalSignIn = () => {
   if (isOpenModalSignUp.value) {
@@ -45,12 +52,33 @@ const handelSignIn = async (form: IFormSignIn) => {
   if (isLoading.value) return
   try {
     isLoading.value = true
+    email.value = form.email
     const rs = await apiAuth.login(form)
     toast.add({
       title: t('success'),
       description: rs.message,
       color: 'success'
     })
+    if (rs.value.tokenContent) {
+      tokenOtp.value = rs.value.tokenContent
+      isOpenModalSignIn.value = false
+      isOpenModalOtp.value = true
+    }
+  } catch (error) {
+    console.log(error)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const handleVedifyOtp = async () => {
+  if (isLoading.value) return
+  try {
+    isLoading.value = true
+    const _otp = otp.value.join('')
+    const rs = await apiAuth.verifyOtp(_otp, tokenOtp.value)
+    setTokens(rs.value)
+    isOpenModalOtp.value = false
   } catch (error) {
     console.log(error)
   } finally {
@@ -62,7 +90,7 @@ const handelSignIn = async (form: IFormSignIn) => {
 <template>
   <header class="m-6 mx-10">
     <div class="flex justify-between items-center">
-      <div class="text-xl font-semibold">logo</div>
+      <div class="text-xl font-semibold" @click="isOpenModalOtp = true">logo</div>
       <nav aria-label="Primary" class="flex justify-end items-center gap-x-8 text-lg">
         <NuxtLink to="/" class="hover:text-primary">Trang chủ</NuxtLink>
         <!-- /movie-schedules -->
@@ -88,6 +116,32 @@ const handelSignIn = async (form: IFormSignIn) => {
     @sign-up="openModalSignUp"
     @sign-in="handelSignIn"
   />
+  <UModal v-model:open="isOpenModalOtp" :ui="{ content: 'w-120' }">
+    <template #content>
+      <div class="w-full mx-auto items-center p-6">
+        <p class="text-center text-lg font-bold mb-6">Check your email</p>
+        <p class="text-center text-[#62748e]">Enter the verification code sent to</p>
+        <p class="text-center">ngoduccanh19@gmail.com</p>
+        <UPinInput
+          v-model="otp"
+          :length="6"
+          size="xl"
+          class="my-6 flex justify-center items-center"
+          @keyup.enter="handleVedifyOtp"
+        />
+        <div class="flex justify-center">
+          <BaseButton
+            :is-loading="isLoading"
+            text="Verify email"
+            title="Verify email"
+            class="w-80"
+            variant="solid"
+            @click="handleVedifyOtp"
+          />
+        </div>
+      </div>
+    </template>
+  </UModal>
 </template>
 
 <style scoped>

@@ -1,6 +1,6 @@
 import type { IFormSignIn, IFormSignUp } from '~/schemas/auth.schema'
 import BaseService from '~/services/base.service'
-import type { IResponseLogin, LoginResponse } from '~/types/auth.types'
+import type { IResponseLogin, IResponseOtpLogin } from '~/types/auth.types'
 import type { IResponseData, IResponseMessage } from '~/types/response.type'
 
 export class AuthService extends BaseService {
@@ -10,23 +10,23 @@ export class AuthService extends BaseService {
   async register(payload: IFormSignUp): Promise<IResponseMessage> {
     return this.post<IResponseMessage, typeof payload>('/register', payload)
   }
-  async login(payload: IFormSignIn): Promise<IResponseData<IResponseLogin>> {
-    return this.post<IResponseData<IResponseLogin>, typeof payload>('/otp-sign-in', payload)
+  async login(payload: IFormSignIn): Promise<IResponseData<IResponseOtpLogin>> {
+    return this.post<IResponseData<IResponseOtpLogin>, typeof payload>('/otp-sign-in', payload)
   }
 
-  async verifyOtp(payload: string): Promise<IResponseData<IResponseLogin>> {
-    return this.post<IResponseData<IResponseLogin>, typeof payload>(`/verify-sign-in/${payload}`)
+  async verifyOtp(payload: string, token: string): Promise<IResponseData<IResponseLogin>> {
+    return this.post<IResponseData<IResponseLogin>, typeof payload>(`/verify-sign-in/${payload}`, undefined, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
   }
 
   async logout(): Promise<void> {
     await this.post<unknown>('/logout')
   }
 
-  async refreshToken(refreshToken: string): Promise<LoginResponse> {
-    return this.post<LoginResponse, { refreshToken: string }>('/refresh-token', { refreshToken })
-  }
-
-  async getUserInfo(): Promise<LoginResponse['user']> {
-    return this.get<LoginResponse['user']>('/me')
+  async refreshToken(refreshToken: string): Promise<IResponseLogin> {
+    return this.post<IResponseLogin, { refreshToken: string }>('/refresh-token', { refreshToken })
   }
 }
