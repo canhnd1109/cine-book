@@ -15,7 +15,7 @@ export default defineNuxtPlugin(() => {
 
   // Create axios instance
   const $http: AxiosInstance = axios.create({
-    baseURL: `${runtimeConfig.public.baseApiUrl}/api/v1`,
+    baseURL: `${runtimeConfig.public.baseApiUrl}`,
     headers,
     timeout: API_REQUEST_TIMEOUT,
     withCredentials: true, // Enable cookies for CSRF protection

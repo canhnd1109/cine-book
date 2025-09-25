@@ -1,8 +1,10 @@
-import BaseService from '~/plugins/base'
+// services/useUserApi.ts
+
+import BaseService from "~/plugins/base"
+
+const userService = new BaseService('/users')
 
 export function useUserApi() {
-  const userService = new BaseService('/users')
-
   const getProfile = async () => {
     return userService.get('/profile')
   }

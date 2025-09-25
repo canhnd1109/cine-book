@@ -1,8 +1,8 @@
-import BaseService from '~/plugins/base'
+import BaseService from "~/plugins/base";
+
+const authService = new BaseService('/auth')
 
 export function useAuthApi() {
-  const authService = new BaseService('/auth')
-
   const login = async (credentials: { email: string; password: string }) => {
     return authService.postWithResponse('/login', credentials)
   }
