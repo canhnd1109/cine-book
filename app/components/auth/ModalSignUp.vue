@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
 import { createSignUpSchema, type IFormSignUp } from '~/schemas/auth.schema'
-import { useAuthApi } from '~/services/auth.service';
+import { apiAuth } from '~/services'
 const { t } = useI18n()
-const api = useAuthApi()
 
 const { schema: signUpSchema } = useSchema(createSignUpSchema)
 
@@ -37,7 +36,7 @@ async function onSubmit(event: FormSubmitEvent<IFormSignUp>) {
   try {
     isLoading.value = true
 
-    const res = await api.register(event.data)
+    const res = await apiAuth.register(event.data)
 
     console.log('🚀 ~ handleSignUp ~ res:', res)
 

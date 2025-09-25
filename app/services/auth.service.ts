@@ -1,5 +1,5 @@
 import type { IFormSignUp } from '~/schemas/auth.schema';
-import BaseService from '~/services/base';
+import BaseService from '~/services/base.service';
 import type { LoginResponse } from '~/types/auth.types'
 
 export class AuthService extends BaseService {
@@ -26,10 +26,4 @@ export class AuthService extends BaseService {
   }
 }
 
-let _authService: AuthService | null = null
-export const useAuthApi = () => {
-  if (!_authService) {
-    _authService = new AuthService()
-  }
-  return _authService
-}
+
