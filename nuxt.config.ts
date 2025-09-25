@@ -75,7 +75,9 @@ export default defineNuxtConfig({
   runtimeConfig: {
     // Private keys (only available on server-side)
     apiSecret: process.env.API_SECRET,
+    apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:8000',
     public: {
+      baseApiUrl: process.env.NUXT_PUBLIC_BASE_API_URL || 'http://localhost:8000',
       apiBase: process.env.NUXT_PUBLIC_API_BASE || '/api',
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
       siteName: 'CineBook',
