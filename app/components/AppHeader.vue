@@ -59,6 +59,7 @@ const handelSignIn = async (form: IFormSignIn) => {
       description: rs.message,
       color: 'success'
     })
+
     if (rs.value.tokenContent) {
       tokenOtp.value = rs.value.tokenContent
       isOpenModalSignIn.value = false

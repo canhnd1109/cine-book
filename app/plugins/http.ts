@@ -1,6 +1,5 @@
 import type { NitroFetchOptions, NitroFetchRequest } from 'nitropack'
 import type { FetchError } from 'ofetch'
-import type { LoginResponse } from '~/types/auth.types'
 import Cookies from 'js-cookie'
 
 const API_REQUEST_TIMEOUT = 20000
@@ -29,7 +28,7 @@ export default defineNuxtPlugin(() => {
       ...((options.headers as Record<string, string>) ?? {})
     }
 
-    const token = Cookies.get('access_token')
+    const token = Cookies.get('access-token')
     if (token) {
       headers.Authorization = `Bearer ${token}`
     }
@@ -48,18 +47,18 @@ export default defineNuxtPlugin(() => {
         options._retry = true
 
         try {
-          const refreshToken = Cookies.get('refresh_token')
+          const refreshToken = Cookies.get('refresh-token')
           if (!refreshToken) throw new Error('No refresh token')
 
-          const response = await $fetch<LoginResponse>(`${runtimeConfig.public.baseApiUrl}/refresh`, {
+          const response = await $fetch<any>(`${runtimeConfig.public.baseApiUrl}/refresh`, {
             method: 'POST',
             body: { refreshToken },
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include'
           })
 
-          Cookies.set('access_token', response.accessToken, { secure: true, sameSite: 'strict' })
-          Cookies.set('refresh_token', response.refreshToken, { secure: true, sameSite: 'strict' })
+          Cookies.set('access-token', response.accessToken, { secure: true, sameSite: 'strict' })
+          Cookies.set('refresh-token', response.refreshToken, { secure: true, sameSite: 'strict' })
 
           await refreshNuxtData()
 
@@ -72,8 +71,8 @@ export default defineNuxtPlugin(() => {
           })
         } catch (refreshError) {
           console.error('Token refresh failed:', refreshError)
-          Cookies.remove('access_token')
-          Cookies.remove('refresh_token')
+          Cookies.remove('access-token')
+          Cookies.remove('refresh-token')
           throw refreshError
         }
       }
