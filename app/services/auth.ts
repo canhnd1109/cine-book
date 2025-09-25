@@ -1,36 +1,56 @@
-import BaseService from "~/plugins/base";
+import { useNuxtApp } from "#app"
+import createBaseService from "~/plugins/base"
 
-const authService = new BaseService('/auth')
+type QueryParams = Record<string, string | number | boolean | string[] | number[] | undefined>
 
 export function useAuthApi() {
-  const login = async (credentials: { email: string; password: string }) => {
-    return authService.postWithResponse('/login', credentials)
+  const nuxtApp = useNuxtApp()
+  const { $http } = nuxtApp
+  const authService = createBaseService("/auth", $http)
+
+  const login = async (
+    credentials: { email: string; password: string },
+    params?: QueryParams
+  ) => {
+    return authService.postWithResponse("/login", credentials, { params })
   }
 
-  const register = async (userData: {
-    firstName: string
-    lastName: string
-    email: string
-    phoneNumber: string
-    password: string
-  }) => {
-    return authService.postWithResponse('/register', userData)
+  const register = async (
+    userData: {
+      firstName: string
+      lastName: string
+      email: string
+      phoneNumber: string
+      password: string
+    },
+    params?: QueryParams
+  ) => {
+    return authService.postWithResponse("/register", userData, { params })
   }
 
-  const logout = async () => {
-    return authService.post('/logout')
+  const logout = async (params?: QueryParams) => {
+    return authService.post("/logout", undefined, { params })
   }
 
-  const refreshToken = async (refreshToken: string) => {
-    return authService.postWithResponse('/refresh', { refreshToken })
+  const refreshToken = async (
+    refreshToken: string,
+    params?: QueryParams
+  ) => {
+    return authService.postWithResponse("/refresh", { refreshToken }, { params })
   }
 
-  const forgotPassword = async (email: string) => {
-    return authService.postWithResponse('/forgot-password', { email })
+  const forgotPassword = async (
+    email: string,
+    params?: QueryParams
+  ) => {
+    return authService.postWithResponse("/forgot-password", { email }, { params })
   }
 
-  const resetPassword = async (data: { token: string; password: string }) => {
-    return authService.postWithResponse('/reset-password', data)
+  const resetPassword = async (
+    data: { token: string; password: string },
+    params?: QueryParams
+  ) => {
+    return authService.postWithResponse("/reset-password", data, { params })
   }
 
   return {
@@ -39,6 +59,6 @@ export function useAuthApi() {
     logout,
     refreshToken,
     forgotPassword,
-    resetPassword
+    resetPassword,
   }
 }

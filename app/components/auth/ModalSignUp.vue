@@ -8,6 +8,7 @@ const { schema: signUpSchema } = useSchema(createSignUpSchema)
 
 const emits = defineEmits<{
   'sign-in': []
+  'sign-up':[form:IFormSignUp]
 }>()
 
 const showPass = ref(false)
@@ -15,7 +16,7 @@ const showConfirmPass = ref(false)
 const passwordFocused = ref(false)
 const isOpen = defineModel('isOpen', { type: Boolean, default: false })
 
-const form = reactive<Partial<IFormSignUp>>({
+const form = ref<IFormSignUp>({
   lastName: '',
   firstName: '',
   email: '',
@@ -42,7 +43,7 @@ function checkStrength(str: string) {
   return requirements.map(req => ({ met: req.regex.test(str), text: req.text }))
 }
 
-const strength = computed(() => checkStrength(form.password as string))
+const strength = computed(() => checkStrength(form.value.password as string))
 const score = computed(() => strength.value.filter(req => req.met).length)
 
 const color = computed(() => {
@@ -220,6 +221,7 @@ const text = computed(() => {
         :text="t('header.signup')"
         variant="solid"
         class-name="w-full mt-6 flex justify-center"
+        @click="emits('sign-up', form)"
       />
       <p class="text-center mt-4">
         {{ t('auth.already-have-an-account?') }}
