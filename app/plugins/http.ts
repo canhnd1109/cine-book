@@ -10,8 +10,7 @@ const defaultHeaders: Record<string, string> = {
   Accept: 'application/json'
 }
 
-interface ExtendedFetchOptions<T extends NitroFetchRequest = NitroFetchRequest>
-  extends NitroFetchOptions<T> {
+interface ExtendedFetchOptions<T extends NitroFetchRequest = NitroFetchRequest> extends NitroFetchOptions<T> {
   _retry?: boolean
 }
 
@@ -21,16 +20,13 @@ export default defineNuxtPlugin(() => {
   const $http = $fetch.create({
     baseURL: runtimeConfig.public.baseApiUrl,
     headers: defaultHeaders,
-    timeout: API_REQUEST_TIMEOUT,
+    timeout: API_REQUEST_TIMEOUT
     // credentials: 'include'
   })
 
-  async function apiFetch<T>(
-    url: NitroFetchRequest,
-    options: ExtendedFetchOptions = {}
-  ): Promise<T> {
+  async function apiFetch<T>(url: NitroFetchRequest, options: ExtendedFetchOptions = {}): Promise<T> {
     const headers: Record<string, string> = {
-      ...(options.headers as Record<string, string> ?? {})
+      ...((options.headers as Record<string, string>) ?? {})
     }
 
     const token = Cookies.get('access_token')

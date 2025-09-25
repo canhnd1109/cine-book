@@ -40,18 +40,12 @@ const imagesList = [
       :auto-height="true"
       :pagination="{ clickable: true }"
     >
-      <SwiperSlide
-        v-for="(img, idx) in items"
-        :key="idx"
-      >
-        <img
-          :src="img"
-          class="w-full h-auto mx-auto"
-        >
+      <SwiperSlide v-for="(img, idx) in items" :key="idx">
+        <img :src="img" class="w-full h-auto mx-auto" />
       </SwiperSlide>
     </Swiper>
 
-    <div class="dark:bg-[#111]  bg-light-bg rounded-[50px] py-24 mx-12 my-6 ">
+    <div class="dark:bg-[#111] bg-light-bg rounded-[50px] py-24 mx-12 my-6">
       <div class="px-10 space-y-10">
         <div class="title-wrap bookmb-15 text-center">
           <p class="small-title bookfont-100 text-center">
@@ -61,7 +55,7 @@ const imagesList = [
             {{ t('home.content-1') }}
           </p>
         </div>
-        <div class="text-center w-full flex justify-center ">
+        <div class="text-center w-full flex justify-center">
           <p class="text-center text-[#999] text-2xl w-1/2">
             {{ t('home.content-2') }}
           </p>
@@ -72,16 +66,8 @@ const imagesList = [
         <div class="marquee-inner w-full">
           <div class="common-slider w-full">
             <div class="marquee-items">
-              <div
-                v-for="n in 2"
-                :key="n"
-                class="flex"
-              >
-                <div
-                  v-for="(item, index) in imagesList"
-                  :key="index"
-                  class="item"
-                >
+              <div v-for="n in 2" :key="n" class="flex">
+                <div v-for="(item, index) in imagesList" :key="index" class="item">
                   <div class="img-wrap">
                     <img
                       :src="item"
@@ -90,7 +76,7 @@ const imagesList = [
                       loading="lazy"
                       alt="movie"
                       class="img-fluid hover:scale-105 duration-500 cursor-pointer transition"
-                    >
+                    />
                   </div>
                 </div>
               </div>

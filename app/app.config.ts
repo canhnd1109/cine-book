@@ -4,7 +4,7 @@ export default defineAppConfig({
   baseUrl: 'https://cinebookmovie.vercel.app',
   description: 'app.description',
   pages: {
-    'home': {
+    home: {
       path: '/',
       name: 'Home'
     },
@@ -27,5 +27,4 @@ export default defineAppConfig({
       }
     }
   }
-
 })

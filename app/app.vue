@@ -6,7 +6,9 @@ const route = useRoute()
 const canonicalUrl = `${appConfig.baseUrl || 'https://cinebookmovie.vercel.app'}${route.path}`
 
 const pageTitle = 'CineBook – Đặt Vé Xem Phim Trực Tuyến Nhanh Chóng & Tiện Lợi'
-const pageDescription = t(`${appConfig.description}`) || 'Đặt vé xem phim online dễ dàng tại CineBook. Hệ thống rạp chiếu phim hiện đại, giá vé ưu đãi, thanh toán an toàn. Trải nghiệm điện ảnh tuyệt vời!'
+const pageDescription =
+  t(`${appConfig.description}`) ||
+  'Đặt vé xem phim online dễ dàng tại CineBook. Hệ thống rạp chiếu phim hiện đại, giá vé ưu đãi, thanh toán an toàn. Trải nghiệm điện ảnh tuyệt vời!'
 
 useHead({
   title: pageTitle,
@@ -71,15 +73,15 @@ useHead({
       innerHTML: JSON.stringify({
         '@context': 'https://schema.org',
         '@type': 'Organization',
-        'name': 'CineBook',
-        'url': canonicalUrl,
-        'logo': '/logo.png',
-        'description': pageDescription,
-        'contactPoint': {
+        name: 'CineBook',
+        url: canonicalUrl,
+        logo: '/logo.png',
+        description: pageDescription,
+        contactPoint: {
           '@type': 'ContactPoint',
-          'telephone': '+84-0395279591',
-          'contactType': 'customer service',
-          'availableLanguage': ['Vietnamese', 'English']
+          telephone: '+84-0395279591',
+          contactType: 'customer service',
+          availableLanguage: ['Vietnamese', 'English']
         }
         // 'sameAs': [
         //   'https://facebook.com/cinebook',
@@ -93,14 +95,14 @@ useHead({
       innerHTML: JSON.stringify({
         '@context': 'https://schema.org',
         '@type': 'WebSite',
-        'name': 'CineBook',
-        'url': canonicalUrl,
-        'description': pageDescription,
-        'potentialAction': {
+        name: 'CineBook',
+        url: canonicalUrl,
+        description: pageDescription,
+        potentialAction: {
           '@type': 'SearchAction',
-          'target': {
+          target: {
             '@type': 'EntryPoint',
-            'urlTemplate': `${canonicalUrl}/search?q={search_term_string}`
+            urlTemplate: `${canonicalUrl}/search?q={search_term_string}`
           },
           'query-input': 'required name=search_term_string'
         }

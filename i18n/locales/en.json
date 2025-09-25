@@ -3,60 +3,58 @@
     "title": "CineBook",
     "description": "CineBook is your online movie ticket booking platform. Check showtimes, choose your favorite seats, enjoy special offers, and experience cinema in the most convenient way."
   },
-  "header" :{
-    "signin":"Sign in",
-    "signup":"Sign up"
+  "header": {
+    "signin": "Sign in",
+    "signup": "Sign up"
   },
-  "auth":{
-    "at-least-8-characters":"At least 8 characters",
-    "at-least-1-number":"At least 1 number",
-    "at-least-1-lowercase-letter":"At least 1 lowercase letter",
-    "at-least-1-uppercase-letter":"At least 1 uppercase letter",
-    "at-least-1-special-character":"At least 1 special character",
-    "email":"Email",
-    "enter-a-password":"Enter a password",
-    "weak-password":"Weak password",
-    "medium-password":"Medium password",
-    "strong-password":"Strong password",
-    "last-name":"Last name",
-    "first-name":"First name",
-    "phone-number":"Phone number",
-    "password":"Password",
-    "must-contain":"Must contain",
-    "confirm-password":"Confirm Password",
-    "password-requirements":"Password requirements",
-    "already-have-an-account?":"Already have an account?",
-    "first-name-is-required":"First name is required",
-    "last-name-is-required":"Last name is required",
-    "phone-number-is-required":"Phone number is required",
-    "phone-number-invalid":"Invalid phone number format",
-    "email-is-required":"Email is required",
-    "invalid-email":"Invalid email address",
-    "password-must-be-at-least-8-characters-include-uppercase-lowercase-number-and-special-character":"Password must be at least 8 characters, include uppercase, lowercase, number, and special character",
-    "confirm-password-is-required":"Confirm password is required",
-    "passwords-do-not-match":"Passwords do not match",
-    "forgot-password":"Forgot password?",
-    "don-not-have-an-account?":"Don't have an account?"
+  "auth": {
+    "at-least-8-characters": "At least 8 characters",
+    "at-least-1-number": "At least 1 number",
+    "at-least-1-lowercase-letter": "At least 1 lowercase letter",
+    "at-least-1-uppercase-letter": "At least 1 uppercase letter",
+    "at-least-1-special-character": "At least 1 special character",
+    "email": "Email",
+    "enter-a-password": "Enter a password",
+    "weak-password": "Weak password",
+    "medium-password": "Medium password",
+    "strong-password": "Strong password",
+    "last-name": "Last name",
+    "first-name": "First name",
+    "phone-number": "Phone number",
+    "password": "Password",
+    "must-contain": "Must contain",
+    "confirm-password": "Confirm Password",
+    "password-requirements": "Password requirements",
+    "already-have-an-account?": "Already have an account?",
+    "first-name-is-required": "First name is required",
+    "last-name-is-required": "Last name is required",
+    "phone-number-is-required": "Phone number is required",
+    "phone-number-invalid": "Invalid phone number format",
+    "email-is-required": "Email is required",
+    "invalid-email": "Invalid email address",
+    "password-must-be-at-least-8-characters-include-uppercase-lowercase-number-and-special-character": "Password must be at least 8 characters, include uppercase, lowercase, number, and special character",
+    "confirm-password-is-required": "Confirm password is required",
+    "passwords-do-not-match": "Passwords do not match",
+    "forgot-password": "Forgot password?",
+    "don-not-have-an-account?": "Don't have an account?"
   },
   "home": {
-    "content-1":"How MindInventory Designed a User-Centric Movie Ticket Booking App",
-    "content-2":" Experience Action Drama, Comedy, Romance, & all-in-all theater experience in just one click. Grab your tickets before the show gets sold out!"
+    "content-1": "How MindInventory Designed a User-Centric Movie Ticket Booking App",
+    "content-2": " Experience Action Drama, Comedy, Romance, & all-in-all theater experience in just one click. Grab your tickets before the show gets sold out!"
   },
-   "footer":{
-    "policy":"Policy",
-    "showtime":"Showtime",
-    "news":"News",
-    "ticket-price":"Ticket price",
-    "faq":"FAQ",
-    "group-booking":"Group booking",
-    "contact":"Contact",
-    "line-1":"Managing agency: MINISTRY OF CULTURE, SPORTS AND TOURISM",
-    "line-2":"Copyright belongs to National Cinema Center.",
-    "line-3":"License No: 224/GP-TTDT dated August 31, 2010 - Responsible person: Ngo Duc Canh - Director.",
-    "line-4":"Address: No. 87 Lang Ha, O Cho Dua Ward, Hanoi City - Phone: 024.35141791",
-    "line-5":"Copyright 2023. NCC All Rights Reservered. Dev by Ngo Duc Canh"
+  "footer": {
+    "policy": "Policy",
+    "showtime": "Showtime",
+    "news": "News",
+    "ticket-price": "Ticket price",
+    "faq": "FAQ",
+    "group-booking": "Group booking",
+    "contact": "Contact",
+    "line-1": "Managing agency: MINISTRY OF CULTURE, SPORTS AND TOURISM",
+    "line-2": "Copyright belongs to National Cinema Center.",
+    "line-3": "License No: 224/GP-TTDT dated August 31, 2010 - Responsible person: Ngo Duc Canh - Director.",
+    "line-4": "Address: No. 87 Lang Ha, O Cho Dua Ward, Hanoi City - Phone: 024.35141791",
+    "line-5": "Copyright 2023. NCC All Rights Reservered. Dev by Ngo Duc Canh"
   },
   "success": "Success"
 }
-
-

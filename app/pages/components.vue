@@ -5,9 +5,7 @@ useSeoMeta({ title: 'Components' })
 <template>
   <div class="flex">
     <!-- Sidebar -->
-    <aside
-      class="flex items-start justify-center w-64 overflow-y-auto border-r rtl:border-r-0 rtl:border-l"
-    >
+    <aside class="flex items-start justify-center w-64 overflow-y-auto border-r rtl:border-r-0 rtl:border-l">
       <div class="flex flex-col justify-start items-start">
         <span class="text-2xl font-bold">Components</span>
         <div class="flex flex-col justify-between flex-1 mt-6">

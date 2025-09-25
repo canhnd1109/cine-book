@@ -8,25 +8,14 @@ definePageMeta({ layout: 'blank' })
   <div class="h-screen w-screen overflow-hidden relative flex justify-center dark:bg-white">
     <div class="page-not-found" />
     <div class="flex h-screen w-screen items-center justify-center space-x-8 max-lg:block max-lg:px-6 max-sm:pt-20">
-      <img
-        alt="404 Raket Mascot"
-        src="/images/raket-error.png"
-        class="flex items-center justify-center"
-      >
+      <img alt="404 Raket Mascot" src="/images/raket-error.png" class="flex items-center justify-center" />
       <div class="space-y-6">
-        <h2 class="text-xl font-bold text-[#ff7e20]">
-          Page Not Found
-        </h2>
-        <p class="text-6xl font-bold text-[#1e2225]">
-          Oh No! Error 404
-        </p>
+        <h2 class="text-xl font-bold text-[#ff7e20]">Page Not Found</h2>
+        <p class="text-6xl font-bold text-[#1e2225]">Oh No! Error 404</p>
         <p class="text-lg text-[#959799]">
           The page you are looking for might have been removed had its name changed or is temporarily unavailable.
         </p>
-        <div
-          class="mt-7 cursor-pointer py-4"
-          @click="navigateTo(appConfig.pages.home.path)"
-        >
+        <div class="mt-7 cursor-pointer py-4" @click="navigateTo(appConfig.pages.home.path)">
           <span class="inline rounded-full bg-[#ff7e20] px-6 py-4 font-semibold text-white hover:bg-[#FF974D]">Back to Home</span>
         </div>
       </div>

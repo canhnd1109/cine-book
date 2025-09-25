@@ -1,4 +1,3 @@
-
 export interface LoginResponse {
   accessToken: string
   refreshToken: string
@@ -21,5 +20,5 @@ export interface RefreshTokenResponse {
 }
 
 export interface IUser {
-  email:string
+  email: string
 }

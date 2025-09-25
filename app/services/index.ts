@@ -1,5 +1,4 @@
-import { AuthService } from "~/services/auth.service"
-
+import { AuthService } from '~/services/auth.service'
 
 const apiAuth: AuthService = new AuthService()
 

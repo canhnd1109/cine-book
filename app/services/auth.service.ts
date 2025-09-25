@@ -1,13 +1,13 @@
-import type { IFormSignUp } from '~/schemas/auth.schema';
-import BaseService from '~/services/base.service';
+import type { IFormSignUp } from '~/schemas/auth.schema'
+import BaseService from '~/services/base.service'
 import type { LoginResponse } from '~/types/auth.types'
-import type { IResponseMessage } from '~/types/response.type';
+import type { IResponseMessage } from '~/types/response.type'
 
 export class AuthService extends BaseService {
   constructor() {
     super('')
   }
-  async register(payload:IFormSignUp): Promise<IResponseMessage> {
+  async register(payload: IFormSignUp): Promise<IResponseMessage> {
     return this.post<IResponseMessage, typeof payload>('/register', payload)
   }
   async login(payload: { email: string; password: string }): Promise<LoginResponse> {
@@ -26,5 +26,3 @@ export class AuthService extends BaseService {
     return this.get<LoginResponse['user']>('/me')
   }
 }
-
-

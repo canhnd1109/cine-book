@@ -7,14 +7,12 @@ const { schema: signUpSchema } = useSchema(createSignUpSchema)
 
 const emits = defineEmits<{
   'sign-in': []
-  'sign-up':[form: IFormSignUp]
+  'sign-up': [form: IFormSignUp]
 }>()
 
-
-const {isLoading = false} = defineProps<{
+const { isLoading = false } = defineProps<{
   isLoading: boolean
 }>()
-
 
 const showPass = ref(false)
 const showConfirmPass = ref(false)
@@ -73,84 +71,41 @@ const text = computed(() => {
 })
 
 const canSubmit = computed(() => {
-  return form.value.firstName &&
-         form.value.lastName &&
-         form.value.email &&
-         form.value.phone &&
-         form.value.password &&
-         form.value.confirmPassword &&
-         form.value.password === form.value.confirmPassword &&
-         !isLoading
+  return (
+    form.value.firstName &&
+    form.value.lastName &&
+    form.value.email &&
+    form.value.phone &&
+    form.value.password &&
+    form.value.confirmPassword &&
+    form.value.password === form.value.confirmPassword &&
+    !isLoading
+  )
 })
 </script>
 
 <template>
-  <UModal
-    v-model:open="isOpen"
-    :title="t('header.signup')"
-  >
+  <UModal v-model:open="isOpen" :title="t('header.signup')">
     <template #body>
-      <UForm
-        ref="formRef"
-        :schema="signUpSchema"
-        :state="form"
-        class="space-y-4"
-        @submit="emits('sign-up', form)"
-      >
+      <UForm ref="formRef" :schema="signUpSchema" :state="form" class="space-y-4" @submit="emits('sign-up', form)">
         <div class="grid grid-cols-2 gap-4">
-          <UFormField
-            :label="t('auth.last-name')"
-            name="lastName"
-          >
-            <UInput
-              v-model="form.lastName"
-              :placeholder="t('auth.last-name')"
-              :ui="{ base: 'h-10' }"
-              class="w-full"
-            />
+          <UFormField :label="t('auth.last-name')" name="lastName">
+            <UInput v-model="form.lastName" :placeholder="t('auth.last-name')" :ui="{ base: 'h-10' }" class="w-full" />
           </UFormField>
-          <UFormField
-            :label="t('auth.first-name')"
-            name="firstName"
-          >
-            <UInput
-              v-model="form.firstName"
-              :placeholder="t('auth.first-name')"
-              :ui="{ base: 'h-10' }"
-              class="w-full"
-            />
+          <UFormField :label="t('auth.first-name')" name="firstName">
+            <UInput v-model="form.firstName" :placeholder="t('auth.first-name')" :ui="{ base: 'h-10' }" class="w-full" />
           </UFormField>
         </div>
-        <UFormField
-          :label="t('auth.email')"
-          name="email"
-        >
-          <UInput
-            v-model="form.email"
-            :placeholder="t('auth.email')"
-            :ui="{ base: 'h-10' }"
-            class="w-full"
-          />
+        <UFormField :label="t('auth.email')" name="email">
+          <UInput v-model="form.email" :placeholder="t('auth.email')" :ui="{ base: 'h-10' }" class="w-full" />
         </UFormField>
-        <UFormField
-          :label="t('auth.phone-number')"
-          name="phoneNumber"
-        >
-          <UInput
-            v-model="form.phone"
-            :placeholder="t('auth.phone-number')"
-            :ui="{ base: 'h-10' }"
-            class="w-full"
-          />
+        <UFormField :label="t('auth.phone-number')" name="phoneNumber">
+          <UInput v-model="form.phone" :placeholder="t('auth.phone-number')" :ui="{ base: 'h-10' }" class="w-full" />
         </UFormField>
         <div class="flex justify-between items-center w-full">
           <div class="space-y-2 w-full">
             <!-- Password -->
-            <UFormField
-              :label="t('auth.password')"
-              name="password"
-              class="w-full"
-            >
+            <UFormField :label="t('auth.password')" name="password" class="w-full">
               <UInput
                 ref="passwordRef"
                 v-model="form.password"
@@ -161,7 +116,7 @@ const canSubmit = computed(() => {
                 :ui="{ trailing: 'pe-1', base: 'h-10' }"
                 @focus="passwordFocused = true"
                 @blur="passwordFocused = false"
-                >
+              >
                 <template #trailing>
                   <UButton
                     color="neutral"
@@ -174,50 +129,26 @@ const canSubmit = computed(() => {
               </UInput>
             </UFormField>
 
-            <div
-              v-if="passwordFocused && form.password"
-              class="space-y-2"
-            >
-              <UProgress
-                :color="color"
-                :indicator="text"
-                :model-value="score"
-                :max="5"
-                size="sm"
-              />
+            <div v-if="passwordFocused && form.password" class="space-y-2">
+              <UProgress :color="color" :indicator="text" :model-value="score" :max="5" size="sm" />
 
-              <p
-                id="password-strength"
-                class="text-sm font-medium"
-              >
-                {{ text }}. {{ t('auth.must-contain') }}:
-              </p>
+              <p id="password-strength" class="text-sm font-medium">{{ text }}. {{ t('auth.must-contain') }}:</p>
 
-              <ul
-                class="space-y-1"
-                :aria-label="t('password-requirements')"
-              >
+              <ul class="space-y-1" :aria-label="t('password-requirements')">
                 <li
                   v-for="(req, index) in strength"
                   :key="index"
                   class="flex items-center gap-0.5"
                   :class="req.met ? 'text-success' : 'text-muted'"
                 >
-                  <UIcon
-                    :name="req.met ? 'i-lucide-circle-check' : 'i-lucide-circle-x'"
-                    class="size-4 shrink-0"
-                  />
+                  <UIcon :name="req.met ? 'i-lucide-circle-check' : 'i-lucide-circle-x'" class="size-4 shrink-0" />
                   <span class="text-xs font-light">{{ req.text }}</span>
                 </li>
               </ul>
             </div>
 
             <!-- Confirm Password -->
-            <UFormField
-              :label="t('auth.confirm-password')"
-              name="confirmPassword"
-              class="w-full"
-            >
+            <UFormField :label="t('auth.confirm-password')" name="confirmPassword" class="w-full">
               <UInput
                 ref="confirmPasswordRef"
                 id="confirm-password"
@@ -256,15 +187,10 @@ const canSubmit = computed(() => {
 
       <p class="text-center mt-4">
         {{ t('auth.already-have-an-account?') }}
-        <span
-          class="underline text-primary hover:cursor-pointer"
-          @click="emits('sign-in')"
-        >{{ t('header.signin') }}</span>
+        <span class="underline text-primary hover:cursor-pointer" @click="emits('sign-in')">{{ t('header.signin') }}</span>
       </p>
     </template>
   </UModal>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
