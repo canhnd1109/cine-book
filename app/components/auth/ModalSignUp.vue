@@ -2,6 +2,7 @@
 import type { FormSubmitEvent } from '@nuxt/ui'
 import { createSignUpSchema, type IFormSignUp } from '~/schemas/auth.schema'
 import { apiAuth } from '~/services'
+
 const { t } = useI18n()
 
 const { schema: signUpSchema } = useSchema(createSignUpSchema)
@@ -11,13 +12,18 @@ const emits = defineEmits<{
   'sign-up':[form: IFormSignUp]
 }>()
 
+
+const {isLoading = false} = defineProps<{
+  isLoading: boolean
+}>()
+
+
 const showPass = ref(false)
 const showConfirmPass = ref(false)
 const passwordFocused = ref(false)
 const isOpen = defineModel('isOpen', { type: Boolean, default: false })
 
 const formRef = ref()
-const isLoading = ref(false)
 
 const form = ref<IFormSignUp>({
   lastName: '',
@@ -28,38 +34,9 @@ const form = ref<IFormSignUp>({
   confirmPassword: ''
 })
 
-const toast = useToast()
 
-async function onSubmit(event: FormSubmitEvent<IFormSignUp>) {
-  if (isLoading.value) return
-
-  try {
-    isLoading.value = true
-
-    const res = await apiAuth.register(event.data)
-
-    console.log('🚀 ~ handleSignUp ~ res:', res)
-
-    toast.add({
-      title: 'Success',
-      description: 'Registration successful!',
-      color: 'success'
-    })
-  } catch (error) {
-    toast.add({
-      title: 'Error',
-      description: 'Registration failed. Please try again.',
-      color: 'error'
-    })
-    console.error('Sign up error:', error)
-  } finally {
-    isLoading.value = false
-  }
-}
-
-// Function để submit form khi nhấn Enter
 function submitForm() {
-  if (formRef.value && !isLoading.value) {
+  if (formRef.value && !isLoading) {
     formRef.value.submit()
   }
 }
@@ -108,7 +85,7 @@ const canSubmit = computed(() => {
          form.value.password &&
          form.value.confirmPassword &&
          form.value.password === form.value.confirmPassword &&
-         !isLoading.value
+         !isLoading
 })
 </script>
 
@@ -123,7 +100,7 @@ const canSubmit = computed(() => {
         :schema="signUpSchema"
         :state="form"
         class="space-y-4"
-        @submit="onSubmit"
+        @submit="emits('sign-up', form)"
       >
         <div class="grid grid-cols-2 gap-4">
           <UFormField
@@ -272,7 +249,7 @@ const canSubmit = computed(() => {
         </div>
       </UForm>
       <BaseButton
-        :text="isLoading ? t('auth.signing-up') : t('header.signup')"
+        :text="isLoading ? t('auth.signin-up') : t('header.signup')"
         variant="solid"
         class-name="w-full mt-6 flex justify-center"
         :disabled="!canSubmit"

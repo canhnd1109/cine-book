@@ -1,7 +1,15 @@
 <script setup lang="ts">
+import type { FormSubmitEvent } from '@nuxt/ui'
+import type { IFormSignUp } from '~/schemas/auth.schema'
+import { apiAuth } from '~/services'
+
+const toast = useToast()
 const { t } = useI18n()
+
 const modalSignUp = ref(false)
 const modalSignIn = ref(false)
+const isLoading = ref(false)
+
 const openModalSignIn = () => {
   if (modalSignUp.value) {
     modalSignUp.value = false
@@ -14,6 +22,29 @@ const openModalSignUp = () => {
   }
   modalSignUp.value = true
 }
+
+async function handleSignUp(form: IFormSignUp) {
+  if (isLoading.value) return
+  try {
+    isLoading.value = true
+    const rs = await apiAuth.register(form)
+    toast.add({
+      title: t('success'),
+      description: rs.message,
+      color: 'success',
+    })
+    modalSignUp.value = false
+  } catch (error) {
+    toast.add({
+      title: 'Error',
+      description: 'Registration failed. Please try again.',
+      color: 'error'
+    })
+  } finally {
+    isLoading.value = false
+  }
+}
+
 </script>
 
 <template>
@@ -54,8 +85,10 @@ const openModalSignUp = () => {
     </div>
   </header>
   <AuthModalSignUp
+    :is-loading="isLoading"
     v-model:is-open="modalSignUp"
     @sign-in="openModalSignIn"
+    @sign-up="handleSignUp"
   />
   <AuthModalSignIn
     v-model:is-open="modalSignIn"
