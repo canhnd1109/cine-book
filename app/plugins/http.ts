@@ -22,7 +22,7 @@ export default defineNuxtPlugin(() => {
     baseURL: runtimeConfig.public.baseApiUrl,
     headers: defaultHeaders,
     timeout: API_REQUEST_TIMEOUT,
-    credentials: 'include'
+    // credentials: 'include'
   })
 
   async function apiFetch<T>(
