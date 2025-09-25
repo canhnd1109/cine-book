@@ -18,6 +18,7 @@
     "@nuxt/ui": "^3.3.4",
     "@nuxtjs/i18n": "^10.1.0",
     "@nuxtjs/mdc": "0.17.3",
+    "axios": "^1.12.2",
     "lodash-es": "^4.17.21",
     "nuxt": "^4.1.2",
     "nuxt-security": "^2.4.0",
