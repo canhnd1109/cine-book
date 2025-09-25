@@ -23,7 +23,10 @@ export default class BaseService {
     })
   }
 
-  async post<T, B extends Record<string, unknown> | FormData | undefined = undefined>(url: string, body?: B): Promise<T> {
+  async post<T, B extends Record<string, unknown> | FormData | string | undefined = undefined>(
+    url: string,
+    body?: B
+  ): Promise<T> {
     return this.api<T>(`${this.prefix}${url}`, {
       method: 'post',
       body

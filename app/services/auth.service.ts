@@ -1,7 +1,7 @@
-import type { IFormSignUp } from '~/schemas/auth.schema'
+import type { IFormSignIn, IFormSignUp } from '~/schemas/auth.schema'
 import BaseService from '~/services/base.service'
-import type { LoginResponse } from '~/types/auth.types'
-import type { IResponseMessage } from '~/types/response.type'
+import type { IResponseLogin, LoginResponse } from '~/types/auth.types'
+import type { IResponseData, IResponseMessage } from '~/types/response.type'
 
 export class AuthService extends BaseService {
   constructor() {
@@ -10,8 +10,12 @@ export class AuthService extends BaseService {
   async register(payload: IFormSignUp): Promise<IResponseMessage> {
     return this.post<IResponseMessage, typeof payload>('/register', payload)
   }
-  async login(payload: { email: string; password: string }): Promise<LoginResponse> {
-    return this.post<LoginResponse, typeof payload>('/login', payload)
+  async login(payload: IFormSignIn): Promise<IResponseData<IResponseLogin>> {
+    return this.post<IResponseData<IResponseLogin>, typeof payload>('/otp-sign-in', payload)
+  }
+
+  async verifyOtp(payload: string): Promise<IResponseData<IResponseLogin>> {
+    return this.post<IResponseData<IResponseLogin>, typeof payload>(`/verify-sign-in/${payload}`)
   }
 
   async logout(): Promise<void> {

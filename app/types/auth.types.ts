@@ -1,3 +1,8 @@
+export interface IResponseLogin {
+  tokenContent: string
+  expToken: string
+}
+
 export interface LoginResponse {
   accessToken: string
   refreshToken: string

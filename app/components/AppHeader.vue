@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { IFormSignUp } from '~/schemas/auth.schema'
+import type { IFormSignIn, IFormSignUp } from '~/schemas/auth.schema'
 import { apiAuth } from '~/services'
 
 const toast = useToast()
@@ -35,11 +35,24 @@ async function handleSignUp(form: IFormSignUp) {
     isOpenModalSignUp.value = false
     isOpenModalSignIn.value = true
   } catch (error) {
+    console.log(error)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const handelSignIn = async (form: IFormSignIn) => {
+  if (isLoading.value) return
+  try {
+    isLoading.value = true
+    const rs = await apiAuth.login(form)
     toast.add({
-      title: 'Error',
-      description: 'Registration failed. Please try again.',
-      color: 'error'
+      title: t('success'),
+      description: rs.message,
+      color: 'success'
     })
+  } catch (error) {
+    console.log(error)
   } finally {
     isLoading.value = false
   }
@@ -69,7 +82,12 @@ async function handleSignUp(form: IFormSignUp) {
     @sign-in="openModalSignIn"
     @sign-up="handleSignUp"
   />
-  <AuthModalSignIn v-model:is-open="isOpenModalSignIn" @sign-up="openModalSignUp" />
+  <AuthModalSignIn
+    :is-loading="isLoading"
+    v-model:is-open="isOpenModalSignIn"
+    @sign-up="openModalSignUp"
+    @sign-in="handelSignIn"
+  />
 </template>
 
 <style scoped>

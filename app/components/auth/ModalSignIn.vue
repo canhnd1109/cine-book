@@ -6,27 +6,33 @@ const { t } = useI18n()
 const showPass = ref(false)
 const { schema: signInSchema } = useSchema(createSignInSchema)
 const isOpen = defineModel('isOpen', { type: Boolean, default: false })
+const formRef = ref()
+
+const { isLoading } = defineProps<{
+  isLoading?: boolean
+}>()
 
 const emits = defineEmits<{
   'sign-up': []
+  'sign-in': [form: IFormSignIn]
 }>()
 
-const form = reactive<Partial<IFormSignIn>>({
+const form = ref<IFormSignIn>({
   email: '',
   password: ''
 })
 
-const toast = useToast()
-async function onSubmit(event: FormSubmitEvent<IFormSignIn>) {
-  toast.add({ title: 'Success', description: 'The form has been submitted.', color: 'success' })
-  console.log(event.data)
+const submitForm = () => {
+  if (formRef.value && !isLoading) {
+    formRef.value.submit()
+  }
 }
 </script>
 
 <template>
   <UModal v-model:open="isOpen" :title="t('header.signin')">
     <template #body>
-      <UForm :schema="signInSchema" :state="form" class="space-y-4" @submit="onSubmit">
+      <UForm ref="formRef" :schema="signInSchema" :state="form" class="space-y-4" @submit="emits('sign-in', form)">
         <UFormField :label="t('auth.email')" name="email">
           <UInput v-model="form.email" :placeholder="t('auth.email')" :ui="{ base: 'h-10' }" class="w-full" />
         </UFormField>
@@ -38,6 +44,7 @@ async function onSubmit(event: FormSubmitEvent<IFormSignIn>) {
             :type="showPass ? 'text' : 'password'"
             class="w-full"
             :ui="{ trailing: 'pe-1', base: 'h-10' }"
+            @keyup.enter="submitForm"
           >
             <template #trailing>
               <UButton
@@ -54,7 +61,7 @@ async function onSubmit(event: FormSubmitEvent<IFormSignIn>) {
       <p class="text-end mt-4 underline text-primary hover:cursor-pointer">
         {{ t('auth.forgot-password') }}
       </p>
-      <BaseButton :text="t('header.signin')" variant="solid" class-name="w-full mt-6 flex justify-center" />
+      <BaseButton :text="t('header.signin')" variant="solid" class-name="w-full mt-6 flex justify-center" @click="submitForm" />
       <p class="text-center mt-4">
         {{ t('auth.don-not-have-an-account?') }}
         <span class="underline text-primary hover:cursor-pointer" @click="emits('sign-up')">{{ t('header.signup') }}</span>
