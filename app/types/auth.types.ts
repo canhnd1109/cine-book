@@ -18,3 +18,7 @@ export interface RefreshTokenResponse {
   accessToken: string
   refreshToken: string
 }
+
+export interface IUser {
+  email:string
+}

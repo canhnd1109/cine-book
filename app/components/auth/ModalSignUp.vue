@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
-import axios from 'axios';
 import { createSignUpSchema, type IFormSignUp } from '~/schemas/auth.schema'
+import { useAuthApi } from '~/services/auth.service';
 const { t } = useI18n()
+const api = useAuthApi()
 
 const { schema: signUpSchema } = useSchema(createSignUpSchema)
 
@@ -25,7 +26,7 @@ const form = ref<IFormSignUp>({
   email: '',
   phone: '',
   password: '',
-  // confirmPassword: ''
+  confirmPassword: ''
 })
 
 const toast = useToast()
@@ -35,8 +36,11 @@ async function onSubmit(event: FormSubmitEvent<IFormSignUp>) {
 
   try {
     isLoading.value = true
-    const res = await axios.post('http://localhost:8080/register',event.data)
-    console.log("🚀 ~ handleSignUp ~ res:", res)
+
+    const res = await api.register(event.data)
+
+    console.log('🚀 ~ handleSignUp ~ res:', res)
+
     toast.add({
       title: 'Success',
       description: 'Registration successful!',
@@ -63,9 +67,9 @@ function submitForm() {
 
 
 function handleConfirmPasswordEnter() {
-  // if (form.value.confirmPassword && form.value.password === form.value.confirmPassword) {
+  if (form.value.confirmPassword && form.value.password === form.value.confirmPassword) {
     submitForm()
-  // }
+  }
 }
 
 function checkStrength(str: string) {
@@ -103,8 +107,8 @@ const canSubmit = computed(() => {
          form.value.email &&
          form.value.phone &&
          form.value.password &&
-        //  form.value.confirmPassword &&
-        //  form.value.password === form.value.confirmPassword &&
+         form.value.confirmPassword &&
+         form.value.password === form.value.confirmPassword &&
          !isLoading.value
 })
 </script>
@@ -237,7 +241,7 @@ const canSubmit = computed(() => {
             </div>
 
             <!-- Confirm Password -->
-            <!-- <UFormField
+            <UFormField
               :label="t('auth.confirm-password')"
               name="confirmPassword"
               class="w-full"
@@ -264,7 +268,7 @@ const canSubmit = computed(() => {
                   />
                 </template>
               </UInput>
-            </UFormField> -->
+            </UFormField>
           </div>
         </div>
       </UForm>
