@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '@nuxt/ui'
+import axios from 'axios';
 import { createSignUpSchema, type IFormSignUp } from '~/schemas/auth.schema'
-
 const { t } = useI18n()
 
 const { schema: signUpSchema } = useSchema(createSignUpSchema)
 
 const emits = defineEmits<{
   'sign-in': []
-  'sign-up':[form:IFormSignUp]
+  'sign-up':[form: IFormSignUp]
 }>()
 
 const showPass = ref(false)
@@ -16,19 +16,56 @@ const showConfirmPass = ref(false)
 const passwordFocused = ref(false)
 const isOpen = defineModel('isOpen', { type: Boolean, default: false })
 
+const formRef = ref()
+const isLoading = ref(false)
+
 const form = ref<IFormSignUp>({
   lastName: '',
   firstName: '',
   email: '',
-  phoneNumber: '',
+  phone: '',
   password: '',
-  confirmPassword: ''
+  // confirmPassword: ''
 })
 
 const toast = useToast()
+
 async function onSubmit(event: FormSubmitEvent<IFormSignUp>) {
-  toast.add({ title: 'Success', description: 'The form has been submitted.', color: 'success' })
-  console.log(event.data)
+  if (isLoading.value) return
+
+  try {
+    isLoading.value = true
+    const res = await axios.post('http://localhost:8080/register',event.data)
+    console.log("🚀 ~ handleSignUp ~ res:", res)
+    toast.add({
+      title: 'Success',
+      description: 'Registration successful!',
+      color: 'success'
+    })
+  } catch (error) {
+    toast.add({
+      title: 'Error',
+      description: 'Registration failed. Please try again.',
+      color: 'error'
+    })
+    console.error('Sign up error:', error)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// Function để submit form khi nhấn Enter
+function submitForm() {
+  if (formRef.value && !isLoading.value) {
+    formRef.value.submit()
+  }
+}
+
+
+function handleConfirmPasswordEnter() {
+  // if (form.value.confirmPassword && form.value.password === form.value.confirmPassword) {
+    submitForm()
+  // }
 }
 
 function checkStrength(str: string) {
@@ -59,6 +96,17 @@ const text = computed(() => {
   if (score.value < 5) return t('auth.medium-password')
   return t('auth.strong-password')
 })
+
+const canSubmit = computed(() => {
+  return form.value.firstName &&
+         form.value.lastName &&
+         form.value.email &&
+         form.value.phone &&
+         form.value.password &&
+        //  form.value.confirmPassword &&
+        //  form.value.password === form.value.confirmPassword &&
+         !isLoading.value
+})
 </script>
 
 <template>
@@ -68,6 +116,7 @@ const text = computed(() => {
   >
     <template #body>
       <UForm
+        ref="formRef"
         :schema="signUpSchema"
         :state="form"
         class="space-y-4"
@@ -113,7 +162,7 @@ const text = computed(() => {
           name="phoneNumber"
         >
           <UInput
-            v-model="form.phoneNumber"
+            v-model="form.phone"
             :placeholder="t('auth.phone-number')"
             :ui="{ base: 'h-10' }"
             class="w-full"
@@ -188,17 +237,19 @@ const text = computed(() => {
             </div>
 
             <!-- Confirm Password -->
-            <UFormField
+            <!-- <UFormField
               :label="t('auth.confirm-password')"
               name="confirmPassword"
               class="w-full"
             >
               <UInput
+                id="confirm-password"
                 v-model="form.confirmPassword"
                 :placeholder="t('auth.confirm-password')"
                 :type="showConfirmPass ? 'text' : 'password'"
                 class="w-full"
                 :ui="{ trailing: 'pe-1', base: 'h-10' }"
+                @keyup.enter="handleConfirmPasswordEnter"
               >
                 <template #trailing>
                   <UButton
@@ -213,16 +264,19 @@ const text = computed(() => {
                   />
                 </template>
               </UInput>
-            </UFormField>
+            </UFormField> -->
           </div>
         </div>
       </UForm>
       <BaseButton
-        :text="t('header.signup')"
+        :text="isLoading ? t('auth.signing-up') : t('header.signup')"
         variant="solid"
         class-name="w-full mt-6 flex justify-center"
-        @click="emits('sign-up', form)"
+        :disabled="!canSubmit"
+        :loading="isLoading"
+        @click="submitForm"
       />
+
       <p class="text-center mt-4">
         {{ t('auth.already-have-an-account?') }}
         <span

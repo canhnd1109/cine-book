@@ -10,7 +10,7 @@ export function createSignUpSchema(t: (key: string) => string) {
     .object({
       firstName: z.string().min(1, t('auth.first-name-is-required')),
       lastName: z.string().min(1, t('auth.last-name-is-required')),
-      phoneNumber: z
+      phone: z
         .string()
         .min(1, t('auth.phone-number-is-required'))
         .regex(phoneNumberRegex, t('auth.phone-number-invalid')),
@@ -20,12 +20,12 @@ export function createSignUpSchema(t: (key: string) => string) {
           'auth.password-must-be-at-least-8-characters-include-uppercase-lowercase-number-and-special-character'
         )
       }),
-      confirmPassword: z.string().min(1, t('auth.confirm-password-is-required'))
+      // confirmPassword: z.string().min(1, t('auth.confirm-password-is-required'))
     })
-    .refine(data => data.password === data.confirmPassword, {
-      path: ['confirmPassword'],
-      message: t('auth.passwords-do-not-match')
-    })
+    // .refine(data => data.password === data.confirmPassword, {
+    //   path: ['confirmPassword'],
+    //   message: t('auth.passwords-do-not-match')
+    // })
 }
 
 export function createSignInSchema(t: (key: string) => string) {
