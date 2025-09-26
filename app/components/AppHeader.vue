@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { IFormSignIn, IFormSignUp } from '~/schemas/auth.schema'
 import { apiAuth } from '~/services'
-import type { IResponseLogin } from '~/types/auth.types'
 
 const { setTokens } = useAuthStore()
 
@@ -15,6 +14,8 @@ const isOpenModalOtp = ref(false)
 const email = ref('')
 const otp = ref([])
 const tokenOtp = ref('')
+const remainingSeconds = ref(90)
+let intervalId: number | null = null
 
 const openModalSignIn = () => {
   if (isOpenModalSignUp.value) {
@@ -64,6 +65,7 @@ const handelSignIn = async (form: IFormSignIn) => {
       tokenOtp.value = rs.value.tokenContent
       isOpenModalSignIn.value = false
       isOpenModalOtp.value = true
+      startTimer()
     }
   } catch (error) {
     console.log(error)
@@ -86,6 +88,30 @@ const handleVedifyOtp = async () => {
     isLoading.value = false
   }
 }
+
+const isAlmostExpired = computed(() => {
+  return remainingSeconds.value <= 10
+})
+
+const formattedTime = computed(() => {
+  const minutes = Math.floor(remainingSeconds.value / 60)
+  const seconds = remainingSeconds.value % 60
+  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+})
+
+// Start the timer interval
+const startTimer = () => {
+  if (intervalId !== null) return
+
+  intervalId = window.setInterval(() => {
+    if (remainingSeconds.value > 0) {
+      remainingSeconds.value--
+    }
+  }, 1000)
+}
+const isDisableVerifyOtp = computed(() => {
+  return otp.value.length < 6
+})
 </script>
 
 <template>
@@ -127,11 +153,13 @@ const handleVedifyOtp = async () => {
           v-model="otp"
           :length="6"
           size="xl"
-          class="my-6 flex justify-center items-center"
-          @keyup.enter="handleVedifyOtp"
+          class="flex mt-6 justify-center items-center"
+          @keyup.enter="otp.length === 6 && handleVedifyOtp()"
         />
+        <p class="text-center my-6">{{ formattedTime }}</p>
         <div class="flex justify-center">
           <BaseButton
+            :is-disable="isDisableVerifyOtp"
             :is-loading="isLoading"
             text="Verify email"
             title="Verify email"
