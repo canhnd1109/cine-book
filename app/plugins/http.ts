@@ -15,6 +15,7 @@ interface ExtendedFetchOptions<T extends NitroFetchRequest = NitroFetchRequest> 
 
 export default defineNuxtPlugin(() => {
   const runtimeConfig = useRuntimeConfig()
+  const toast = useToast()
 
   const $http = $fetch.create({
     baseURL: runtimeConfig.public.baseApiUrl,
@@ -29,6 +30,8 @@ export default defineNuxtPlugin(() => {
     }
 
     const token = Cookies.get('access-token')
+    const language = Cookies.get('i18n_redirected')
+
     if (token) {
       headers.Authorization = `Bearer ${token}`
     }
@@ -75,6 +78,13 @@ export default defineNuxtPlugin(() => {
           Cookies.remove('refresh-token')
           throw refreshError
         }
+      }
+      if (err?.response?.status === 400 && import.meta.client) {
+        toast.add({
+          title: language === 'en' ? 'Error' : 'Lỗi',
+          description: err?.response?._data?.message || 'Có lỗi xảy ra',
+          color: 'error'
+        })
       }
 
       throw err
