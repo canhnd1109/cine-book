@@ -1,11 +1,14 @@
-@import "tailwindcss";
-@import "@nuxt/ui";
+@import 'tailwindcss';
+@import '@nuxt/ui';
 @import './button.css';
 
 @theme static {
-  --color-primary:#00e080;
+  --color-primary: #00e080;
   /* Light */
-  --color-light-bg:#f9fafc;
+  --color-light-bg: #f9fafc;
+
+  /* Error */
+  --color-text-error: #d10000;
 }
 
 /* Swiper pagination dots */

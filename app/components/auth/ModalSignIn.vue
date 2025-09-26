@@ -27,6 +27,9 @@ const submitForm = () => {
     formRef.value.submit()
   }
 }
+const canSubmit = computed(() => {
+  return form.value.email && form.value.password && !isLoading
+})
 </script>
 
 <template>
@@ -61,7 +64,14 @@ const submitForm = () => {
       <p class="text-end mt-4 underline text-primary hover:cursor-pointer">
         {{ t('auth.forgot-password') }}
       </p>
-      <BaseButton :text="t('header.signin')" variant="solid" class-name="w-full mt-6 flex justify-center" @click="submitForm" />
+      <BaseButton
+        :text="t('header.signin')"
+        :is-loading="isLoading"
+        :disabled="!canSubmit"
+        variant="solid"
+        class-name="w-full mt-6 flex justify-center"
+        @click="submitForm"
+      />
       <p class="text-center mt-4">
         {{ t('auth.don-not-have-an-account?') }}
         <span class="underline text-primary hover:cursor-pointer" @click="emits('sign-up')">{{ t('header.signup') }}</span>
