@@ -23,5 +23,10 @@ export interface RefreshTokenResponse {
 }
 
 export interface IUser {
+  id: string
+  firstName: string
+  lastName: string
   email: string
+  phone: string
+  role: string
 }

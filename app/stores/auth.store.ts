@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia'
 import Cookies from 'js-cookie'
 import type { IResponseLogin, IUser } from '~/types/auth.types'
+import { apiAuth } from '~/services'
 
 export const useAuthStore = defineStore('auth', () => {
   const accessToken = ref<string | null>(null)
   const refreshToken = ref<string | null>(null)
-  const user = ref<IUser | null>(null)
+  const userInfo = ref<IUser | null>(null)
   const isAuthenticated = ref(false)
   const isLoading = ref(false)
 
@@ -20,16 +21,28 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  const getUserInfo = () => {
+    if (userInfo.value) return userInfo.value
+
+    const { data, status } = useAsyncData('user-info', () => apiAuth.getUserInfo(), {
+      server: true,
+      lazy: true,
+      default: () => null
+    })
+    if (data.value && status.value === 'success') {
+      userInfo.value = data.value.value
+    }
+  }
+
   function logOut(options: { redirect?: string } = {}) {
     accessToken.value = null
     refreshToken.value = null
-    user.value = null
+    userInfo.value = null
     isAuthenticated.value = false
 
     if (import.meta.client) {
       Cookies.remove('accessToken')
       Cookies.remove('refreshToken')
-      Cookies.remove('user')
     }
 
     if (options.redirect) {
@@ -37,29 +50,14 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  function restoreAuth() {
-    if (import.meta.client) {
-      const storedAccessToken = Cookies.get('accessToken') || null
-      const storedRefreshToken = Cookies.get('refreshToken') || null
-      const storedUser = Cookies.get('user')
-
-      if (storedAccessToken && storedRefreshToken) {
-        accessToken.value = storedAccessToken
-        refreshToken.value = storedRefreshToken
-        user.value = storedUser ? JSON.parse(storedUser) : null
-        isAuthenticated.value = true
-      }
-    }
-  }
-
   return {
     accessToken,
     refreshToken,
-    user,
     isAuthenticated,
     isLoading,
     setTokens,
     logOut,
-    restoreAuth
+    getUserInfo,
+    userInfo
   }
 })

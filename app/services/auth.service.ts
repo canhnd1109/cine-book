@@ -1,6 +1,6 @@
 import type { IFormSignIn, IFormSignUp } from '~/schemas/auth.schema'
 import BaseService from '~/services/base.service'
-import type { IResponseLogin, IResponseOtpLogin } from '~/types/auth.types'
+import type { IResponseLogin, IResponseOtpLogin, IUser } from '~/types/auth.types'
 import type { IResponseData, IResponseMessage } from '~/types/response.type'
 
 export class AuthService extends BaseService {
@@ -20,6 +20,10 @@ export class AuthService extends BaseService {
         Authorization: `Bearer ${token}`
       }
     })
+  }
+
+  async getUserInfo(): Promise<IResponseData<IUser>> {
+    return this.post<IResponseData<IUser>>('/token')
   }
 
   async logout(): Promise<void> {

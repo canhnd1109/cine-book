@@ -10,6 +10,13 @@ const pageDescription =
   t(`${appConfig.description}`) ||
   'Đặt vé xem phim online dễ dàng tại CineBook. Hệ thống rạp chiếu phim hiện đại, giá vé ưu đãi, thanh toán an toàn. Trải nghiệm điện ảnh tuyệt vời!'
 
+const { getUserInfo } = useAuthStore()
+const { isAuthenticated } = storeToRefs(useAuthStore())
+
+if (isAuthenticated.value) {
+  getUserInfo()
+}
+
 useHead({
   title: pageTitle,
   meta: [
