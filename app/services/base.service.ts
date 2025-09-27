@@ -2,8 +2,6 @@ import type { NitroFetchRequest } from 'nitropack'
 import { useNuxtApp } from '#app'
 import type { ExtendedFetchOptions } from '~/types/http.type'
 
-type RequestBody = Record<string, unknown> | FormData | string
-
 export default class BaseService {
   prefix: string
 

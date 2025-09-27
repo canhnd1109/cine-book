@@ -2,7 +2,8 @@
 import type { IFormSignIn, IFormSignUp } from '~/schemas/auth.schema'
 import { apiAuth } from '~/services'
 
-const { setTokens } = useAuthStore()
+const { verifyOtp } = useAuthStore()
+// const { userInfo } = storeToRefs(useAuthStore())
 
 const toast = useToast()
 const { t } = useI18n()
@@ -79,8 +80,7 @@ const handleVedifyOtp = async () => {
   try {
     isLoading.value = true
     const _otp = otp.value.join('')
-    const rs = await apiAuth.verifyOtp(_otp, tokenOtp.value)
-    setTokens(rs.value)
+    await verifyOtp(_otp, tokenOtp.value)
     isOpenModalOtp.value = false
   } catch (error) {
     console.log(error)

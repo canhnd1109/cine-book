@@ -4,45 +4,40 @@ import type { IResponseLogin, IUser } from '~/types/auth.types'
 import { apiAuth } from '~/services'
 
 export const useAuthStore = defineStore('auth', () => {
-  const accessToken = ref<string | null>(null)
-  const refreshToken = ref<string | null>(null)
+  const accessToken = ref<string>(Cookies.get('access-token') || '')
   const userInfo = ref<IUser | null>(null)
-  const isAuthenticated = ref(false)
   const isLoading = ref(false)
+  const isAuthenticated = computed(() => !!accessToken.value)
+
+  const verifyOtp = async (otp: string, tokenOtp: string) => {
+    const { value } = await apiAuth.verifyOtp(otp, tokenOtp)
+    setTokens(value)
+  }
 
   function setTokens(response: IResponseLogin) {
     accessToken.value = response.tokenContent
-    refreshToken.value = response.refreshToken
-    isAuthenticated.value = true
-
     if (import.meta.client) {
-      Cookies.set('access-token', response.tokenContent, { expires: 1 })
-      Cookies.set('refresh-token', response.refreshToken, { expires: 7 })
+      setCookie('access-token', response.tokenContent, 3)
+      setCookie('refresh-token', response.refreshToken, 7)
     }
   }
 
-  const getUserInfo = () => {
+  const getUserInfo = async () => {
     if (userInfo.value) return userInfo.value
-
-    const { data, status } = useAsyncData('user-info', () => apiAuth.getUserInfo(), {
-      server: true,
-      lazy: true,
-      default: () => null
-    })
-    if (data.value && status.value === 'success') {
-      userInfo.value = data.value.value
+    const { value } = await apiAuth.getUserInfo()
+    if (value) {
+      userInfo.value = value
     }
+
+    return userInfo.value
   }
 
   function logOut(options: { redirect?: string } = {}) {
-    accessToken.value = null
-    refreshToken.value = null
     userInfo.value = null
-    isAuthenticated.value = false
 
     if (import.meta.client) {
-      Cookies.remove('accessToken')
-      Cookies.remove('refreshToken')
+      clearCookie('access-token')
+      clearCookie('refresh-token')
     }
 
     if (options.redirect) {
@@ -50,14 +45,5 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  return {
-    accessToken,
-    refreshToken,
-    isAuthenticated,
-    isLoading,
-    setTokens,
-    logOut,
-    getUserInfo,
-    userInfo
-  }
+  return { isAuthenticated, isLoading, setTokens, logOut, getUserInfo, userInfo, verifyOtp }
 })
