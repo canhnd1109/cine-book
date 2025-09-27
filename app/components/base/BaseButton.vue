@@ -12,9 +12,11 @@ const {
   trailingIcon = '',
   to = '',
   type = 'button',
+  size = 'md',
   isDisable = false,
   target = null,
-  ui = {}
+  ui = {},
+  text = ''
 } = defineProps<{
   text?: string
   isLoading?: boolean
@@ -62,6 +64,7 @@ const handleClick = debounce(() => {
     :type
     :disabled="isDisable"
     :target
+    :size
     :ui
     @click="handleClick"
   >

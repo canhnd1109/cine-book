@@ -12,11 +12,16 @@ const isDark = computed({
 </script>
 
 <template>
-  <UButton
-    :icon="isDark ? 'i-lucide-sun' :'i-lucide-moon'"
-    color="neutral"
-    variant="ghost"
-    :ui="{ base: 'cursor-pointer' }"
-    @click="isDark = !isDark"
-  />
+  <ClientOnly>
+    <UButton
+      :icon="isDark ? 'i-lucide-sun' : 'i-lucide-moon'"
+      color="neutral"
+      variant="ghost"
+      :ui="{ base: 'cursor-pointer' }"
+      @click="isDark = !isDark"
+    />
+    <template #fallback>
+      <div class="size-8" />
+    </template>
+  </ClientOnly>
 </template>
