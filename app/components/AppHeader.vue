@@ -163,7 +163,9 @@ const isDisableVerifyOtp = computed(() => {
           class="flex mt-6 justify-center items-center"
           @keyup.enter="otp.length === 6 && handleVedifyOtp()"
         />
-        <p class="text-center my-6" :class="{ 'text-error': isAlmostExpired }">{{ formattedTime }}</p>
+        <ClientOnly>
+          <p class="text-center my-6" :class="{ 'text-error': isAlmostExpired }">{{ formattedTime }}</p>
+        </ClientOnly>
         <div class="flex justify-center">
           <BaseButton
             :is-disable="isDisableVerifyOtp"

@@ -11,7 +11,7 @@ const emits = defineEmits<{
 }>()
 
 const { isLoading = false } = defineProps<{
-  isLoading: boolean
+  isLoading?: boolean
 }>()
 
 const showPass = ref(false)
@@ -150,8 +150,8 @@ const canSubmit = computed(() => {
             <!-- Confirm Password -->
             <UFormField :label="t('auth.confirm-password')" name="confirmPassword" class="w-full">
               <UInput
-                ref="confirmPasswordRef"
                 id="confirm-password"
+                ref="confirmPasswordRef"
                 v-model="form.confirmPassword"
                 :placeholder="t('auth.confirm-password')"
                 :type="showConfirmPass ? 'text' : 'password'"

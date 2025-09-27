@@ -10,7 +10,6 @@ export const useAuthStore = defineStore('auth', () => {
   const isLoading = ref(false)
 
   function setTokens(response: IResponseLogin) {
-    console.log('🚀 ~ setTokens ~ response:', response)
     accessToken.value = response.tokenContent
     refreshToken.value = response.refreshToken
     isAuthenticated.value = true
