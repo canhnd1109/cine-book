@@ -32,21 +32,22 @@ const openModalSignUp = () => {
 
 async function handleSignUp(form: IFormSignUp) {
   if (isLoading.value) return
-  try {
-    isLoading.value = true
-    const rs = await apiAuth.register(form)
+
+  isLoading.value = true
+
+  const { data, status } = await useAsyncData('signUp', () => apiAuth.register(form))
+
+  if (data.value && status.value === 'success') {
     toast.add({
       title: t('success'),
-      description: rs.message,
+      description: data.value.message,
       color: 'success'
     })
     isOpenModalSignUp.value = false
     isOpenModalSignIn.value = true
-  } catch (error) {
-    console.log(error)
-  } finally {
-    isLoading.value = false
   }
+
+  isLoading.value = false
 }
 
 const handelSignIn = async (form: IFormSignIn) => {
@@ -54,18 +55,22 @@ const handelSignIn = async (form: IFormSignIn) => {
   try {
     isLoading.value = true
     email.value = form.email
-    const rs = await apiAuth.login(form)
-    toast.add({
-      title: t('success'),
-      description: rs.message,
-      color: 'success'
-    })
 
-    if (rs.value.tokenContent) {
-      tokenOtp.value = rs.value.tokenContent
-      isOpenModalSignIn.value = false
-      isOpenModalOtp.value = true
-      startTimer()
+    const { data, status } = await useAsyncData('signIn', () => apiAuth.login(form))
+
+    if (data.value && status.value === 'success') {
+      toast.add({
+        title: t('success'),
+        description: data.value.message,
+        color: 'success'
+      })
+
+      if (data.value.value.tokenContent) {
+        tokenOtp.value = data.value.value.tokenContent
+        isOpenModalSignIn.value = false
+        isOpenModalOtp.value = true
+        startTimer()
+      }
     }
   } catch (error) {
     console.log(error)
@@ -79,9 +84,11 @@ const handleVedifyOtp = async () => {
   try {
     isLoading.value = true
     const _otp = otp.value.join('')
-    const rs = await apiAuth.verifyOtp(_otp, tokenOtp.value)
-    setTokens(rs.value)
-    isOpenModalOtp.value = false
+    const { data, status } = await useAsyncData('verifyOtp', () => apiAuth.verifyOtp(_otp, tokenOtp.value))
+    if (data.value && status.value === 'success') {
+      setTokens(data.value.value)
+      isOpenModalOtp.value = false
+    }
   } catch (error) {
     console.log(error)
   } finally {
@@ -132,14 +139,14 @@ const isDisableVerifyOtp = computed(() => {
     </div>
   </header>
   <AuthModalSignUp
-    :is-loading="isLoading"
     v-model:is-open="isOpenModalSignUp"
+    :is-loading="isLoading"
     @sign-in="openModalSignIn"
     @sign-up="handleSignUp"
   />
   <AuthModalSignIn
-    :is-loading="isLoading"
     v-model:is-open="isOpenModalSignIn"
+    :is-loading="isLoading"
     @sign-up="openModalSignUp"
     @sign-in="handelSignIn"
   />
