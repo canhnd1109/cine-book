@@ -1,23 +1,28 @@
 {
   "extends": ["github>nuxt/renovate-config-nuxt"],
   "dependencyDashboard": true,
+  "timezone": "Asia/Ho_Chi_Minh",
+  "schedule": ["after 10pm every weekday", "before 5am every weekday", "every weekend"],
   "lockFileMaintenance": {
     "enabled": true,
-    "schedule": ["at any time"]
+    "schedule": ["before 5am on monday"]
   },
   "packageRules": [
     {
-      "matchPackagePatterns": ["*"],
-      "groupName": "all dependencies",
-      "schedule": ["at any time"]
-    },
-    {
       "matchDepTypes": ["resolutions"],
       "enabled": true
+    },
+    {
+      "matchUpdateTypes": ["patch", "digest"],
+      "automerge": true,
+      "groupName": "patch updates"
+    },
+    {
+      "matchPackagePatterns": ["^@nuxt/", "^nuxt"],
+      "groupName": "nuxt packages"
     }
   ],
   "postUpdateOptions": ["pnpmDedupe"],
   "semanticCommits": "enabled",
-  "prCreation": "immediate",
-  "timezone": "Asia/Ho_Chi_Minh"
+  "prCreation": "immediate"
 }
