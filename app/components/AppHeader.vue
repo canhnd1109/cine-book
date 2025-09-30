@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { IFormSignIn, IFormSignUp } from '~/schemas/auth.schema'
 import { apiAuth } from '~/services'
+import type { DropdownMenuItem } from '@nuxt/ui'
 
 const { verifyOtp } = useAuthStore()
-// const { userInfo } = storeToRefs(useAuthStore())
+const { userInfo, isAuthenticated } = storeToRefs(useAuthStore())
 
 const toast = useToast()
 const { t } = useI18n()
@@ -112,6 +113,18 @@ const startTimer = () => {
 const isDisableVerifyOtp = computed(() => {
   return otp.value.length < 6
 })
+
+const items: DropdownMenuItem[][] = [
+  [
+    {
+      label: 'Thông tin cá nhân',
+      icon: 'i-lucide-user',
+      onSelect() {
+        console.log('New team clicked')
+      }
+    }
+  ]
+]
 </script>
 
 <template>
@@ -124,10 +137,20 @@ const isDisableVerifyOtp = computed(() => {
         <NuxtLink to="/" class="hover:text-primary">Lịch chiếu</NuxtLink>
       </nav>
       <div class="flex justify-end items-center !gap-x-4">
-        <BaseButton :text="t('header.signup')" title="Sign up" @click="isOpenModalSignUp = true" />
-        <BaseButton :text="t('header.signin')" variant="solid" title="Sign in" @click="isOpenModalSignIn = true" />
+        <div v-if="!isAuthenticated" class="flex justify-end items-center !gap-x-4">
+          <BaseButton :text="t('header.signup')" title="Sign up" @click="isOpenModalSignUp = true" />
+          <BaseButton :text="t('header.signin')" variant="solid" title="Sign in" @click="isOpenModalSignIn = true" />
+        </div>
+
+        <UDropdownMenu v-else :items="items" class="mx-6" :ui="{ itemLabel: 'cursor-pointer' }" :arrow="true">
+          <div class="flex justify-center gap-2 items-center hover:cursor-pointer">
+            <UAvatar :alt="userInfo?.firstName" size="md" />
+            <p>{{ userInfo?.firstName }}</p>
+          </div>
+        </UDropdownMenu>
+
         <BaseLanguages />
-        <BaseTheme />
+        <UColorModeButton :icon-light="'i-ph-sun'" :icon-dark="'i-ph-moon'" />
       </div>
     </div>
   </header>

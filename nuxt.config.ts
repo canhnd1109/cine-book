@@ -1,6 +1,15 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxtjs/mdc', '@nuxtjs/i18n', '@nuxt/image', 'nuxt-security', '@pinia/nuxt'],
+  modules: [
+    '@nuxt/eslint',
+    '@nuxt/ui',
+    '@nuxtjs/mdc',
+    '@nuxtjs/i18n',
+    '@nuxt/image',
+    'nuxt-security',
+    '@pinia/nuxt',
+    '@nuxtjs/color-mode'
+  ],
   ssr: true,
 
   devtools: {
@@ -63,7 +72,6 @@ export default defineNuxtConfig({
       }
     }
   },
-
   ui: {
     theme: {
       defaultVariants: {
@@ -92,7 +100,7 @@ export default defineNuxtConfig({
         'cache-control': 's-maxage=31536000',
         'x-robots-tag': 'index, follow'
       }
-    },
+    }
     // '/api/**': {
     //   cors: true,
     //   headers: {
@@ -206,18 +214,18 @@ export default defineNuxtConfig({
     headers: {
       crossOriginEmbedderPolicy: false,
       contentSecurityPolicy: {
-        'default-src': ['\'self\''],
-        'img-src': ['\'self\'', 'data:', 'https:', 'http:', '*'],
-        'script-src': ['\'self\'', '\'unsafe-inline\'', '\'unsafe-eval\'', 'https:', 'http:', '*'],
-        'style-src': ['\'self\'', '\'unsafe-inline\'', 'https:', 'http:', '*'],
-        'font-src': ['\'self\'', 'https:', 'http:', 'data:', '*'],
-        'connect-src': ['\'self\'', 'https:', 'http:', 'wss:', 'ws:', '*'],
-        'frame-src': ['\'self\'', 'https:', 'http:', '*'],
-        'media-src': ['\'self\'', 'https:', 'http:', 'data:', '*'],
-        'object-src': ['\'none\''],
-        'base-uri': ['\'self\''],
-        'form-action': ['\'self\''],
-        'frame-ancestors': ['\'none\''],
+        'default-src': ["'self'"],
+        'img-src': ["'self'", 'data:', 'https:', 'http:', '*'],
+        'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https:', 'http:', '*'],
+        'style-src': ["'self'", "'unsafe-inline'", 'https:', 'http:', '*'],
+        'font-src': ["'self'", 'https:', 'http:', 'data:', '*'],
+        'connect-src': ["'self'", 'https:', 'http:', 'wss:', 'ws:', '*'],
+        'frame-src': ["'self'", 'https:', 'http:', '*'],
+        'media-src': ["'self'", 'https:', 'http:', 'data:', '*'],
+        'object-src': ["'none'"],
+        'base-uri': ["'self'"],
+        'form-action': ["'self'"],
+        'frame-ancestors': ["'none'"],
         'upgrade-insecure-requests': true
       },
       crossOriginOpenerPolicy: 'same-origin',
@@ -235,12 +243,12 @@ export default defineNuxtConfig({
       xPermittedCrossDomainPolicies: 'none',
       xXSSProtection: '1; mode=block',
       permissionsPolicy: {
-        camera: ['\'none\''],
-        microphone: ['\'none\''],
-        geolocation: ['\'self\''],
-        payment: ['\'self\''],
-        usb: ['\'none\''],
-        bluetooth: ['\'none\'']
+        camera: ["'none'"],
+        microphone: ["'none'"],
+        geolocation: ["'self'"],
+        payment: ["'self'"],
+        usb: ["'none'"],
+        bluetooth: ["'none'"]
       }
     },
     csrf: {
@@ -256,10 +264,7 @@ export default defineNuxtConfig({
     corsHandler: {
       origin:
         process.env.NODE_ENV === 'production'
-          ? [
-              ...(process.env.NUXT_PUBLIC_SITE_URL ? [process.env.NUXT_PUBLIC_SITE_URL] : []),
-              'https://cinebookmovie.vercel.app'
-            ]
+          ? [...(process.env.NUXT_PUBLIC_SITE_URL ? [process.env.NUXT_PUBLIC_SITE_URL] : []), 'https://cinebookmovie.vercel.app']
           : '*',
       credentials: true,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
