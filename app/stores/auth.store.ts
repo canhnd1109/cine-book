@@ -22,6 +22,7 @@ export const useAuthStore = defineStore('auth', () => {
   const verifyOtp = async (otp: string, tokenOtp: string) => {
     const { value } = await apiAuth.verifyOtp(otp, tokenOtp)
     setTokens(value)
+    await nextTick()
     await getUserInfo()
   }
 
@@ -31,20 +32,20 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const getUserInfo = async () => {
-    if (userInfo.value) return userInfo.value
-    const { value } = await apiAuth.getUserInfo()
-    if (value) {
-      userInfo.value = value
+    try {
+      if (userInfo.value) return userInfo.value
+      const { value } = await apiAuth.getUserInfo()
+      if (value) {
+        userInfo.value = value
+      }
+    } catch (error) {
+      console.log(error)
     }
-
-    return userInfo.value
   }
 
   function logOut(options: { redirect?: string } = {}) {
-    if (import.meta.client) {
-      clearCookie('access-token')
-      clearCookie('refresh-token')
-    }
+    accessTokenCookie.value = null
+    refreshTokenCookie.value = null
 
     if (options.redirect) {
       navigateTo(options.redirect)

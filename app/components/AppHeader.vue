@@ -3,7 +3,7 @@ import type { IFormSignIn, IFormSignUp } from '~/schemas/auth.schema'
 import { apiAuth } from '~/services'
 import type { DropdownMenuItem } from '@nuxt/ui'
 
-const { verifyOtp } = useAuthStore()
+const { verifyOtp, logOut } = useAuthStore()
 const { userInfo, isAuthenticated } = storeToRefs(useAuthStore())
 
 const toast = useToast()
@@ -121,6 +121,15 @@ const items: DropdownMenuItem[][] = [
       icon: 'i-lucide-user',
       onSelect() {
         console.log('New team clicked')
+      }
+    }
+  ],
+  [
+    {
+      label: 'Logout',
+      icon: 'i-lucide-log-out',
+      onSelect() {
+        logOut()
       }
     }
   ]
