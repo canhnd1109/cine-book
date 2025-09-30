@@ -150,7 +150,7 @@ const items: DropdownMenuItem[][] = [
         </UDropdownMenu>
 
         <BaseLanguages />
-        <UColorModeButton :icon-light="'i-ph-sun'" :icon-dark="'i-ph-moon'" />
+        <UColorModeButton class="hover:cursor-pointer" :icon-light="'i-ph-sun'" :icon-dark="'i-ph-moon'" />
       </div>
     </div>
   </header>
