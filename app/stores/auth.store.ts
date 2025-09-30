@@ -1,25 +1,33 @@
 import { defineStore } from 'pinia'
-import Cookies from 'js-cookie'
 import type { IResponseLogin, IUser } from '~/types/auth.types'
 import { apiAuth } from '~/services'
 
 export const useAuthStore = defineStore('auth', () => {
-  const accessToken = ref<string>(Cookies.get('access-token') || '')
+  const accessTokenCookie = useCookie('access-token', {
+    maxAge: 60 * 60 * 24 * 3,
+    sameSite: 'lax'
+  })
+
+  const refreshTokenCookie = useCookie('refresh-token', {
+    maxAge: 60 * 60 * 24 * 7,
+    sameSite: 'lax'
+  })
+
   const userInfo = ref<IUser | null>(null)
-  const isLoading = ref(false)
-  const isAuthenticated = computed(() => !!accessToken.value)
+
+  const isAuthenticated = computed(() => {
+    return !!accessTokenCookie.value
+  })
 
   const verifyOtp = async (otp: string, tokenOtp: string) => {
     const { value } = await apiAuth.verifyOtp(otp, tokenOtp)
     setTokens(value)
+    await getUserInfo()
   }
 
   function setTokens(response: IResponseLogin) {
-    accessToken.value = response.tokenContent
-    if (import.meta.client) {
-      setCookie('access-token', response.tokenContent, 3)
-      setCookie('refresh-token', response.refreshToken, 7)
-    }
+    accessTokenCookie.value = response.tokenContent
+    refreshTokenCookie.value = response.refreshToken
   }
 
   const getUserInfo = async () => {
@@ -33,8 +41,6 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   function logOut(options: { redirect?: string } = {}) {
-    userInfo.value = null
-
     if (import.meta.client) {
       clearCookie('access-token')
       clearCookie('refresh-token')
@@ -45,5 +51,12 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  return { isAuthenticated, isLoading, setTokens, logOut, getUserInfo, userInfo, verifyOtp }
+  return {
+    isAuthenticated,
+    userInfo,
+    setTokens,
+    logOut,
+    verifyOtp,
+    getUserInfo
+  }
 })
