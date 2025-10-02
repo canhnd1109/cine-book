@@ -7,6 +7,11 @@ const sidebarAdmin = [
     name: 'Dashboard',
     icon: 'dashboard',
     path: '/admin'
+  },
+  {
+    name: 'Movies',
+    icon: 'movie',
+    path: '/admin/movies'
   }
 ]
 </script>
