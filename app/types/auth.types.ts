@@ -28,5 +28,5 @@ export interface IUser {
   lastName: string
   email: string
   phone: string
-  role: string
+  role: 'ROLE_ADMIN' | 'ROLE_USER'
 }

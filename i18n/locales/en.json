@@ -56,5 +56,7 @@
     "line-4": "Address: No. 87 Lang Ha, O Cho Dua Ward, Hanoi City - Phone: 024.35141791",
     "line-5": "Copyright 2023. NCC All Rights Reservered. Dev by Ngo Duc Canh"
   },
-  "success": "Success"
+  "success": "Success",
+  "error": "Error",
+  "you-do-not-have-permission-to-access-this-page": "You don't have permission to access this page"
 }

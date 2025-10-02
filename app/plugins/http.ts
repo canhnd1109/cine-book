@@ -1,6 +1,5 @@
 import type { NitroFetchOptions, NitroFetchRequest } from 'nitropack'
 import type { FetchError } from 'ofetch'
-import Cookies from 'js-cookie'
 
 const API_REQUEST_TIMEOUT = 20000
 const defaultHeaders: Record<string, string> = {
@@ -17,11 +16,20 @@ export default defineNuxtPlugin(() => {
   const runtimeConfig = useRuntimeConfig()
   const toast = useToast()
 
+  const accessToken = useCookie('access-token', {
+    secure: true,
+    sameSite: 'strict'
+  })
+  const refreshToken = useCookie('refresh-token', {
+    secure: true,
+    sameSite: 'strict'
+  })
+  const language = useCookie('i18n_redirected')
+
   const $http = $fetch.create({
     baseURL: runtimeConfig.public.baseApiUrl,
     headers: defaultHeaders,
     timeout: API_REQUEST_TIMEOUT
-    // credentials: 'include'
   })
 
   async function apiFetch<T>(url: NitroFetchRequest, options: ExtendedFetchOptions = {}): Promise<T> {
@@ -29,11 +37,8 @@ export default defineNuxtPlugin(() => {
       ...((options.headers as Record<string, string>) ?? {})
     }
 
-    const token = Cookies.get('access-token')
-    const language = Cookies.get('i18n_redirected')
-
-    if (token) {
-      headers.Authorization = `Bearer ${token}`
+    if (accessToken.value) {
+      headers.Authorization = `Bearer ${accessToken.value}`
     }
 
     if (import.meta.client) {
@@ -50,18 +55,18 @@ export default defineNuxtPlugin(() => {
         options._retry = true
 
         try {
-          const refreshToken = Cookies.get('refresh-token')
-          if (!refreshToken) throw new Error('No refresh token')
+          if (!refreshToken.value) throw new Error('No refresh token')
 
           const response = await $fetch<any>(`${runtimeConfig.public.baseApiUrl}/refresh`, {
             method: 'POST',
-            body: { refreshToken },
+            body: { refreshToken: refreshToken.value },
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include'
           })
 
-          Cookies.set('access-token', response.accessToken, { secure: true, sameSite: 'strict' })
-          Cookies.set('refresh-token', response.refreshToken, { secure: true, sameSite: 'strict' })
+          // Cập nhật cookies thông qua useCookie
+          accessToken.value = response.accessToken
+          refreshToken.value = response.refreshToken
 
           await refreshNuxtData()
 
@@ -74,14 +79,15 @@ export default defineNuxtPlugin(() => {
           })
         } catch (refreshError) {
           console.error('Token refresh failed:', refreshError)
-          Cookies.remove('access-token')
-          Cookies.remove('refresh-token')
+          accessToken.value = null
+          refreshToken.value = null
           throw refreshError
         }
       }
+
       if (err?.response?.status === 400 && import.meta.client) {
         toast.add({
-          title: language === 'en' ? 'Error' : 'Lỗi',
+          title: language.value === 'en' ? 'Error' : 'Lỗi',
           description: err?.response?._data?.message || 'Có lỗi xảy ra',
           color: 'error'
         })

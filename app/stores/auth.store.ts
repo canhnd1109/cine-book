@@ -14,6 +14,8 @@ export const useAuthStore = defineStore('auth', () => {
   })
 
   const userInfo = ref<IUser | null>(null)
+  const roleName = ref<'ROLE_ADMIN' | 'ROLE_USER'>('ROLE_USER')
+  const isAdmin = computed(() => userInfo.value?.role === 'ROLE_ADMIN')
 
   const isAuthenticated = computed(() => {
     return !!accessTokenCookie.value
@@ -36,6 +38,7 @@ export const useAuthStore = defineStore('auth', () => {
       if (userInfo.value) return userInfo.value
       const { value } = await apiAuth.getUserInfo()
       if (value) {
+        roleName.value = value.role
         userInfo.value = value
       }
     } catch (error) {
@@ -58,6 +61,7 @@ export const useAuthStore = defineStore('auth', () => {
     setTokens,
     logOut,
     verifyOtp,
-    getUserInfo
+    getUserInfo,
+    isAdmin
   }
 })

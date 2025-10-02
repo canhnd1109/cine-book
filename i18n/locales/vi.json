@@ -56,5 +56,7 @@
     "line-4": "Địa chỉ: Số 87 Láng Hạ, Phường Ô Chợ Dừa, TP.Hà Nội - Điện thoại: 024.35141791",
     "line-5": "Bản quyền 2023. NCC Bảo lưu mọi quyền. Phát triển bởi Ngọ Đức Cảnh"
   },
-  "success": "Thành công"
+  "success": "Thành công",
+  "error": "Lỗi",
+  "you-do-not-have-permission-to-access-this-page": "Bạn không có quyền truy cập vào trang này"
 }
