@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import TheHeaderAdmin from '~/components/admin/TheHeaderAdmin.vue'
-import TheSidebarAdmin from '~/components/admin/TheSidebarAdmin.vue'
+import AppHeaderAdmin from '~/components/admin/AppHeaderAdmin.vue'
+import AppSidebarAdmin from '~/components/admin/AppSidebarAdmin.vue'
 </script>
 
 <template>
   <div class="h-screen flex w-screen">
-    <TheSidebarAdmin />
+    <AppSidebarAdmin />
     <div class="w-full">
-      <TheHeaderAdmin />
+      <AppHeaderAdmin />
       <NuxtPage />
     </div>
   </div>
