@@ -14,6 +14,13 @@ const sidebarAdmin = [
     path: '/admin/movies'
   }
 ]
+
+function isActive(path: string) {
+  if (path === '/admin') {
+    return route.path === '/admin'
+  }
+  return route.path.startsWith(path)
+}
 </script>
 
 <template>
@@ -22,7 +29,7 @@ const sidebarAdmin = [
     <div v-for="(item, index) in sidebarAdmin" :key="index">
       <p
         class="flex justify-start items-center gap-2 hover:cursor-pointer hover:bg-gray-200 p-2 rounded-md hover:text-primary"
-        :class="route.path === item.path ? '!bg-primary !text-white font-bold' : ''"
+        :class="isActive(item.path) ? '!bg-primary !text-white font-bold' : ''"
         @click="router.push(item.path)"
       >
         <BaseIcon :name="item.icon" />

@@ -27,7 +27,7 @@ const items: DropdownMenuItem[][] = [
 </script>
 
 <template>
-  <div class="flex justify-end items-center !gap-x-4 my-6 p-4">
+  <div class="flex justify-end items-center !gap-x-4 p-4">
     <UDropdownMenu :items="items" class="mx-6" :ui="{ itemLabel: 'cursor-pointer' }" :arrow="true">
       <div class="flex justify-center gap-2 items-center hover:cursor-pointer">
         <UAvatar :alt="userInfo?.firstName" size="md" />
