@@ -6,6 +6,13 @@
   --color-primary: #00e080;
   /* Light */
   --color-light-bg: #f9fafc;
+  --color-bg-light: #f3f4f6;
+  --color-border-light: #cad5e2;
+
+  /* Dark */
+  --color-bg-primary-dark: #1d2a3d;
+  --color-text-seconary: #90a1b9;
+  --color-border-dark: #314158;
 
   /* Error */
   --color-text-error: #d10000;

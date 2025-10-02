@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import svgLoader from 'vite-svg-loader'
+
 export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
@@ -162,7 +164,9 @@ export default defineNuxtConfig({
   },
 
   compatibilityDate: '2025-01-15',
-
+  vite: {
+    plugins: [svgLoader()]
+  },
   nitro: {
     compressPublicAssets: true,
     minify: true

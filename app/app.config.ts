@@ -8,6 +8,10 @@ export default defineAppConfig({
       path: '/',
       name: 'Home'
     },
+    admin: {
+      path: '/admin',
+      name: 'Admin'
+    },
     'not-found': {
       path: '/:pathMatch(.*)*',
       title: 'Page Not Found'
