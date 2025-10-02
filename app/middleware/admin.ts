@@ -1,7 +1,12 @@
-export default defineNuxtRouteMiddleware((_to, _from) => {
-  const { isAuthenticated, isAdmin } = storeToRefs(useAuthStore())
+export default defineNuxtRouteMiddleware(async (_to, _from) => {
+  const { getUserInfo } = useAuthStore()
+  const { isAuthenticated, isAdmin, userInfo } = storeToRefs(useAuthStore())
   const toast = useToast()
   const language = useCookie('i18n_redirected')
+
+  if (isAuthenticated.value && !userInfo.value) {
+    await getUserInfo()
+  }
 
   if (!isAuthenticated.value) {
     return navigateTo('/')
