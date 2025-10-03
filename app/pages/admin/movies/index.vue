@@ -3,7 +3,7 @@ definePageMeta({ layout: 'admin', middleware: ['admin'] })
 </script>
 
 <template>
-  <div class="space-y-4">
+  <div class="card-box">
     <MoviesTabs />
     <div class="p-4 dark:bg-bg-primary-dark bg-bg-light rounded-lg mr-6">
       <h2>Movies Tab</h2>

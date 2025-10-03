@@ -41,7 +41,7 @@ const canSubmit = computed(() => {
 </script>
 
 <template>
-  <div class="space-y-4 dark:bg-bg-seconary-dark bg-white p-4 m-6">
+  <div class="card-box">
     <MoviesTabs />
     <div class="rounded-lg">
       <GenreFilter @add="handleAdd" />

@@ -1,6 +1,5 @@
 @import 'tailwindcss';
 @import '@nuxt/ui';
-@import './button.css';
 
 @theme static {
   --color-primary: #00e080;
@@ -16,6 +15,10 @@
 
   /* Error */
   --color-text-error: #d10000;
+}
+
+.card-box {
+  @apply space-y-4 dark:bg-bg-seconary-dark bg-white p-4 m-6;
 }
 
 /* Swiper pagination dots */
