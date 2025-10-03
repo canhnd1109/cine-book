@@ -5,9 +5,9 @@ export function addGenre(t: (key: string) => string) {
     genreName: z
       .string()
       .refine(val => typeof val === 'string', {
-        message: t('genreName_invalid')
+        message: t('genre-name-invalid')
       })
-      .nonempty(t('genreName_required'))
+      .nonempty(t('genre-name-required'))
   })
 }
 

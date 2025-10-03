@@ -5,6 +5,7 @@ const emits = defineEmits<{
   add: [value: boolean]
 }>()
 const search = defineModel<string>('search', { default: '' })
+const { t } = useI18n()
 
 const handleSearch = debounce(() => {
   emits('search')
@@ -19,10 +20,10 @@ const handleSearch = debounce(() => {
       size="lg"
       variant="outline"
       loading-icon="i-lucide-loader"
-      placeholder="Search..."
+      :placeholder="t('search')"
       @update:model-value="handleSearch"
     />
-    <BaseButton text="Thêm mới" variant="solid" class-name="rounded" @click="emits('add', true)" />
+    <BaseButton :text="t('add')" variant="solid" class-name="rounded" @click="emits('add', true)" />
   </div>
 </template>
 

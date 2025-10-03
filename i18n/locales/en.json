@@ -58,5 +58,12 @@
   },
   "success": "Success",
   "error": "Error",
-  "you-do-not-have-permission-to-access-this-page": "You don't have permission to access this page"
+  "you-do-not-have-permission-to-access-this-page": "You don't have permission to access this page",
+  "add": "Add",
+  "add-genre": "Add genre",
+  "genre-name": "Genre name",
+  "enter-movie-genre-name": "Enter movie genre name",
+  "search": "Search...",
+  "genre-name-invalid": "Genre name invalid",
+  "genre-name-required": "Genre name is required"
 }

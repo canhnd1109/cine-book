@@ -58,5 +58,12 @@
   },
   "success": "Thành công",
   "error": "Lỗi",
-  "you-do-not-have-permission-to-access-this-page": "Bạn không có quyền truy cập vào trang này"
+  "you-do-not-have-permission-to-access-this-page": "Bạn không có quyền truy cập vào trang này",
+  "add": "Thêm",
+  "add-genre": "Thêm thể loại phim",
+  "genre-name": "Tên thể loại",
+  "enter-movie-genre-name": "Nhập tên thể loại phim",
+  "search": "Tìm kiếm...",
+  "genre-name-invalid": "Tên thể loại không hợp lệ",
+  "genre-name-required": "Tên thể loại là bắt buộc"
 }
