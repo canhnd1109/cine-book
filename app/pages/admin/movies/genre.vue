@@ -43,7 +43,7 @@ const canSubmit = computed(() => {
 <template>
   <div class="space-y-4">
     <MoviesTabs />
-    <div class="p-4 dark:bg-bg-primary-dark bg-bg-light rounded-2xl mr-6">
+    <div class="p-4 dark:bg-bg-primary-dark bg-bg-light rounded-lg mr-6">
       <GenreFilter @add="handleAdd" />
     </div>
     <UModal v-model:open="isOpen" :title="t('add-genre')">

@@ -24,7 +24,7 @@ function isActive(path: string) {
 </script>
 
 <template>
-  <div class="flex-col w-60 dark:bg-bg-primary-dark rounded-2xl bg-bg-light m-6 p-4 space-y-2">
+  <div class="flex-col w-60 dark:bg-bg-primary-dark rounded-lg bg-bg-light m-6 p-4 space-y-2">
     <div class="cursor-pointer" @click="router.push('/')">logo</div>
     <div v-for="(item, index) in sidebarAdmin" :key="index">
       <p
