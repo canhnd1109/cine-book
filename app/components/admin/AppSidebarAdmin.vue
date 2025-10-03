@@ -24,11 +24,11 @@ function isActive(path: string) {
 </script>
 
 <template>
-  <div class="flex-col w-60 dark:bg-bg-primary-dark rounded-lg bg-bg-light m-6 p-4 space-y-2">
+  <div class="w-60 dark:bg-bg-seconary-dark rounded-lg bg-white my-6 ml-6 p-4 space-y-2">
     <div class="cursor-pointer" @click="router.push('/')">logo</div>
     <div v-for="(item, index) in sidebarAdmin" :key="index">
       <p
-        class="flex justify-start items-center gap-2 hover:cursor-pointer hover:bg-gray-200 p-2 rounded-md hover:text-primary"
+        class="flex justify-start items-center gap-2 hover:cursor-pointer hover:bg-gray-200 dark:hover:bg-bg-primary-dark p-2 rounded-md hover:text-primary"
         :class="isActive(item.path) ? '!bg-primary !text-white font-bold' : ''"
         @click="router.push(item.path)"
       >

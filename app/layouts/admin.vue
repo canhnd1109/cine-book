@@ -4,7 +4,7 @@ import AppSidebarAdmin from '~/components/admin/AppSidebarAdmin.vue'
 </script>
 
 <template>
-  <div class="h-screen flex w-screen">
+  <div class="h-screen flex w-screen dark:bg-bg-primary-dark bg-bg-light">
     <AppSidebarAdmin />
     <div class="w-full">
       <AppHeaderAdmin />
