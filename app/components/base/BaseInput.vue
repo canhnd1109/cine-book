@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { debounce } from 'lodash-es'
+// import { debounce } from 'lodash-es'
 
 const props = defineProps<{ modelValue: string }>()
 
 const emits = defineEmits<{
   (e: 'update:modelValue', value: string): void
-  (e: 'search'): void
+  (e: 'input'): void
 }>()
 
 const { t } = useI18n()
@@ -18,14 +18,15 @@ watch(
   }
 )
 
-const handleSearch = debounce(() => {
-  emits('search')
-}, 400)
+// const handleSearch = debounce(() => {
+//   emits('search')
+// }, 400)
 
 const onInput = (val: string) => {
   inputValue.value = val
   emits('update:modelValue', val)
-  handleSearch()
+  emits('input')
+  // handleSearch()
 }
 </script>
 
