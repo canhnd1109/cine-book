@@ -98,5 +98,8 @@
   "close-date-after-release-date": "Close date must be after the release date.",
   "movie-name": "Name movie",
   "drop-your-image-here": "Drop your image here",
-  "description-upload-image": "SVG, PNG, JPG or GIF"
+  "description-upload-image": "SVG, PNG, JPG or GIF",
+  "please-select-poster-image": "Please select poster image",
+  "iamge-size-must-not-exceed-5mb": "Image size must not exceed 5MB",
+  "only-accept-image-formats-jpeg-png-gif-webp": "Only accept image formats: JPEG, PNG, GIF, WEBP"
 }

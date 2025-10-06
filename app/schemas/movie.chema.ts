@@ -29,11 +29,15 @@ export function createMovieSchema(t: (key: string) => string) {
       trailerUrl: z.string().min(1, t('trailer-url-required')),
 
       posterFile: z
-        .any()
-        .refine(file => file instanceof File && file.size > 0, t('poster-file-required'))
-        .refine(file => !file || ['image/png', 'image/jpeg', 'image/jpg'].includes(file.type), t('triler-invalid-format'))
+        .instanceof(File, {
+          message: t('please-select-poster-image')
+        })
+        .refine(file => file.size <= 5 * 1024 * 1024, t('iamge-size-must-not-exceed-5mb'))
+        .refine(
+          file => ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'].includes(file.type),
+          t('only-accept-image-formats-jpeg-png-gif-webp')
+        )
         .nullable(),
-
       genreIds: z.array(z.string()).nonempty(t('genre-ids-nonempty'))
     })
     .refine(data => new Date(data.closeDate) > new Date(data.releaseDate), {

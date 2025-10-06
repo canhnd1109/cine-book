@@ -24,6 +24,8 @@ const form = ref<ICreateMovie>({
   genreIds: []
 })
 
+const uploadError = ref<string>('')
+
 const emit = defineEmits<{
   add: [value: boolean]
 }>()
@@ -47,23 +49,63 @@ function focusCloseInput() {
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   el?.showPicker?.() || el?.focus()
 }
+
+const handleFileSelect = (file: File | null | undefined) => {
+  uploadError.value = ''
+
+  if (!file) {
+    form.value.posterFile = null
+    return
+  }
+
+  const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+  if (!validTypes.includes(file.type)) {
+    uploadError.value = t('invalid-file-type')
+    form.value.posterFile = null
+    return
+  }
+
+  const maxSize = 5 * 1024 * 1024 // 5MB
+  if (file.size > maxSize) {
+    uploadError.value = t('file-too-large')
+    form.value.posterFile = null
+    return
+  }
+
+  form.value.posterFile = file
+}
+
+const canSubmit = computed(() => {
+  return !form.value.posterFile || !form.value.name
+})
 </script>
+
 <template>
   <UModal v-model:open="isOpen" :title="t('add-movie')" class="!w-[1000px]">
     <template #body>
       <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="emit('add', false)">
         <UFormField class="flex justify-center items-center" name="posterFile">
-          <UFileUpload
-            accept="image/*"
-            :label="t('drop-your-image-here')"
-            :description="t('description-upload-image')"
-            class="w-96 min-h-48"
-          />
+          <div class="w-full">
+            <UFileUpload
+              v-model="form.posterFile"
+              accept="image/*"
+              :label="t('drop-your-image-here')"
+              :description="t('description-upload-image')"
+              class="w-96 min-h-48 mx-auto"
+              @update:model-value="handleFileSelect"
+            />
+
+            <!-- Error message -->
+            <p v-if="uploadError" class="text-red-500 text-sm text-center mt-2">
+              {{ uploadError }}
+            </p>
+          </div>
         </UFormField>
 
         <UFormField :label="t('movie-name')" name="name">
           <UInput v-model="form.name" :placeholder="t('movie-name')" :ui="{ base: 'h-10' }" class="w-full" />
         </UFormField>
+
         <div class="grid grid-cols-2 gap-4">
           <UFormField :label="t('director-name')" name="director">
             <UInput v-model="form.director" :placeholder="t('enter-director-movie-name')" :ui="{ base: 'h-10' }" class="w-full" />
@@ -107,6 +149,7 @@ function focusCloseInput() {
             <UInput v-model="form.price" :placeholder="t('price')" :ui="{ base: 'h-10' }" class="w-full" />
           </UFormField>
         </div>
+
         <UFormField :label="t('trailer')" name="trailerUrl">
           <UInput v-model="form.trailerUrl" :placeholder="t('enter-trailer')" :ui="{ base: 'h-10' }" class="w-full" />
         </UFormField>
