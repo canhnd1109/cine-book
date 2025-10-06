@@ -95,5 +95,8 @@
   "poster-file-required": "Poster file is required.",
   "triler-invalid-format": "Poster must be in PNG or JPEG format.",
   "genre-ids-nonempty": "At least one genre must be selected.",
-  "close-date-after-release-date": "Close date must be after the release date."
+  "close-date-after-release-date": "Close date must be after the release date.",
+  "movie-name": "Name movie",
+  "drop-your-image-here": "Drop your image here",
+  "description-upload-image": "SVG, PNG, JPG or GIF"
 }

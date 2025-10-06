@@ -95,5 +95,8 @@
   "poster-file-required": "Vui lòng chọn ảnh poster.",
   "triler-invalid-format": "Ảnh poster chỉ được phép có định dạng PNG hoặc JPEG.",
   "genre-ids-nonempty": "Vui lòng chọn ít nhất một thể loại.",
-  "close-date-after-release-date": "Ngày kết thúc phải sau ngày phát hành."
+  "close-date-after-release-date": "Ngày kết thúc phải sau ngày phát hành.",
+  "movie-name": "Tên phim",
+  "drop-your-image-here": "Tải ảnh nên",
+  "description-upload-image": "SVG, PNG, JPG hoặc GIF"
 }

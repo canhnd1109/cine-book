@@ -19,7 +19,8 @@ const form = ref<ICreateMovie>({
   note: '',
   price: 0,
   trailerUrl: '',
-  posterUrl: null,
+  posterFile: null,
+  name: '',
   genreIds: []
 })
 
@@ -51,6 +52,18 @@ function focusCloseInput() {
   <UModal v-model:open="isOpen" :title="t('add-movie')" class="!w-[1000px]">
     <template #body>
       <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="emit('add', false)">
+        <UFormField class="flex justify-center items-center" name="posterFile">
+          <UFileUpload
+            accept="image/*"
+            :label="t('drop-your-image-here')"
+            :description="t('description-upload-image')"
+            class="w-96 min-h-48"
+          />
+        </UFormField>
+
+        <UFormField :label="t('movie-name')" name="name">
+          <UInput v-model="form.name" :placeholder="t('movie-name')" :ui="{ base: 'h-10' }" class="w-full" />
+        </UFormField>
         <div class="grid grid-cols-2 gap-4">
           <UFormField :label="t('director-name')" name="director">
             <UInput v-model="form.director" :placeholder="t('enter-director-movie-name')" :ui="{ base: 'h-10' }" class="w-full" />
