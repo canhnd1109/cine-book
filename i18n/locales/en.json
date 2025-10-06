@@ -65,5 +65,6 @@
   "enter-movie-genre-name": "Enter movie genre name",
   "search": "Search...",
   "genre-name-invalid": "Genre name invalid",
-  "genre-name-required": "Genre name is required"
+  "genre-name-required": "Genre name is required",
+  "add-movie": "Add movie"
 }

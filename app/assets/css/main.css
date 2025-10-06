@@ -15,10 +15,12 @@
 
   /* Error */
   --color-text-error: #d10000;
+
+  --container-lg: 100vw;
 }
 
 .card-box {
-  @apply space-y-4 dark:bg-bg-seconary-dark bg-white p-4 m-6;
+  @apply space-y-4 dark:bg-bg-seconary-dark bg-white p-4 m-6 rounded-lg;
 }
 
 /* Swiper pagination dots */

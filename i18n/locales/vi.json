@@ -65,5 +65,6 @@
   "enter-movie-genre-name": "Nhập tên thể loại phim",
   "search": "Tìm kiếm...",
   "genre-name-invalid": "Tên thể loại không hợp lệ",
-  "genre-name-required": "Tên thể loại là bắt buộc"
+  "genre-name-required": "Tên thể loại là bắt buộc",
+  "add-movie": "Thêm phim"
 }

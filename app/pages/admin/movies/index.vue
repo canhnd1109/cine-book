@@ -1,12 +1,21 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'admin', middleware: ['admin'] })
+
+const isOpen = ref(false)
+
+const handeAddMovie = (isOpenModal: boolean = false) => {
+  if (isOpenModal) {
+    isOpen.value = true
+  } else {
+    console.log('object')
+  }
+}
 </script>
 
 <template>
   <div class="card-box">
     <MoviesTabs />
-    <div class="p-4 dark:bg-bg-primary-dark bg-bg-light rounded-lg mr-6">
-      <h2>Movies Tab</h2>
-    </div>
+    <MovieFilter @add="handeAddMovie" />
+    <MovieModalAdd v-model:is-open="isOpen" />
   </div>
 </template>
