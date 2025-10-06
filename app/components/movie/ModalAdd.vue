@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { MAX_SIZE_IMAGE_UPLOAD } from '~/constants'
 import { createMovieSchema, type ICreateMovie } from '~/schemas/movie.chema'
 
 const isOpen = defineModel('isOpen', { type: Boolean, default: false })
@@ -8,6 +9,7 @@ const { schema } = useSchema(createMovieSchema)
 
 const formRef = ref()
 const isCreating = ref(false)
+
 const form = ref<ICreateMovie>({
   director: '',
   performer: '',
@@ -20,14 +22,14 @@ const form = ref<ICreateMovie>({
   price: 0,
   trailerUrl: '',
   posterFile: null,
-  name: '',
-  genreIds: []
+  name: ''
+  // genreIds: ['1']
 })
 
 const uploadError = ref<string>('')
 
 const emit = defineEmits<{
-  add: [value: boolean]
+  add: [value: boolean, form: ICreateMovie]
 }>()
 
 const submitForm = () => {
@@ -65,8 +67,7 @@ const handleFileSelect = (file: File | null | undefined) => {
     return
   }
 
-  const maxSize = 5 * 1024 * 1024 // 5MB
-  if (file.size > maxSize) {
+  if (file.size > MAX_SIZE_IMAGE_UPLOAD) {
     uploadError.value = t('file-too-large')
     form.value.posterFile = null
     return
@@ -76,14 +77,26 @@ const handleFileSelect = (file: File | null | undefined) => {
 }
 
 const canSubmit = computed(() => {
-  return !form.value.posterFile || !form.value.name
+  return (
+    form.value.posterFile ||
+    form.value.name ||
+    form.value.performer ||
+    form.value.description ||
+    form.value.releaseDate ||
+    form.value.closeDate ||
+    form.value.nation ||
+    form.value.duration ||
+    form.value.price ||
+    form.value.trailerUrl
+    // !form.value.genreIds.length
+  )
 })
 </script>
 
 <template>
   <UModal v-model:open="isOpen" :title="t('add-movie')" class="!w-[1000px]">
     <template #body>
-      <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="emit('add', false)">
+      <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="emit('add', false, form)">
         <UFormField class="flex justify-center items-center" name="posterFile">
           <div class="w-full">
             <UFileUpload
@@ -102,11 +115,13 @@ const canSubmit = computed(() => {
           </div>
         </UFormField>
 
-        <UFormField :label="t('movie-name')" name="name">
-          <UInput v-model="form.name" :placeholder="t('movie-name')" :ui="{ base: 'h-10' }" class="w-full" />
-        </UFormField>
-
         <div class="grid grid-cols-2 gap-4">
+          <UFormField :label="t('movie-name')" name="name">
+            <UInput v-model="form.name" :placeholder="t('movie-name')" :ui="{ base: 'h-10' }" class="w-full" />
+          </UFormField>
+          <UFormField :label="t('movie-duration')" name="duration">
+            <UInput v-model="form.duration" :placeholder="t('movie-duration')" :ui="{ base: 'h-10' }" class="w-full" />
+          </UFormField>
           <UFormField :label="t('director-name')" name="director">
             <UInput v-model="form.director" :placeholder="t('enter-director-movie-name')" :ui="{ base: 'h-10' }" class="w-full" />
           </UFormField>
@@ -165,7 +180,7 @@ const canSubmit = computed(() => {
           :is-loading="isCreating"
           variant="solid"
           class-name="rounded "
-          :is-disable="canSubmit"
+          :is-disable="!canSubmit"
           @click="submitForm"
         />
       </div>

@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import type { ICreateMovie } from '~/schemas/movie.chema'
+
 definePageMeta({ layout: 'admin', middleware: ['admin'] })
 
 const isOpen = ref(false)
 
-const handeAddMovie = (isOpenModal: boolean = false) => {
+const handeAddMovie = (isOpenModal: boolean = false, formData: ICreateMovie) => {
+  console.log('🚀 ~ handeAddMovie ~ formData:', formData)
   if (isOpenModal) {
     isOpen.value = true
   } else {
@@ -16,6 +19,6 @@ const handeAddMovie = (isOpenModal: boolean = false) => {
   <div class="card-box">
     <MoviesTabs />
     <MovieFilter @add="handeAddMovie" />
-    <MovieModalAdd v-model:is-open="isOpen" />
+    <MovieModalAdd v-model:is-open="isOpen" @add="handeAddMovie" />
   </div>
 </template>

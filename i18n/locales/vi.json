@@ -101,5 +101,6 @@
   "description-upload-image": "SVG, PNG, JPG hoặc GIF",
   "please-select-poster-image": "Vui lòng chọn ảnh poster",
   "iamge-size-must-not-exceed-5mb": "Kích thước ảnh không được vượt quá 5MB",
-  "only-accept-image-formats-jpeg-png-gif-webp": "Chỉ chấp nhận các định dạng ảnh: JPEG, PNG, GIF, WEBP"
+  "only-accept-image-formats-jpeg-png-gif-webp": "Chỉ chấp nhận các định dạng ảnh: JPEG, PNG, GIF, WEBP",
+  "movie-duration": "Thời lượng phim"
 }
