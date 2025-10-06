@@ -3,40 +3,40 @@ import { z } from 'zod'
 export function createMovieSchema(t: (key: string) => string) {
   return z
     .object({
-      director: z.string().min(1, t('director_required')),
+      director: z.string().min(1, t('director-required')),
 
-      performer: z.string().min(1, t('performer_required')),
+      performer: z.string().min(1, t('performer-required')),
 
-      description: z.string().min(1, t('description_required')),
+      description: z.string().min(1, t('description-required')),
 
       releaseDate: z.string().refine(val => !isNaN(Date.parse(val)), {
-        message: t('releaseDate_invalid')
+        message: t('release-date-invalid')
       }),
 
       closeDate: z.string().refine(val => !isNaN(Date.parse(val)), {
-        message: t('closeDate_invalid')
+        message: t('close-date-invalid')
       }),
 
-      nation: z.string().min(1, t('nation_required')),
+      nation: z.string().min(1, t('nation-required')),
 
-      duration: z.string().min(1, t('duration_positive')),
+      duration: z.string().min(1, t('duration-positive')),
 
       note: z.string().optional(),
 
-      price: z.number().nonnegative(t('price_nonnegative')),
+      price: z.number().nonnegative(t('price-nonnegative')),
 
-      trailerUrl: z.string().min(1, t('trailerUrl_invalid')),
+      trailerUrl: z.string().min(1, t('trailerUrl-invalid')),
 
       posterUrl: z
         .instanceof(File)
-        .refine(file => file.size > 0, t('poster_required'))
-        .refine(file => ['image/png', 'image/jpeg', 'image/jpg'].includes(file.type), t('poster_invalid_format'))
+        .refine(file => file.size > 0, t('trailer-required'))
+        .refine(file => ['image/png', 'image/jpeg', 'image/jpg'].includes(file.type), t('triler-invalid-format'))
         .nullable(),
 
-      genreIds: z.array(z.string()).nonempty(t('genreIds_nonempty'))
+      genreIds: z.array(z.string()).nonempty(t('genre-ids-nonempty'))
     })
     .refine(data => new Date(data.closeDate) > new Date(data.releaseDate), {
-      message: t('closeDate_after_releaseDate'),
+      message: t('close-date-after-release-date'),
       path: ['closeDate']
     })
 }

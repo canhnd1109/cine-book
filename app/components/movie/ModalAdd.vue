@@ -69,7 +69,7 @@ function focusCloseInput() {
               ref="dateReleaseInput"
               v-model="form.releaseDate"
               type="datetime-local"
-              placeholder="choose-release-date"
+              :placeholder="t('choose-release-date')"
               :ui="{ base: 'h-10', root: 'w-full' }"
               class="w-full"
               @click="focusReleaseInput"
@@ -94,11 +94,11 @@ function focusCloseInput() {
             <UInput v-model="form.price" :placeholder="t('price')" :ui="{ base: 'h-10' }" class="w-full" />
           </UFormField>
         </div>
-        <UFormField :label="t('trailer-url')" name="trailerUrl">
-          <UInput v-model="form.trailerUrl" :placeholder="t('enter-trailer-url')" :ui="{ base: 'h-10' }" class="w-full" />
+        <UFormField :label="t('trailer')" name="trailerUrl">
+          <UInput v-model="form.trailerUrl" :placeholder="t('enter-trailer')" :ui="{ base: 'h-10' }" class="w-full" />
         </UFormField>
-        <UFormField :label="t('description')" name="description">
-          <UTextarea v-model="form.description" :placeholder="t('enter-description-movie')" class="w-full" />
+        <UFormField :label="t('description-movie')" name="description">
+          <UTextarea v-model="form.description" :placeholder="t('description-movie')" class="w-full" />
         </UFormField>
       </UForm>
     </template>
