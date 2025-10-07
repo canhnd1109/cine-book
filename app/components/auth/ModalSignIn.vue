@@ -33,7 +33,7 @@ const canSubmit = computed(() => {
 
 <template>
   <ClientOnly>
-    <UModal v-model:open="isOpen" :title="t('header.signin')">
+    <UModal v-model:open="isOpen" :title="t('header.signin')" class="w-1/3">
       <template #body>
         <UForm ref="formRef" :schema="signInSchema" :state="form" class="space-y-4" @submit="emits('sign-in', form)">
           <UFormField :label="t('auth.email')" name="email">

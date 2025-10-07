@@ -86,7 +86,7 @@ const canSubmit = computed(() => {
 
 <template>
   <ClientOnly>
-    <UModal v-model:open="isOpen" :title="t('header.signup')">
+    <UModal v-model:open="isOpen" :title="t('header.signup')" class="w-1/3">
       <template #body>
         <UForm ref="formRef" :schema="signUpSchema" :state="form" class="space-y-4" @submit="emits('sign-up', form)">
           <div class="grid grid-cols-2 gap-4">
