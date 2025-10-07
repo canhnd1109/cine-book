@@ -8,6 +8,10 @@ const isOpen = defineModel('isOpen', { type: Boolean, default: false })
 const { t } = useI18n()
 const { schema } = useSchema(createMovieSchema)
 
+const { isProcessing = false } = defineProps<{
+  isProcessing?: boolean
+}>()
+
 const formRef = ref()
 const isCreating = ref(false)
 
@@ -95,8 +99,8 @@ const canSubmit = computed(() => {
 
 const formattedPrice = computed({
   get: () => {
-    if (!form.value.price) return ''
-    return new Intl.NumberFormat('vi-VN').format(form.value.price)
+    if (!form.value.price) return 0
+    return new Intl.NumberFormat('vi-VN').format(+form.value.price)
   },
   set: (value: string) => {
     const numberValue = value.replace(/[^\d]/g, '')
@@ -200,7 +204,8 @@ const formattedPrice = computed({
       <div class="flex justify-end w-full">
         <BaseButton
           :text="t('add')"
-          :is-loading="isCreating"
+          class="w-20"
+          :is-loading="isProcessing"
           variant="solid"
           class-name="rounded "
           :is-disable="!canSubmit"

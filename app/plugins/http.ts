@@ -4,7 +4,6 @@ import type { FetchError } from 'ofetch'
 const API_REQUEST_TIMEOUT = 20000
 const defaultHeaders: Record<string, string> = {
   'App-Code': 'cine-book',
-  'Content-Type': 'application/json',
   Accept: 'application/json'
 }
 
@@ -37,6 +36,10 @@ export default defineNuxtPlugin(() => {
       ...((options.headers as Record<string, string>) ?? {})
     }
 
+    if (options.body && !(options.body instanceof FormData)) {
+      headers['Content-Type'] = 'application/json'
+    }
+
     if (accessToken.value) {
       headers.Authorization = `Bearer ${accessToken.value}`
     }
@@ -64,7 +67,6 @@ export default defineNuxtPlugin(() => {
             credentials: 'include'
           })
 
-          // Cập nhật cookies thông qua useCookie
           accessToken.value = response.accessToken
           refreshToken.value = response.refreshToken
 
