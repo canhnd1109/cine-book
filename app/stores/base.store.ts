@@ -1,4 +1,4 @@
-import { apiGenre, apiShared } from '~/services'
+import { apiShared } from '~/services'
 import type { IGenre } from '~/types/genre.type'
 
 export const useBaseStore = defineStore('base', () => {

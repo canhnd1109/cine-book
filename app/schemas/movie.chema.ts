@@ -37,8 +37,8 @@ export function createMovieSchema(t: (key: string) => string) {
           file => ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'].includes(file.type),
           t('only-accept-image-formats-jpeg-png-gif-webp')
         )
-        .nullable()
-      // genreIds: z.array(z.string()).nonempty(t('genre-ids-nonempty'))
+        .nullable(),
+      genreIds: z.array(z.string()).nonempty(t('genre-ids-nonempty'))
     })
     .refine(data => new Date(data.closeDate) > new Date(data.releaseDate), {
       message: t('close-date-after-release-date'),

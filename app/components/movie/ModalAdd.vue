@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { MAX_SIZE_IMAGE_UPLOAD } from '~/constants'
 import { createMovieSchema, type ICreateMovie } from '~/schemas/movie.chema'
+const { genres } = storeToRefs(useBaseStore())
 
 const isOpen = defineModel('isOpen', { type: Boolean, default: false })
 
@@ -22,8 +23,8 @@ const form = ref<ICreateMovie>({
   price: 0,
   trailerUrl: '',
   posterFile: null,
-  name: ''
-  // genreIds: ['1']
+  name: '',
+  genreIds: []
 })
 
 const uploadError = ref<string>('')
@@ -164,6 +165,17 @@ const canSubmit = computed(() => {
             <UInput v-model="form.price" :placeholder="t('price')" :ui="{ base: 'h-10' }" class="w-full" />
           </UFormField>
         </div>
+        <UFormField :label="t('genre')" name="genreIds">
+          <BaseSelect
+            v-model="form.genreIds"
+            :item="genres"
+            label-key="name"
+            value-key="id"
+            multiple
+            :placeholder="t('genre')"
+            class="w-full"
+          />
+        </UFormField>
 
         <UFormField :label="t('trailer')" name="trailerUrl">
           <UInput v-model="form.trailerUrl" :placeholder="t('enter-trailer')" :ui="{ base: 'h-10' }" class="w-full" />

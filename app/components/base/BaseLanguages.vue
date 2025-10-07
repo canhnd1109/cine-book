@@ -7,7 +7,8 @@
     :ui="{
       base: 'w-36 h-10 hover:cursor-pointer',
       value: 'ml-2 hover:cursor-pointer',
-      content: 'hover:cursor-pointer'
+      content: 'hover:cursor-pointer',
+      trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200'
     }"
     @change="setLocale(locale)"
   />
@@ -39,7 +40,5 @@ const items = ref([
   }
 ] satisfies SelectItem[])
 
-const avatar = computed(() =>
-  items.value.find(item => item.value === locale.value)?.avatar
-)
+const avatar = computed(() => items.value.find(item => item.value === locale.value)?.avatar)
 </script>

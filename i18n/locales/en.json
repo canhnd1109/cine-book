@@ -102,5 +102,6 @@
   "please-select-poster-image": "Please select poster image",
   "iamge-size-must-not-exceed-5mb": "Image size must not exceed 5MB",
   "only-accept-image-formats-jpeg-png-gif-webp": "Only accept image formats: JPEG, PNG, GIF, WEBP",
-  "movie-duration": "Movie duration"
+  "movie-duration": "Movie duration",
+  "genre": "Genre movie"
 }
