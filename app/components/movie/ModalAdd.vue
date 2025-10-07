@@ -79,18 +79,29 @@ const handleFileSelect = (file: File | null | undefined) => {
 
 const canSubmit = computed(() => {
   return (
-    form.value.posterFile ||
-    form.value.name ||
-    form.value.performer ||
-    form.value.description ||
-    form.value.releaseDate ||
-    form.value.closeDate ||
-    form.value.nation ||
-    form.value.duration ||
-    form.value.price ||
-    form.value.trailerUrl
-    // !form.value.genreIds.length
+    form.value.posterFile &&
+    form.value.name &&
+    form.value.performer &&
+    form.value.description &&
+    form.value.releaseDate &&
+    form.value.closeDate &&
+    form.value.nation &&
+    form.value.duration &&
+    form.value.price &&
+    form.value.trailerUrl &&
+    form.value.genreIds.length
   )
+})
+
+const formattedPrice = computed({
+  get: () => {
+    if (!form.value.price) return ''
+    return new Intl.NumberFormat('vi-VN').format(form.value.price)
+  },
+  set: (value: string) => {
+    const numberValue = value.replace(/[^\d]/g, '')
+    form.value.price = numberValue ? parseInt(numberValue) : 0
+  }
 })
 </script>
 
@@ -162,7 +173,7 @@ const canSubmit = computed(() => {
             <UInput v-model="form.nation" :placeholder="t('nation')" :ui="{ base: 'h-10' }" class="w-full" />
           </UFormField>
           <UFormField :label="t('price')" name="price">
-            <UInput v-model="form.price" :placeholder="t('price')" :ui="{ base: 'h-10' }" class="w-full" />
+            <UInput v-model="formattedPrice" :placeholder="t('price')" :ui="{ base: 'h-10' }" class="w-full" />
           </UFormField>
         </div>
         <UFormField :label="t('genre')" name="genreIds">
