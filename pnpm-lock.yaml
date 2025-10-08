@@ -51,8 +51,8 @@ importers:
         specifier: ^3.0.3
         version: 3.0.3(typescript@5.9.2)(vue@3.5.21(typescript@5.9.2))
       swiper:
-        specifier: ^12.0.1
-        version: 12.0.1
+        specifier: ^12.0.2
+        version: 12.0.2
       zod:
         specifier: ^4.1.9
         version: 4.1.9
@@ -5043,8 +5043,8 @@ packages:
     engines: {node: '>=16'}
     hasBin: true
 
-  swiper@12.0.1:
-    resolution: {integrity: sha512-Fi+gNw/tfc4hsGowQU5tRC/f1HFknkh4Vz8PaDI4JTinLUMTwhZyaovcH/va+iXq98BNUHN5ok0c2lEI82Fsgw==}
+  swiper@12.0.2:
+    resolution: {integrity: sha512-y8F6fDGXmTVVgwqJj6I00l4FdGuhpFJn0U/9Ucn1MwWOw3NdLV8aH88pZOjyhBgU/6PyBlUx+JuAQ5KMWz906Q==}
     engines: {node: '>= 4.7.0'}
 
   swrv@1.1.0:
@@ -11626,7 +11626,7 @@ snapshots:
       picocolors: 1.1.1
       sax: 1.4.1
 
-  swiper@12.0.1: {}
+  swiper@12.0.2: {}
 
   swrv@1.1.0(vue@3.5.21(typescript@5.9.2)):
     dependencies:
