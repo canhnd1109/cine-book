@@ -4,6 +4,7 @@ import { addGenre, type IFormGenre } from '~/schemas/genre.schema'
 import { apiGenre } from '~/services'
 import type { IGenre } from '~/types/genre.type'
 import { useGenreData } from './useGenre'
+import type { IResponseData } from '~/types/response.type'
 
 definePageMeta({ layout: 'admin', middleware: ['admin'] })
 
@@ -25,15 +26,11 @@ const {
   data,
   pending: isFetching,
   refresh
-} = await useAsyncData('genres-list', () => apiGenre.fetchGenre(filters.value), {
-  server: true,
-  lazy: false,
-  default: () => []
+} = await useAsyncData('genres-list', async () => {
+  const res = await apiGenre.fetchGenre(filters.value)
+  return res.value
 })
-
-if (data.value) {
-  genres.value = data.value.value
-}
+genres.value = data.value || []
 
 setRefreshCallback(refresh)
 
@@ -67,7 +64,7 @@ const columns: TableColumn<IGenre>[] = [
   {
     accessorKey: 'id',
     header: 'ID',
-    cell: ({ row }) => `#${row.getValue('id')}`
+    cell: ({ row }) => `${row.getValue('id')}`
   },
   {
     accessorKey: 'name',

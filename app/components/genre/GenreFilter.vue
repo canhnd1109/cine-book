@@ -13,7 +13,11 @@ const { t } = useI18n()
 
 <template>
   <div class="flex justify-between items-center">
-    <BaseInput v-model="filters.search" @input="apply({ search: filters.search }, { debounce: true, resetPage: true })" />
+    <BaseInput
+      v-model="filters.search"
+      :is-show-clear="true"
+      @input="apply({ search: filters.search }, { debounce: true, resetPage: true })"
+    />
     <BaseButton :text="t('add')" variant="solid" class-name="rounded" @click="emits('add', true)" />
   </div>
 </template>

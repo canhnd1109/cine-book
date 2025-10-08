@@ -1,7 +1,8 @@
 <script setup lang="ts">
-// import { debounce } from 'lodash-es'
-
-const props = defineProps<{ modelValue: string }>()
+const { modelValue = '', isShowClear = false } = defineProps<{
+  modelValue?: string
+  isShowClear?: boolean
+}>()
 
 const emits = defineEmits<{
   (e: 'update:modelValue', value: string): void
@@ -9,24 +10,19 @@ const emits = defineEmits<{
 }>()
 
 const { t } = useI18n()
-const inputValue = ref(props.modelValue)
+const inputValue = ref(modelValue)
 
 watch(
-  () => props.modelValue,
+  () => modelValue,
   val => {
     inputValue.value = val
   }
 )
 
-// const handleSearch = debounce(() => {
-//   emits('search')
-// }, 400)
-
 const onInput = (val: string) => {
   inputValue.value = val
   emits('update:modelValue', val)
   emits('input')
-  // handleSearch()
 }
 </script>
 
@@ -39,5 +35,15 @@ const onInput = (val: string) => {
     loading-icon="i-lucide-loader"
     :placeholder="t('search')"
     @update:model-value="onInput"
-  />
+  >
+    <template v-if="isShowClear && inputValue?.length" #trailing>
+      <UButton
+        color="neutral"
+        variant="link"
+        size="sm"
+        icon="i-lucide-circle-x"
+        aria-label="Clear input"
+        @click="inputValue = ''"
+      /> </template
+  ></UInput>
 </template>
