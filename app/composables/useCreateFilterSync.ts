@@ -1,3 +1,5 @@
+import { useFilterSync } from './useFilterSync'
+
 export type CoerceKind = 'number' | 'boolean' | 'string' | ((v: any) => any)
 
 interface CreateFilterSyncOptions<T> {
@@ -10,7 +12,6 @@ interface CreateFilterSyncOptions<T> {
 function getByPath(obj: any, path: string) {
   return path.split('.').reduce((o, k) => (o ? o[k] : undefined), obj)
 }
-
 function setByPath(obj: any, path: string, value: any) {
   const keys = path.split('.')
   let cur = obj

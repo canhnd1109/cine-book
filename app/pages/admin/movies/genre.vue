@@ -1,8 +1,12 @@
 <script setup lang="ts">
+import type { TableColumn } from '@nuxt/ui'
 import { addGenre, type IFormGenre } from '~/schemas/genre.schema'
 import { apiGenre } from '~/services'
+import type { IGenre } from '~/types/genre.type'
 
 definePageMeta({ layout: 'admin', middleware: ['admin'] })
+
+const { genres } = storeToRefs(useBaseStore())
 const { t } = useI18n()
 
 const { schema } = useSchema(addGenre)
@@ -14,6 +18,7 @@ const isCreating = ref(false)
 const form = ref<IFormGenre>({
   genreName: ''
 })
+
 const handleAdd = async (isOpenModal: boolean = false) => {
   if (isOpenModal) {
     isOpen.value = true
@@ -35,9 +40,22 @@ const submitForm = () => {
     formRef.value.submit()
   }
 }
+
 const canSubmit = computed(() => {
   return !form.value.genreName
 })
+
+const columns: TableColumn<IGenre>[] = [
+  {
+    accessorKey: 'id',
+    header: 'ID',
+    cell: ({ row }) => `#${row.getValue('id')}`
+  },
+  {
+    accessorKey: 'name',
+    header: 'Name'
+  }
+]
 </script>
 
 <template>
@@ -45,6 +63,7 @@ const canSubmit = computed(() => {
     <MoviesTabs />
     <div class="rounded-lg">
       <GenreFilter @add="handleAdd" />
+      <UTable ref="table" :data="genres" :columns="columns" />
     </div>
     <UModal v-model:open="isOpen" :title="t('add-genre')">
       <template #body>

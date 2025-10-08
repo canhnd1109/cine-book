@@ -13,7 +13,6 @@ const { isProcessing = false } = defineProps<{
 }>()
 
 const formRef = ref()
-const isCreating = ref(false)
 
 const form = ref<ICreateMovie>({
   director: '',
