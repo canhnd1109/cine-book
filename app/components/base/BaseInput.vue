@@ -24,6 +24,10 @@ const onInput = (val: string) => {
   emits('update:modelValue', val)
   emits('input')
 }
+
+const clearInput = () => {
+  onInput('')
+}
 </script>
 
 <template>
@@ -37,13 +41,7 @@ const onInput = (val: string) => {
     @update:model-value="onInput"
   >
     <template v-if="isShowClear && inputValue?.length" #trailing>
-      <UButton
-        color="neutral"
-        variant="link"
-        size="sm"
-        icon="i-lucide-circle-x"
-        aria-label="Clear input"
-        @click="inputValue = ''"
-      /> </template
-  ></UInput>
+      <UButton color="neutral" variant="link" size="sm" icon="i-lucide-circle-x" aria-label="Clear input" @click="clearInput" />
+    </template>
+  </UInput>
 </template>
