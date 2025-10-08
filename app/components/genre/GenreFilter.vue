@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useGenreFilterSync } from '~/pages/admin/movies/useGenre'
+import { useGenreData } from '~/pages/admin/movies/useGenre'
 
-const { apply, filters } = useGenreFilterSync()
+const { apply, filters } = useGenreData()
 
 const emits = defineEmits<{
   search: []

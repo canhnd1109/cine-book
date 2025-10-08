@@ -3,10 +3,10 @@ import type { TableColumn } from '@nuxt/ui'
 import { addGenre, type IFormGenre } from '~/schemas/genre.schema'
 import { apiGenre } from '~/services'
 import type { IGenre } from '~/types/genre.type'
+import { useGenreData } from './useGenre'
 
 definePageMeta({ layout: 'admin', middleware: ['admin'] })
 
-const { genres } = storeToRefs(useBaseStore())
 const { t } = useI18n()
 
 const { schema } = useSchema(addGenre)
@@ -18,6 +18,24 @@ const isCreating = ref(false)
 const form = ref<IFormGenre>({
   genreName: ''
 })
+
+const { filters, genres, setRefreshCallback } = useGenreData()
+
+const {
+  data,
+  pending: isFetching,
+  refresh
+} = await useAsyncData('genres-list', () => apiGenre.fetchGenre(filters.value), {
+  server: true,
+  lazy: false,
+  default: () => []
+})
+
+if (data.value) {
+  genres.value = data.value.value
+}
+
+setRefreshCallback(refresh)
 
 const handleAdd = async (isOpenModal: boolean = false) => {
   if (isOpenModal) {
@@ -63,7 +81,7 @@ const columns: TableColumn<IGenre>[] = [
     <MoviesTabs />
     <div class="rounded-lg">
       <GenreFilter @add="handleAdd" />
-      <UTable ref="table" :data="genres" :columns="columns" />
+      <UTable ref="table" :data="genres" :columns="columns" :loading="isFetching" />
     </div>
     <UModal v-model:open="isOpen" :title="t('add-genre')">
       <template #body>

@@ -2,6 +2,8 @@ import type { NitroFetchRequest } from 'nitropack'
 import { useNuxtApp } from '#app'
 import type { ExtendedFetchOptions } from '~/types/http.type'
 
+type QueryParams = Record<string, string | number | boolean | string[] | number[] | undefined | any>
+
 export default class BaseService {
   prefix: string
 
@@ -24,10 +26,7 @@ export default class BaseService {
     }
   }
 
-  async get<T, Q extends Record<string, string | number | boolean | null | undefined> = Record<string, never>>(
-    url: string,
-    params?: Q
-  ): Promise<T> {
+  async get<T>(url: string, params?: QueryParams): Promise<T> {
     return this.handleRequest<T>(url, { method: 'get', query: params })
   }
 

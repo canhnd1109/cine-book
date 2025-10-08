@@ -42,11 +42,19 @@ export function useFilterSync<T>(
       return
     }
 
-    const doUpdate = () => router[replace ? 'replace' : 'push']({ query: filtersToQuery(next) })
+    const doUpdate = async () => {
+      await router[replace ? 'replace' : 'push']({ query: filtersToQuery(next) })
+      await nextTick()
+    }
 
     if (useDebounce) {
       if (debounceId.value) clearTimeout(debounceId.value)
-      debounceId.value = setTimeout(() => doUpdate(), debounceMs)
+      await new Promise<void>(resolve => {
+        debounceId.value = setTimeout(async () => {
+          await doUpdate()
+          resolve()
+        }, debounceMs)
+      })
     } else {
       await doUpdate()
     }
