@@ -17,6 +17,12 @@ useSeoMeta({ title: 'Components' })
               >
                 <span>Button</span>
               </NuxtLink>
+              <NuxtLink
+                class="flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg"
+                to="/components/pagination"
+              >
+                <span>Pagination</span>
+              </NuxtLink>
             </div>
           </nav>
         </div>
