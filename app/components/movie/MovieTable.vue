@@ -13,6 +13,7 @@ const hoveredItem = ref<string | null>(null)
 
 <template>
   <BaseSkeletonCard v-if="isFetching" />
+  <BaseEmpty v-else-if="!movies.length" />
   <template v-else>
     <div
       v-for="item in movies"

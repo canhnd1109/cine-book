@@ -49,8 +49,11 @@ const {
   const res = await apiPublic.fetchMovies(filters.value)
   return res.value
 })
-movies.value = data.value?.content || []
-totalRecords.value = data.value?.totalElements as number
+
+watchEffect(() => {
+  movies.value = data.value?.content || []
+  totalRecords.value = data.value?.totalElements || 0
+})
 
 setRefreshCallback(refresh)
 </script>

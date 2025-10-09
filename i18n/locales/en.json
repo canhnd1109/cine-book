@@ -115,5 +115,6 @@
   "note": "Note",
   "price": "Price",
   "genres": "Genres",
-  "order-by": "Order by"
+  "order-by": "Order by",
+  "no-data": "No data"
 }
