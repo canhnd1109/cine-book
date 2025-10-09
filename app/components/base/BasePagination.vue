@@ -14,7 +14,7 @@ interface Props {
   disabled?: boolean
   showInfo?: boolean
   infoPosition?: 'left' | 'right' | 'top' | 'bottom'
-  label: string
+  label?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
