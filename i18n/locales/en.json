@@ -75,8 +75,8 @@
   "choose-release-date": "Choose release date",
   "close-date": "End date",
   "choose-close-date": "Choose end date",
-  "nation": "Country",
-  "price": "Ticket price",
+  "country": "Country",
+  "ticket-price": "Ticket price",
   "trailer": "Movie trailer",
   "enter-trailer": "Enter movie trailer",
   "description-movie": "Description",
@@ -105,5 +105,14 @@
   "movie-duration": "Movie duration",
   "genre": "Genre movie",
   "delete": "Delete",
-  "deleting": "Deleting"
+  "deleting": "Deleting",
+  "director": "Director",
+  "performer": "Performer",
+  "releaseDate": "Release date",
+  "closeDate": "Close date",
+  "nation": "Nation",
+  "duration": "Duration",
+  "note": "Note",
+  "price": "Price",
+  "genres": "Genres"
 }

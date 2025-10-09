@@ -76,8 +76,8 @@
   "choose-release-date": "Chọn thời gian ra mắt",
   "close-date": "Thời gian đóng",
   "choose-close-date": "Chọn thời gian đóng",
-  "nation": "Quốc gia",
-  "price": "Giá vé",
+  "country": "Quốc gia",
+  "ticket-price": "Giá vé",
   "trailer": "Giới thiệu phim",
   "enter-trailer": "Nhập giới thiệu phim",
   "description-movie": "Mô tả",
@@ -105,5 +105,14 @@
   "only-accept-image-formats-jpeg-png-gif-webp": "Chỉ chấp nhận các định dạng ảnh: JPEG, PNG, GIF, WEBP",
   "movie-duration": "Thời lượng phim",
   "delete": "Xóa",
-  "deleting": "Xóa"
+  "deleting": "Xóa",
+  "director": "Đạo diễn",
+  "performer": "Diễn viên",
+  "releaseDate": "Ngày phát hành",
+  "closeDate": "Ngày kết thúc",
+  "nation": "Quốc gia",
+  "duration": "Thời lượng",
+  "note": "Ghi chú",
+  "price": "Giá",
+  "genres": "Thể loại"
 }

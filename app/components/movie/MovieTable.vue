@@ -29,41 +29,42 @@ const hoveredItem = ref<string | null>(null)
           {{ item.name }}
         </p>
         <p>
-          <span class="text-[#90a1b9] text-sm">Director: </span>
+          <span class="text-[#90a1b9] text-sm">{{ $t('director') }}: </span>
           <span>{{ item.director }}</span>
         </p>
         <p>
-          <span class="text-[#90a1b9] text-sm">Performer: </span>
+          <span class="text-[#90a1b9] text-sm">{{ $t('performer') }}: </span>
           <span>{{ item.performer }}</span>
         </p>
         <p>
-          <span class="text-[#90a1b9] text-sm">Release date: </span>
+          <span class="text-[#90a1b9] text-sm">{{ $t('releaseDate') }}: </span>
           <span>{{ useFormatDate(item.releaseDate, 'DD/MM/YYYY hh:mm:ss') }}</span>
         </p>
         <p>
-          <span class="text-[#90a1b9] text-sm">Close date: </span>
-          <span>{{ useFormatDate(item.releaseDate, 'DD/MM/YYYY hh:mm:ss') }}</span>
+          <span class="text-[#90a1b9] text-sm">{{ $t('closeDate') }}: </span>
+          <span>{{ useFormatDate(item.closeDate, 'DD/MM/YYYY hh:mm:ss') }}</span>
         </p>
         <p>
-          <span class="text-[#90a1b9] text-sm">Nation: </span>
+          <span class="text-[#90a1b9] text-sm">{{ $t('nation') }}: </span>
           <span>{{ item.nation }}</span>
         </p>
         <p>
-          <span class="text-[#90a1b9] text-sm">Duration: </span>
+          <span class="text-[#90a1b9] text-sm">{{ $t('duration') }}: </span>
           <span>{{ item.duration }}</span>
         </p>
         <p>
-          <span class="text-[#90a1b9] text-sm">Note: </span>
+          <span class="text-[#90a1b9] text-sm">{{ $t('note') }}: </span>
           <span>{{ item.note }}</span>
         </p>
         <p>
-          <span class="text-[#90a1b9] text-sm">Price: </span>
-          <span>{{ item.price }}</span>
+          <span class="text-[#90a1b9] text-sm">{{ $t('ticket-price') }}: </span>
+          <span>{{ useFormatPrice(item.price) }}</span>
         </p>
         <p>
-          <span class="text-[#90a1b9] text-sm">Genres: </span>
+          <span class="text-[#90a1b9] text-sm">{{ $t('genres') }}: </span>
           <span>{{ item.genres.join(', ') }}</span>
         </p>
+
         <!-- eslint-disable-next-line vue/no-v-html -->
         <p class="line-clamp-3" v-html="item.description" />
       </template>
