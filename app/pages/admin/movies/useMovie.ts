@@ -7,7 +7,7 @@ export const useMovieFilterSync = createFilterSync<IMovieFilter>({
     ...DEFAULT_QUERY_PAGINATION,
     searchName: '',
     genre: '',
-    price: '',
+    rangePrice: '',
     maxPrice: '',
     minPrice: '',
     orderBy: '',
@@ -16,6 +16,7 @@ export const useMovieFilterSync = createFilterSync<IMovieFilter>({
   mapping: {
     searchName: 'searchName',
     genre: 'genre',
+    rangePrice: 'rangePrice',
     maxPrice: 'maxPrice',
     minPrice: 'minPrice',
     orderBy: 'orderBy',
@@ -24,6 +25,7 @@ export const useMovieFilterSync = createFilterSync<IMovieFilter>({
   coerce: {
     searchName: 'string',
     genre: 'string',
+    rangePrice: 'string',
     maxPrice: 'string',
     minPrice: 'string',
     orderBy: 'number',

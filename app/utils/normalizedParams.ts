@@ -1,7 +1,7 @@
 import { cloneDeep, forEach } from 'lodash-es'
 
 export default function normalizedParamss(params: Record<string, any>) {
-  const removeKeys = ['loading', 'tabActive', 'total']
+  const removeKeys = ['loading', 'tabActive', 'total', 'rangePrice']
 
   if (params) {
     const _params = cloneDeep(params)

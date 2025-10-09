@@ -9,7 +9,7 @@ export interface IMovieFilter {
   genre: string
   minPrice: string | number
   maxPrice: string | number
-  price: string | number
+  rangePrice: string | number
   pageIndex: number
   pageSize: number
   orderType: string

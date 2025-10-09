@@ -15,6 +15,7 @@ const { t } = useI18n()
 const { apply, filters } = useMovieData()
 
 const handleSelectedPrice = (value: string) => {
+  filters.value.rangePrice = value
   if (value) {
     const [min, max] = value.includes('-')
       ? value.split('-').map(Number)
@@ -26,7 +27,10 @@ const handleSelectedPrice = (value: string) => {
     filters.value.minPrice = ''
     filters.value.maxPrice = ''
   }
-  apply({ minPrice: filters.value.minPrice, maxPrice: filters.value.maxPrice }, { resetPage: true })
+  apply(
+    { minPrice: filters.value.minPrice, maxPrice: filters.value.maxPrice, rangePrice: filters.value.rangePrice },
+    { resetPage: true }
+  )
 }
 </script>
 
@@ -53,7 +57,7 @@ const handleSelectedPrice = (value: string) => {
         @change="apply({ genre: $event }, { resetPage: true })"
       />
       <BaseSelect
-        :model-value="filters.price"
+        v-model="filters.rangePrice"
         :item="LIST_PRICE_MOVIE"
         :placeholder="t('price-ticket')"
         @change="handleSelectedPrice($event)"
