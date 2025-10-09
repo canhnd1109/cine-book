@@ -6,9 +6,12 @@ import AppSidebarAdmin from '~/components/admin/AppSidebarAdmin.vue'
 <template>
   <div class="h-screen flex w-screen dark:bg-bg-primary-dark bg-bg-light">
     <AppSidebarAdmin />
-    <div class="w-full">
+
+    <div class="flex flex-col w-full h-screen overflow-hidden">
       <AppHeaderAdmin />
-      <NuxtPage />
+      <div class="flex-1 overflow-y-auto">
+        <NuxtPage />
+      </div>
     </div>
   </div>
 </template>

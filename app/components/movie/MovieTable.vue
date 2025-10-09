@@ -12,7 +12,12 @@ const hoveredItem = ref<string | null>(null)
 </script>
 
 <template>
-  <div v-for="item in movies" :key="item.id" class="grid-cols-5 gap-6 grid">
+  <BaseSkeletonCard />
+  <div
+    v-for="item in movies"
+    :key="item.id"
+    class="grid-cols-5 gap-6 grid max-lg:grid-cols-4 max-md:grid-cols-3 max-sm:grid-cols-2"
+  >
     <BaseCard :item="item" :index="0" class="w-full">
       <template #image>
         <div class="flex items-center justify-center">
