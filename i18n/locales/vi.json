@@ -114,5 +114,6 @@
   "duration": "Thời lượng",
   "note": "Ghi chú",
   "price": "Giá",
-  "genres": "Thể loại"
+  "genres": "Thể loại",
+  "order-by": "Sắp Xếp"
 }

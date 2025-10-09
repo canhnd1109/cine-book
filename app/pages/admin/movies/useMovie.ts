@@ -25,7 +25,7 @@ export const useMovieFilterSync = createFilterSync<IMovieFilter>({
     genre: 'string',
     maxPrice: 'string',
     minPrice: 'string',
-    orderBy: 'string',
+    orderBy: 'number',
     orderType: 'string'
   },
   debounceMs: 400

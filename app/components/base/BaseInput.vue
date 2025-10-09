@@ -34,7 +34,7 @@ const clearInput = () => {
   <UInput
     :model-value="inputValue"
     icon="i-lucide-search"
-    size="lg"
+    size="xl"
     variant="outline"
     loading-icon="i-lucide-loader"
     :placeholder="t('search')"

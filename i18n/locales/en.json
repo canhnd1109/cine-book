@@ -114,5 +114,6 @@
   "duration": "Duration",
   "note": "Note",
   "price": "Price",
-  "genres": "Genres"
+  "genres": "Genres",
+  "order-by": "Order by"
 }

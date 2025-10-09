@@ -1,11 +1,6 @@
 <script setup lang="ts" generic="T extends SelectItem">
 import type { SelectItem } from '@nuxt/ui'
 
-const model = defineModel<any>({
-  required: false,
-  default: ''
-})
-
 const {
   item,
   labelKey = 'label',
@@ -27,6 +22,23 @@ const {
   multiple?: boolean
   required?: boolean
 }>()
+
+const model = defineModel<any>({
+  required: false,
+  default: ''
+})
+
+const emit = defineEmits<{
+  'update:modelValue': [value: any]
+  blur: [e: FocusEvent]
+  focus: []
+  change: [value: any]
+}>()
+
+function handleChange(value: any) {
+  emit('update:modelValue', value)
+  emit('change', value)
+}
 </script>
 
 <template>
@@ -45,5 +57,8 @@ const {
       content: `hover:cursor-pointer ${contentStyle}`,
       trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200'
     }"
+    @update:model-value="handleChange"
+    @blur="emit('blur', $event)"
+    @focus="emit('focus')"
   />
 </template>
