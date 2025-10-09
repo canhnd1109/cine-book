@@ -3,6 +3,7 @@ import { useNuxtApp } from '#app'
 import type { ExtendedFetchOptions } from '~/types/http.type'
 
 type QueryParams = Record<string, string | number | boolean | string[] | number[] | undefined | any>
+type DeleteParams = Record<string, string | number | boolean | undefined>
 
 export default class BaseService {
   prefix: string
@@ -46,10 +47,7 @@ export default class BaseService {
     return this.handleRequest<T>(url, { method: 'patch', body })
   }
 
-  async delete<T, Q extends Record<string, string | number | boolean | null | undefined> = Record<string, never>>(
-    url: string,
-    params?: Q
-  ): Promise<T> {
+  async delete<T>(url: string, params?: DeleteParams): Promise<T> {
     return this.handleRequest<T>(url, { method: 'delete', query: params })
   }
 }

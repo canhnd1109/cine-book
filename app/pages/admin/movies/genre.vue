@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import type { TableColumn } from '@nuxt/ui'
+import type { DropdownMenuItem, TableColumn } from '@nuxt/ui'
 import { addGenre, type IFormGenre } from '~/schemas/genre.schema'
-import { apiGenre } from '~/services'
+import { apiGenre, apiPublic } from '~/services'
 import type { IGenre } from '~/types/genre.type'
 import { useGenreData } from './useGenre'
-import type { IResponseData } from '~/types/response.type'
 
 definePageMeta({ layout: 'admin', middleware: ['admin'] })
 
@@ -14,7 +13,8 @@ const { schema } = useSchema(addGenre)
 const isOpen = ref(false)
 const formRef = ref()
 const toast = useToast()
-const isCreating = ref(false)
+const isProcessing = ref(false)
+const isActionLoading = ref(false)
 
 const form = ref<IFormGenre>({
   genreName: ''
@@ -27,7 +27,7 @@ const {
   pending: isFetching,
   refresh
 } = await useAsyncData('genres-list', async () => {
-  const res = await apiGenre.fetchGenre(filters.value)
+  const res = await apiPublic.fetchGenre(filters.value)
   return res.value
 })
 genres.value = data.value || []
@@ -38,14 +38,14 @@ const handleAdd = async (isOpenModal: boolean = false) => {
   if (isOpenModal) {
     isOpen.value = true
   } else {
-    isCreating.value = true
+    isProcessing.value = true
     const { message } = await apiGenre.addGenre(form.value.genreName)
     toast.add({
       title: t('success'),
       description: message,
       color: 'success'
     })
-    isCreating.value = false
+    isProcessing.value = false
     isOpen.value = false
   }
 }
@@ -69,8 +69,42 @@ const columns: TableColumn<IGenre>[] = [
   {
     accessorKey: 'name',
     header: t('genre-name')
+  },
+  {
+    id: 'action'
   }
 ]
+
+function getDropdownActions(row: IGenre): DropdownMenuItem[][] {
+  return [
+    [
+      {
+        label: 'Edit',
+        icon: 'i-lucide-edit'
+      },
+      {
+        label: isActionLoading.value ? t('deleting') + '...' : t('delete'),
+        icon: isActionLoading.value ? 'i-lucide-loader spin' : 'i-lucide-trash',
+        color: 'error',
+        disabled: isActionLoading.value,
+        onSelect: async () => {
+          isActionLoading.value = true
+          try {
+            const { message } = await apiGenre.deleteGenre(row.id)
+            toast.add({
+              title: t('success'),
+              description: message,
+              color: 'success'
+            })
+            await refresh()
+          } finally {
+            isActionLoading.value = false
+          }
+        }
+      }
+    ]
+  ]
+}
 </script>
 
 <template>
@@ -78,7 +112,19 @@ const columns: TableColumn<IGenre>[] = [
     <MoviesTabs />
     <div class="rounded-lg">
       <GenreFilter @add="handleAdd" />
-      <UTable ref="table" :data="genres" :columns="columns" :loading="isFetching" />
+      <UTable ref="table" :data="genres" :columns="columns" :loading="isFetching">
+        <template #action-cell="{ row }">
+          <UDropdownMenu :items="getDropdownActions(row.original)" :ui="{ itemLabel: 'cursor-pointer' }">
+            <UButton
+              :icon="isActionLoading ? 'i-lucide-loader animate-spin' : 'i-lucide-ellipsis-vertical'"
+              color="neutral"
+              variant="ghost"
+              aria-label="Actions"
+              class="hover:cursor-pointer"
+            />
+          </UDropdownMenu>
+        </template>
+      </UTable>
     </div>
     <UModal v-model:open="isOpen" :title="t('add-genre')">
       <template #body>
@@ -98,7 +144,7 @@ const columns: TableColumn<IGenre>[] = [
         <div class="flex justify-end w-full">
           <BaseButton
             :text="t('add')"
-            :is-loading="isCreating"
+            :is-loading="isProcessing"
             variant="solid"
             class-name="rounded "
             :is-disable="canSubmit"
