@@ -47,7 +47,7 @@ function handleChange(value: any) {
     :items="[item]"
     :value-key="valueKey as string"
     :label-key="labelKey as string"
-    class="w-48"
+    class="w-40"
     :placeholder
     :multiple
     :required

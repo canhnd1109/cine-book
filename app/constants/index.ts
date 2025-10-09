@@ -35,4 +35,31 @@ const ORDER_BY_MOVIE = [
   }
 ]
 
-export { MAX_SIZE_IMAGE_UPLOAD, DEFAULT_QUERY_PAGINATION, ORDER_BY_MOVIE }
+const LIST_PRICE_MOVIE = [
+  {
+    label: 'Dưới 100.000đ',
+    value: '100000'
+  },
+  {
+    label: '100.000đ - 200.000đ',
+    value: '100000-200000'
+  },
+  {
+    label: '200.000đ - 300.000đ',
+    value: '200000-300000'
+  },
+  {
+    label: '300.000đ - 400.000đ',
+    value: '300000-400000'
+  },
+  {
+    label: '400.000đ - 500.000đ',
+    value: '400000-500000'
+  },
+  {
+    label: 'Trên 500.000đ',
+    value: '500000'
+  }
+]
+
+export { MAX_SIZE_IMAGE_UPLOAD, DEFAULT_QUERY_PAGINATION, ORDER_BY_MOVIE, LIST_PRICE_MOVIE }

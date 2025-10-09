@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useMovieData } from '~/pages/admin/movies/useMovie'
 import type { ICreateMovie } from '~/schemas/movie.chema'
-import { ORDER_BY_MOVIE } from '~/constants'
+import { ORDER_BY_MOVIE, LIST_PRICE_MOVIE } from '~/constants'
+
+const { genres } = storeToRefs(useBaseStore())
 
 const emits = defineEmits<{
   search: []
@@ -11,6 +13,21 @@ const emits = defineEmits<{
 const { t } = useI18n()
 
 const { apply, filters } = useMovieData()
+
+const handleSelectedPrice = (value: string) => {
+  if (value) {
+    const [min, max] = value.includes('-')
+      ? value.split('-').map(Number)
+      : [value === '100000' ? null : 500000, value === '100000' ? 100000 : null]
+
+    filters.value.minPrice = min || 0
+    filters.value.maxPrice = max || 0
+  } else {
+    filters.value.minPrice = ''
+    filters.value.maxPrice = ''
+  }
+  apply({ minPrice: filters.value.minPrice, maxPrice: filters.value.maxPrice }, { resetPage: true })
+}
 </script>
 
 <template>
@@ -25,8 +42,21 @@ const { apply, filters } = useMovieData()
         :model-value="filters.orderBy"
         :item="ORDER_BY_MOVIE"
         :placeholder="t('order-by')"
-        class="w-40"
         @change="apply({ orderBy: $event }, { resetPage: true })"
+      />
+      <BaseSelect
+        v-model="filters.genre"
+        :item="genres"
+        label-key="name"
+        value-key="id"
+        :placeholder="t('genre')"
+        @change="apply({ genre: $event }, { resetPage: true })"
+      />
+      <BaseSelect
+        :model-value="filters.price"
+        :item="LIST_PRICE_MOVIE"
+        :placeholder="t('price-ticket')"
+        @change="handleSelectedPrice($event)"
       />
     </div>
     <div>

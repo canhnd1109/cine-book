@@ -7,6 +7,7 @@ export const useMovieFilterSync = createFilterSync<IMovieFilter>({
     ...DEFAULT_QUERY_PAGINATION,
     searchName: '',
     genre: '',
+    price: '',
     maxPrice: '',
     minPrice: '',
     orderBy: '',

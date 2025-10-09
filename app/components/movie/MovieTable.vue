@@ -63,7 +63,7 @@ const hoveredItem = ref<string | null>(null)
             <span>{{ item.note }}</span>
           </p>
           <p>
-            <span class="text-[#90a1b9] text-sm">{{ $t('ticket-price') }}: </span>
+            <span class="text-[#90a1b9] text-sm">{{ $t('price-ticket') }}: </span>
             <span>{{ useFormatPrice(item.price) }}</span>
           </p>
           <p>

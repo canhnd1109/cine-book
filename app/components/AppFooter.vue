@@ -11,7 +11,7 @@
         {{ t('footer.news') }}
       </span>
       <span class="hover:cursor-pointer hover:scale-110 hover:font-semibold transition-transform duration-200 inline-block">
-        {{ t('footer.ticket-price') }}
+        {{ t('footer.price-ticket') }}
       </span>
       <span class="hover:cursor-pointer hover:scale-110 hover:font-semibold transition-transform duration-200 inline-block">
         {{ t('footer.faq') }}
