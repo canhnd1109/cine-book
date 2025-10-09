@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import type { ICreateMovie } from '~/schemas/movie.chema'
-import { apiMovie } from '~/services'
+import { apiMovie, apiPublic } from '~/services'
 import normalizedParamss from '~/utils/normalizedParams'
+import { useMovieData } from './useMovie'
 
 definePageMeta({ layout: 'admin', middleware: ['admin'] })
+
 const toast = useToast()
 const { t } = useI18n()
 
@@ -36,6 +38,21 @@ const handeAddMovie = async (isOpenModal: boolean = false, formData: ICreateMovi
     }
   }
 }
+
+const { filters, movies, totalRecords, setRefreshCallback } = useMovieData()
+
+const {
+  data,
+  pending: isFetching,
+  refresh
+} = await useAsyncData('movies-list', async () => {
+  const res = await apiPublic.fetchMovies(filters.value)
+  return res.value
+})
+movies.value = data.value?.content || []
+totalRecords.value = data.value?.totalElements as number
+
+setRefreshCallback(refresh)
 </script>
 
 <template>
@@ -43,5 +60,6 @@ const handeAddMovie = async (isOpenModal: boolean = false, formData: ICreateMovi
     <MoviesTabs />
     <MovieFilter @add="handeAddMovie" />
     <MovieModalAdd v-model:is-open="isOpen" :is-processing="isProcessing" @add="handeAddMovie" />
+    <MovieTable :is-fetching="isFetching" />
   </div>
 </template>

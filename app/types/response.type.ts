@@ -9,3 +9,15 @@ export interface IResponseData<T> {
   message: string
   value: T
 }
+
+export interface IResponsePagination<T> {
+  pageIndex: number
+  pageSize: number
+  totalElements: number
+  totalPages: number
+  sortBy: {
+    property: string
+    direction: string
+  }
+  content: T
+}
