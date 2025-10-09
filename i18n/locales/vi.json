@@ -116,5 +116,6 @@
   "price": "Giá",
   "genres": "Thể loại",
   "order-by": "Sắp Xếp",
-  "no-data": "Không có dữ liệu"
+  "no-data": "Không có dữ liệu",
+  "showing": "Hiển thị"
 }

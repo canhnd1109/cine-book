@@ -2,7 +2,7 @@
 import { useMovieData } from '~/pages/admin/movies/useMovie'
 import useFormatDate from '~/composables/useDateFormat'
 
-const { movies } = useMovieData()
+const { movies, filters, totalRecords } = useMovieData()
 
 const { isFetching } = defineProps<{
   isFetching: boolean
@@ -77,6 +77,16 @@ const hoveredItem = ref<string | null>(null)
         </template>
       </BaseCard>
     </div>
+    <BasePagination
+      :current-page="filters.pageIndex"
+      :items-per-page="filters.pageSize"
+      :total="totalRecords"
+      @update:page="
+        page => {
+          filters.pageIndex = page
+        }
+      "
+    />
   </template>
 </template>
 

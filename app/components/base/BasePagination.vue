@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 interface Props {
   currentPage?: number
   itemsPerPage?: number
@@ -12,6 +14,7 @@ interface Props {
   disabled?: boolean
   showInfo?: boolean
   infoPosition?: 'left' | 'right' | 'top' | 'bottom'
+  label: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -25,7 +28,8 @@ const props = withDefaults(defineProps<Props>(), {
   variant: 'solid',
   disabled: false,
   showInfo: true,
-  infoPosition: 'left'
+  infoPosition: 'left',
+  label: ''
 })
 
 const emit = defineEmits<{
@@ -63,8 +67,8 @@ const isHorizontal = computed(() => ['left', 'right'].includes(props.infoPositio
   >
     <!-- Info text -->
     <div v-if="showInfo" class="text-sm text-gray-500 dark:text-gray-400">
-      Showing <span class="font-medium">{{ startItem }}</span> to <span class="font-medium">{{ endItem }}</span> of
-      <span class="font-medium">{{ total }}</span> results
+      {{ t('showing') }} <span class="font-medium">{{ startItem }}</span> - <span class="font-medium">{{ endItem }}</span> /
+      <span class="font-medium">{{ total }}</span> {{ props.label }}
     </div>
 
     <!-- UPagination -->

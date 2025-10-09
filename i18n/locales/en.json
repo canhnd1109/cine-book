@@ -116,5 +116,6 @@
   "price": "Price",
   "genres": "Genres",
   "order-by": "Order by",
-  "no-data": "No data"
+  "no-data": "No data",
+  "showing": "Showing"
 }
