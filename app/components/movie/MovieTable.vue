@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useMovieData } from '~/pages/admin/movies/useMovie'
+import useFormatDate from '~/composables/useDateFormat'
 
 const { movies } = useMovieData()
 
@@ -28,15 +29,43 @@ const hoveredItem = ref<string | null>(null)
           {{ item.name }}
         </p>
         <p>
-          <span>Director</span>
+          <span class="text-[#90a1b9] text-sm">Director: </span>
           <span>{{ item.director }}</span>
         </p>
         <p>
-          <span>Performer</span>
+          <span class="text-[#90a1b9] text-sm">Performer: </span>
           <span>{{ item.performer }}</span>
         </p>
+        <p>
+          <span class="text-[#90a1b9] text-sm">Release date: </span>
+          <span>{{ useFormatDate(item.releaseDate, 'DD/MM/YYYY hh:mm:ss') }}</span>
+        </p>
+        <p>
+          <span class="text-[#90a1b9] text-sm">Close date: </span>
+          <span>{{ useFormatDate(item.releaseDate, 'DD/MM/YYYY hh:mm:ss') }}</span>
+        </p>
+        <p>
+          <span class="text-[#90a1b9] text-sm">Nation: </span>
+          <span>{{ item.nation }}</span>
+        </p>
+        <p>
+          <span class="text-[#90a1b9] text-sm">Duration: </span>
+          <span>{{ item.duration }}</span>
+        </p>
+        <p>
+          <span class="text-[#90a1b9] text-sm">Note: </span>
+          <span>{{ item.note }}</span>
+        </p>
+        <p>
+          <span class="text-[#90a1b9] text-sm">Price: </span>
+          <span>{{ item.price }}</span>
+        </p>
+        <p>
+          <span class="text-[#90a1b9] text-sm">Genres: </span>
+          <span>{{ item.genres.join(', ') }}</span>
+        </p>
         <!-- eslint-disable-next-line vue/no-v-html -->
-        <p class="line-clamp-3 text-sm text-gray-600 dark:text-gray-400" v-html="item.description" />
+        <p class="line-clamp-3" v-html="item.description" />
       </template>
     </BaseCard>
   </div>
