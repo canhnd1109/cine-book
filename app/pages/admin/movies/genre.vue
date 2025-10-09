@@ -62,13 +62,13 @@ const canSubmit = computed(() => {
 
 const columns: TableColumn<IGenre>[] = [
   {
-    accessorKey: 'id',
-    header: 'ID',
-    cell: ({ row }) => `${row.getValue('id')}`
+    accessorKey: 'stt',
+    header: 'STT',
+    cell: ({ row }) => row.index + 1
   },
   {
     accessorKey: 'name',
-    header: 'Name'
+    header: t('genre-name')
   }
 ]
 </script>
