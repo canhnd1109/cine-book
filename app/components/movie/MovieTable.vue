@@ -12,69 +12,71 @@ const hoveredItem = ref<string | null>(null)
 </script>
 
 <template>
-  <BaseSkeletonCard />
-  <div
-    v-for="item in movies"
-    :key="item.id"
-    class="grid-cols-5 gap-6 grid max-lg:grid-cols-4 max-md:grid-cols-3 max-sm:grid-cols-2"
-  >
-    <BaseCard :item="item" :index="0" class="w-full">
-      <template #image>
-        <div class="flex items-center justify-center">
-          <div class="relative flex items-center justify-center overflow-hidden rounded-lg w-full h-60">
-            <div class="image-container" :class="{ 'slide-active': hoveredItem }">
-              <img :src="item.posterUrl" class="absolute top-0 left-0 h-full w-full object-cover max-sm:object-center" />
+  <BaseSkeletonCard v-if="isFetching" />
+  <template v-else>
+    <div
+      v-for="item in movies"
+      :key="item.id"
+      class="grid-cols-5 gap-6 grid max-lg:grid-cols-4 max-md:grid-cols-3 max-sm:grid-cols-2"
+    >
+      <BaseCard :item="item" :index="0" class="w-full">
+        <template #image>
+          <div class="flex items-center justify-center">
+            <div class="relative flex items-center justify-center overflow-hidden rounded-lg w-full h-60">
+              <div class="image-container" :class="{ 'slide-active': hoveredItem }">
+                <img :src="item.posterUrl" class="absolute top-0 left-0 h-full w-full object-cover max-sm:object-center" />
+              </div>
             </div>
           </div>
-        </div>
-      </template>
+        </template>
 
-      <template #content>
-        <p class="mt-2 line-clamp-2 text-center font-medium">
-          {{ item.name }}
-        </p>
-        <p>
-          <span class="text-[#90a1b9] text-sm">{{ $t('director') }}: </span>
-          <span>{{ item.director }}</span>
-        </p>
-        <p>
-          <span class="text-[#90a1b9] text-sm">{{ $t('performer') }}: </span>
-          <span>{{ item.performer }}</span>
-        </p>
-        <p>
-          <span class="text-[#90a1b9] text-sm">{{ $t('releaseDate') }}: </span>
-          <span>{{ useFormatDate(item.releaseDate, 'DD/MM/YYYY hh:mm:ss') }}</span>
-        </p>
-        <p>
-          <span class="text-[#90a1b9] text-sm">{{ $t('closeDate') }}: </span>
-          <span>{{ useFormatDate(item.closeDate, 'DD/MM/YYYY hh:mm:ss') }}</span>
-        </p>
-        <p>
-          <span class="text-[#90a1b9] text-sm">{{ $t('nation') }}: </span>
-          <span>{{ item.nation }}</span>
-        </p>
-        <p>
-          <span class="text-[#90a1b9] text-sm">{{ $t('duration') }}: </span>
-          <span>{{ item.duration }}</span>
-        </p>
-        <p>
-          <span class="text-[#90a1b9] text-sm">{{ $t('note') }}: </span>
-          <span>{{ item.note }}</span>
-        </p>
-        <p>
-          <span class="text-[#90a1b9] text-sm">{{ $t('ticket-price') }}: </span>
-          <span>{{ useFormatPrice(item.price) }}</span>
-        </p>
-        <p>
-          <span class="text-[#90a1b9] text-sm">{{ $t('genres') }}: </span>
-          <span>{{ item.genres.join(', ') }}</span>
-        </p>
+        <template #content>
+          <p class="mt-2 line-clamp-2 text-center font-medium">
+            {{ item.name }}
+          </p>
+          <p>
+            <span class="text-[#90a1b9] text-sm">{{ $t('director') }}: </span>
+            <span>{{ item.director }}</span>
+          </p>
+          <p>
+            <span class="text-[#90a1b9] text-sm">{{ $t('performer') }}: </span>
+            <span>{{ item.performer }}</span>
+          </p>
+          <p>
+            <span class="text-[#90a1b9] text-sm">{{ $t('releaseDate') }}: </span>
+            <span>{{ useFormatDate(item.releaseDate, 'DD/MM/YYYY hh:mm:ss') }}</span>
+          </p>
+          <p>
+            <span class="text-[#90a1b9] text-sm">{{ $t('closeDate') }}: </span>
+            <span>{{ useFormatDate(item.closeDate, 'DD/MM/YYYY hh:mm:ss') }}</span>
+          </p>
+          <p>
+            <span class="text-[#90a1b9] text-sm">{{ $t('nation') }}: </span>
+            <span>{{ item.nation }}</span>
+          </p>
+          <p>
+            <span class="text-[#90a1b9] text-sm">{{ $t('duration') }}: </span>
+            <span>{{ item.duration }}</span>
+          </p>
+          <p>
+            <span class="text-[#90a1b9] text-sm">{{ $t('note') }}: </span>
+            <span>{{ item.note }}</span>
+          </p>
+          <p>
+            <span class="text-[#90a1b9] text-sm">{{ $t('ticket-price') }}: </span>
+            <span>{{ useFormatPrice(item.price) }}</span>
+          </p>
+          <p>
+            <span class="text-[#90a1b9] text-sm">{{ $t('genres') }}: </span>
+            <span>{{ item.genres.join(', ') }}</span>
+          </p>
 
-        <!-- eslint-disable-next-line vue/no-v-html -->
-        <p class="line-clamp-3" v-html="item.description" />
-      </template>
-    </BaseCard>
-  </div>
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <p class="line-clamp-3" v-html="item.description" />
+        </template>
+      </BaseCard>
+    </div>
+  </template>
 </template>
 
 <style scoped>

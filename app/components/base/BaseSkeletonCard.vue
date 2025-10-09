@@ -1,8 +1,9 @@
 <script setup lang="ts">
-const { skeletonCards = 5, gridClass = 'grid-cols-5' } = defineProps<{
+const { skeletonCards = 5 } = defineProps<{
   skeletonCards?: number
-  gridClass?: string
 }>()
+
+const gridClass = 'grid-cols-[repeat(auto-fit,minmax(200px,1fr))]'
 </script>
 <template>
   <div class="mx-auto grid gap-6" :class="gridClass">
@@ -14,5 +15,3 @@ const { skeletonCards = 5, gridClass = 'grid-cols-5' } = defineProps<{
     </template>
   </div>
 </template>
-
-<style scoped></style>
