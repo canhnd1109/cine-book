@@ -3,6 +3,8 @@
   "dependencyDashboard": true,
   "timezone": "Asia/Ho_Chi_Minh",
   "schedule": ["after 10pm every weekday", "before 5am every weekday", "every weekend"],
+  "reviewers": ["canhnd1109"],
+  "assignees": ["canhnd1109"],
   "lockFileMaintenance": {
     "enabled": true,
     "schedule": ["before 5am on monday"]
@@ -20,9 +22,31 @@
     {
       "matchPackagePatterns": ["^@nuxt/", "^nuxt"],
       "groupName": "nuxt packages"
+    },
+    {
+      "matchPackagePatterns": ["^vue", "^@vue/"],
+      "groupName": "vue packages"
+    },
+    {
+      "matchPackagePatterns": ["^eslint", "^@typescript-eslint/", "^prettier"],
+      "groupName": "linting and formatting"
+    },
+    {
+      "matchPackagePatterns": ["^@tailwindcss/", "^tailwindcss"],
+      "groupName": "tailwind packages"
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "enabled": false
     }
   ],
   "postUpdateOptions": ["pnpmDedupe"],
   "semanticCommits": "enabled",
-  "prCreation": "immediate"
+  "prCreation": "immediate",
+  "labels": ["dependencies", "auto-update"],
+  "commitMessagePrefix": "deps:",
+  "commitMessageAction": "update",
+  "separateMajorMinor": true,
+  "separateMinorPatch": false,
+  "baseBranches": ["develop"]
 }
