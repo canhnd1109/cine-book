@@ -1,4 +1,4 @@
-FROM docker.elastic.co/elasticsearch/elasticsearch:8.10.0
+FROM docker.elastic.co/elasticsearch/elasticsearch:8.19.5
 
 # Cài plugin analysis-icu (hoặc plugin khác nếu anh cần)
 RUN elasticsearch-plugin install --batch analysis-icu
