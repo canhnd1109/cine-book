@@ -23,11 +23,13 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: 10.18.2
 
       # Bật cache pnpm nếu có lockfile
       - name: Setup Node.js (with pnpm cache)
         if: hashFiles('pnpm-lock.yaml') != ''
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20'
           cache: 'pnpm'
@@ -35,7 +37,7 @@ jobs:
       # Fallback nếu chưa có lockfile
       - name: Setup Node.js
         if: hashFiles('pnpm-lock.yaml') == ''
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20'
 
@@ -165,7 +167,7 @@ jobs:
 
       - name: Comment on PR (if PR triggered)
         if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');
@@ -179,7 +181,7 @@ jobs:
 
       - name: Create issue for poor performance (scheduled runs)
         if: github.event_name == 'schedule'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const homePerf = parseFloat(process.env.HOME_PERFORMANCE || '0');
@@ -212,17 +214,19 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: 10.18.2
 
       - name: Setup Node.js (with pnpm cache)
         if: hashFiles('pnpm-lock.yaml') != ''
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20'
           cache: 'pnpm'
 
       - name: Setup Node.js
         if: hashFiles('pnpm-lock.yaml') == ''
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20'
 

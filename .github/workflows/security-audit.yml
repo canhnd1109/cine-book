@@ -26,12 +26,12 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10.18.2
 
       # Cache pnpm nếu có lockfile
       - name: Setup Node.js (with pnpm cache)
         if: hashFiles('pnpm-lock.yaml') != ''
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20'
           cache: 'pnpm'
@@ -39,7 +39,7 @@ jobs:
       # Fallback nếu chưa có lockfile (tránh lỗi cache lock file)
       - name: Setup Node.js
         if: hashFiles('pnpm-lock.yaml') == ''
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '20'
 
@@ -98,7 +98,7 @@ jobs:
 
       - name: Create security issue
         if: env.CRITICAL_VULNERABILITIES != '0' || env.HIGH_VULNERABILITIES != '0'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const {
