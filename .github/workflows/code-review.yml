@@ -1,9 +1,9 @@
-name: Automated Code Review
+name: Automated Code Review 🧠
 
 on:
   pull_request:
-    branches: [ develop, production ]
-    types: [ opened, synchronize, reopened ]
+    branches: [develop, production]
+    types: [opened, synchronize, reopened]
 
 permissions:
   contents: read
@@ -11,245 +11,246 @@ permissions:
   checks: write
 
 jobs:
-  # Automated code review using AI (complexity analysis)
+  # =====================================
+  # 🧩 1️⃣ CODE COMPLEXITY REVIEW (Madge)
+  # =====================================
   code-review:
     runs-on: ubuntu-latest
-    name: AI Code Review
+    name: 🧩 Code Complexity Review
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v4
         with:
           version: 10.18.2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 20
           cache: pnpm
 
-      - name: Install dependencies
-        run: pnpm install
+      - run: pnpm install
 
-      - name: Run complexity analysis with madge (TS/JS only)
+      - name: Run Madge complexity analysis
         shell: bash
         run: |
-          set -e
+          echo "## 🧩 Code Complexity Analysis" >> $GITHUB_STEP_SUMMARY
           DIRS=()
           for d in app components composables plugins utils lib; do
             [ -d "$d" ] && DIRS+=("$d")
           done
           if [ ${#DIRS[@]} -gt 0 ]; then
-            echo "Analyzing directories: ${DIRS[*]}"
-            npx madge --circular --extensions ts,tsx,js,jsx "${DIRS[@]}" || true
-            npx madge --summary "${DIRS[@]}" || true
+            echo "**Analyzed directories:** ${DIRS[*]}" >> $GITHUB_STEP_SUMMARY
+            {
+              npx madge --circular --extensions ts,tsx,js,jsx "${DIRS[@]}" || true
+              npx madge --summary "${DIRS[@]}" || true
+            } > temp_madge.txt
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat temp_madge.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
           else
-            echo "No JS/TS directories found for madge."
+            echo "_No JS/TS directories found for Madge._" >> $GITHUB_STEP_SUMMARY
           fi
 
-  # Check for common issues (TODOs, console logs, unused imports, component names)
+  # =====================================
+  # 🧹 2️⃣ CODE QUALITY CHECKS
+  # =====================================
   code-quality-checks:
     runs-on: ubuntu-latest
-    name: Quality Checks
+    name: 🧹 Code Quality Checks
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
+      - uses: actions/checkout@v5
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v4
         with:
           version: 10.18.2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 20
           cache: pnpm
 
-      - name: Install dependencies
-        run: pnpm install
+      - run: pnpm install
 
-      - name: Check for TODO/FIXME comments
+      - name: 🔍 TODO / FIXME comments
         shell: bash
         run: |
-          echo "## TODO/FIXME Comments Found:" >> $GITHUB_STEP_SUMMARY
-          FOUND=$(grep -R -n -E "TODO|FIXME" \
-            --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" --include="*.vue" \
-            app components pages layouts composables plugins server utils lib 2>/dev/null || true)
+          echo "## 🔍 TODO & FIXME" >> $GITHUB_STEP_SUMMARY
+          FOUND=$(grep -R -n -E "TODO|FIXME" --include="*.{ts,tsx,js,jsx,vue}" app components pages layouts composables plugins server utils lib 2>/dev/null || true)
           if [ -z "$FOUND" ]; then
-            echo "No TODO/FIXME comments found" >> $GITHUB_STEP_SUMMARY
+            echo "✅ No TODO/FIXME comments found" >> $GITHUB_STEP_SUMMARY
           else
-            echo "$FOUND" | head -100 >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ Found TODO/FIXME lines (top 20):" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "$FOUND" | head -20 >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
           fi
 
-      - name: Check for console statements
+      - name: 🧾 Console.* statements
         shell: bash
         run: |
-          echo "## Console.* Statements:" >> $GITHUB_STEP_SUMMARY
-          FOUND=$(grep -R -n -E "console\." \
-            --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" --include="*.vue" \
-            app components pages layouts composables plugins server utils lib 2>/dev/null || true)
+          echo "## 🧾 Console Statements" >> $GITHUB_STEP_SUMMARY
+          FOUND=$(grep -R -n -E "console\." --include="*.{ts,tsx,js,jsx,vue}" app components pages layouts composables plugins server utils lib 2>/dev/null || true)
           if [ -z "$FOUND" ]; then
-            echo "No console statements found" >> $GITHUB_STEP_SUMMARY
+            echo "✅ No console statements found" >> $GITHUB_STEP_SUMMARY
           else
-            echo "$FOUND" | head -100 >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ Found console logs (top 20):" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "$FOUND" | head -20 >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
           fi
 
-      # Replace unimported (which assumes ./src) with knip (best-effort)
-      - name: Check for unused exports/imports (best-effort)
+      - name: 📦 Unused exports/imports (Knip)
         run: npx knip --reporter summary || true
 
-      - name: Check component naming (components/*.vue)
+      - name: 🧱 Component file list
         shell: bash
         run: |
-          echo "## Component Files (.vue in components/):" >> $GITHUB_STEP_SUMMARY
+          echo "## 🧱 Component Files (.vue)" >> $GITHUB_STEP_SUMMARY
           if [ -d components ]; then
-            find components -maxdepth 2 -type f -name "*.vue" | sed 's|.*/||' | sort >> $GITHUB_STEP_SUMMARY
+            find components -maxdepth 2 -type f -name "*.vue" | sort > temp_components.txt
+            echo '| Component | Path |' >> $GITHUB_STEP_SUMMARY
+            echo '|------------|------|' >> $GITHUB_STEP_SUMMARY
+            while read file; do
+              name=$(basename "$file")
+              echo "| $name | $file |" >> $GITHUB_STEP_SUMMARY
+            done < temp_components.txt
           else
-            echo "No components directory" >> $GITHUB_STEP_SUMMARY
+            echo "_No components directory found._" >> $GITHUB_STEP_SUMMARY
           fi
 
-  # Performance analysis
+  # =====================================
+  # ⚡ 3️⃣ PERFORMANCE ANALYSIS
+  # =====================================
   performance-check:
     runs-on: ubuntu-latest
-    name: Performance Analysis
+    name: ⚡ Performance Analysis
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
         with:
           version: 10.18.2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 20
           cache: pnpm
+      - run: pnpm install
 
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Build (Nuxt)
+      - name: 🏗️ Build project
         run: pnpm build
 
-      - name: Analyze build output sizes
+      - name: 📊 Analyze build output sizes
         shell: bash
         run: |
-          echo "## Build Output Sizes:" >> $GITHUB_STEP_SUMMARY
+          echo "## 📊 Build Output Sizes" >> $GITHUB_STEP_SUMMARY
           if [ -d ".output/public" ]; then
             du -sh .output .output/public >> $GITHUB_STEP_SUMMARY
-            echo "### Sample JS assets:" >> $GITHUB_STEP_SUMMARY
-            find .output/public -type f -name "*.js" | head -20 >> $GITHUB_STEP_SUMMARY
+            find .output/public -type f -name "*.js" | head -20 > temp_js.txt
+            echo "### 📦 JS Assets (sample):" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat temp_js.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
           elif [ -d "dist" ]; then
             du -sh dist >> $GITHUB_STEP_SUMMARY
-            echo "### Sample JS assets:" >> $GITHUB_STEP_SUMMARY
-            find dist -type f -name "*.js" | head -20 >> $GITHUB_STEP_SUMMARY
+            find dist -type f -name "*.js" | head -20 > temp_js.txt
+            echo "### 📦 JS Assets (sample):" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat temp_js.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
           else
-            echo "No recognized Nuxt output directory (.output/ or dist/) found." >> $GITHUB_STEP_SUMMARY
+            echo "_No Nuxt output directory (.output/ or dist/) found._" >> $GITHUB_STEP_SUMMARY
           fi
 
-      - name: Check image optimization candidates
+      - name: 🖼️ Image optimization candidates
         shell: bash
         run: |
-          echo "## Image Files (public/ and assets/):" >> $GITHUB_STEP_SUMMARY
+          echo "## 🖼️ Image Optimization Candidates" >> $GITHUB_STEP_SUMMARY
           if [ -d public ] || [ -d assets ]; then
-            find public assets -type f \
-              $$ -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.webp" $$ 2>/dev/null \
-              | head -20 >> $GITHUB_STEP_SUMMARY || true
+            find public assets -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.webp" \) \
+              2>/dev/null | head -20 > temp_imgs.txt
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat temp_imgs.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
           else
-            echo "No image directories (public/ or assets/) found" >> $GITHUB_STEP_SUMMARY
+            echo "_No image directories (public/ or assets/) found._" >> $GITHUB_STEP_SUMMARY
           fi
 
-  # Security checks
+  # =====================================
+  # 🔒 4️⃣ SECURITY ANALYSIS
+  # =====================================
   security-analysis:
     runs-on: ubuntu-latest
-    name: Security Analysis
+    name: 🔒 Security Analysis
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
         with:
           version: 10.18.2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 20
           cache: pnpm
+      - run: pnpm install
 
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Check for hardcoded secrets
+      - name: 🔑 Check for hardcoded secrets
         shell: bash
         run: |
-          echo "## Security Check Results:" >> $GITHUB_STEP_SUMMARY
+          echo "## 🔑 Security Scan" >> $GITHUB_STEP_SUMMARY
           FOUND=$(grep -R -n -i -E "password|secret|api[_-]?key|token|bearer\s+[A-Za-z0-9\._\-]+" \
-            --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" --include="*.vue" \
-            app components pages layouts composables plugins server utils lib 2>/dev/null | grep -v "placeholder" || true)
+            --include="*.{ts,tsx,js,jsx,vue}" app components pages layouts composables plugins server utils lib 2>/dev/null | grep -v "placeholder" || true)
           if [ -z "$FOUND" ]; then
-            echo "No hardcoded secrets found" >> $GITHUB_STEP_SUMMARY
+            echo "✅ No hardcoded secrets found" >> $GITHUB_STEP_SUMMARY
           else
-            echo "$FOUND" | head -100 >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ Found potential secrets (top 20):" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "$FOUND" | head -20 >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
           fi
 
-      - name: Run pnpm audit (best-effort)
-        run: pnpm audit --audit-level moderate || true
+      - name: 🧩 pnpm audit (best-effort)
+        run: pnpm audit --audit-level=moderate || true
 
-  # Accessibility checks
+  # =====================================
+  # ♿ 5️⃣ ACCESSIBILITY CHECK
+  # =====================================
   accessibility-check:
     runs-on: ubuntu-latest
-    name: Accessibility Check
+    name: ♿ Accessibility Check
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
         with:
           version: 10.18.2
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 20
           cache: pnpm
+      - run: pnpm install
 
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Check for accessibility issues
+      - name: 🧠 Accessibility pattern scan
         shell: bash
         run: |
-          echo "## Accessibility Analysis:" >> $GITHUB_STEP_SUMMARY
-          echo "Checking for common accessibility patterns in .vue and TS/JS files..." >> $GITHUB_STEP_SUMMARY
+          echo "## ♿ Accessibility Scan" >> $GITHUB_STEP_SUMMARY
+          echo "Scanning for missing **alt** and **label** attributes..." >> $GITHUB_STEP_SUMMARY
 
-          # Check alt attributes for <img> and <NuxtImg>
-          MISSING_ALT=$(grep -R -n -E "<img|<NuxtImg" \
-            --include="*.vue" --include="*.tsx" --include="*.ts" --include="*.jsx" --include="*.js" \
-            app components pages layouts 2>/dev/null | grep -v "alt=" || true)
+          MISSING_ALT=$(grep -R -n -E "<img|<NuxtImg" --include="*.{vue,ts,tsx,js,jsx}" app components pages layouts 2>/dev/null | grep -v "alt=" || true)
           if [ -z "$MISSING_ALT" ]; then
-            echo "All images likely have alt attributes (heuristic)" >> $GITHUB_STEP_SUMMARY
+            echo "✅ All images likely have alt attributes" >> $GITHUB_STEP_SUMMARY
           else
-            echo "Potential missing alt attributes (first 10):" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ Missing alt attributes (top 10):" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
             echo "$MISSING_ALT" | head -10 >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
           fi
 
-          # Check form inputs for labels/aria-label
-          MISSING_LABEL=$(grep -R -n -E "<input|<select|<textarea" \
-            --include="*.vue" --include="*.tsx" --include="*.ts" --include="*.jsx" --include="*.js" \
-            app components pages layouts 2>/dev/null | grep -v -E "label|aria-label" || true)
+          MISSING_LABEL=$(grep -R -n -E "<input|<select|<textarea" --include="*.{vue,ts,tsx,js,jsx}" app components pages layouts 2>/dev/null | grep -v -E "label|aria-label" || true)
           if [ -z "$MISSING_LABEL" ]; then
-            echo "All inputs likely have labels (heuristic)" >> $GITHUB_STEP_SUMMARY
+            echo "✅ All inputs likely have labels" >> $GITHUB_STEP_SUMMARY
           else
-            echo "Potential unlabeled inputs (first 5):" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ Missing labels (top 5):" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
             echo "$MISSING_LABEL" | head -5 >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
           fi
