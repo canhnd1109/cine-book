@@ -1,52 +1,48 @@
 {
-  "extends": ["github>nuxt/renovate-config-nuxt"],
-  "dependencyDashboard": true,
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:base", "github>nuxt/renovate-config-nuxt"],
+  "branchPrefix": "renovate/",
+  "rebaseWhen": "conflicted",
+  "baseBranches": ["develop"],
+  "rangeStrategy": "bump",
   "timezone": "Asia/Ho_Chi_Minh",
   "schedule": ["after 10pm every weekday", "before 5am every weekday", "every weekend"],
   "reviewers": ["canhnd1109"],
   "assignees": ["canhnd1109"],
+  "labels": ["dependencies", "auto-update"],
   "lockFileMaintenance": {
     "enabled": true,
     "schedule": ["before 5am on monday"]
   },
-  "packageRules": [
-    {
-      "matchDepTypes": ["resolutions"],
-      "enabled": true
-    },
-    {
-      "matchUpdateTypes": ["patch", "digest"],
-      "automerge": true,
-      "groupName": "patch updates"
-    },
-    {
-      "matchPackagePatterns": ["^@nuxt/", "^nuxt"],
-      "groupName": "nuxt packages"
-    },
-    {
-      "matchPackagePatterns": ["^vue", "^@vue/"],
-      "groupName": "vue packages"
-    },
-    {
-      "matchPackagePatterns": ["^eslint", "^@typescript-eslint/", "^prettier"],
-      "groupName": "linting and formatting"
-    },
-    {
-      "matchPackagePatterns": ["^@tailwindcss/", "^tailwindcss"],
-      "groupName": "tailwind packages"
-    },
-    {
-      "matchUpdateTypes": ["major"],
-      "enabled": false
-    }
-  ],
   "postUpdateOptions": ["pnpmDedupe"],
   "semanticCommits": "enabled",
-  "prCreation": "immediate",
-  "labels": ["dependencies", "auto-update"],
   "commitMessagePrefix": "deps:",
-  "commitMessageAction": "update",
-  "separateMajorMinor": true,
-  "separateMinorPatch": false,
-  "baseBranches": ["develop"]
+  "prCreation": "immediate",
+  "dependencyDashboard": true,
+  "packageRules": [
+    {
+      "matchPackagePatterns": ["*"],
+      "matchManagers": ["pnpm"],
+      "matchDatasources": ["npm"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "groupName": "packages (minor & patch)",
+      "labels": ["packages"],
+      "reviewers": ["canhnd1109"],
+      "assignees": ["canhnd1109"]
+    },
+    {
+      "matchPackagePatterns": ["*"],
+      "matchManagers": ["pnpm"],
+      "matchDatasources": ["npm"],
+      "matchUpdateTypes": ["major"],
+      "groupName": "packages (major)",
+      "labels": ["packages"],
+      "reviewers": ["canhnd1109"],
+      "assignees": ["canhnd1109"]
+    },
+    {
+      "matchDepTypes": ["resolutions"],
+      "enabled": false
+    }
+  ]
 }
