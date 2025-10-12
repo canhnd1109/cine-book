@@ -110,13 +110,17 @@ jobs:
         run: |
           echo "## 🧱 Component Files (.vue)" >> $GITHUB_STEP_SUMMARY
           if [ -d components ]; then
-            find components -maxdepth 2 -type f -name "*.vue" | sort > temp_components.txt
-            echo '| Component | Path |' >> $GITHUB_STEP_SUMMARY
-            echo '|------------|------|' >> $GITHUB_STEP_SUMMARY
-            while read file; do
-              name=$(basename "$file")
-              echo "| $name | $file |" >> $GITHUB_STEP_SUMMARY
-            done < temp_components.txt
+            find components -maxdepth 2 -type f -name "*.vue" 2>/dev/null | sort > temp_components.txt || true
+            if [ -s temp_components.txt ]; then
+              echo '| Component | Path |' >> $GITHUB_STEP_SUMMARY
+              echo '|------------|------|' >> $GITHUB_STEP_SUMMARY
+              while read file; do
+                name=$(basename "$file")
+                echo "| $name | $file |" >> $GITHUB_STEP_SUMMARY
+              done < temp_components.txt
+            else
+              echo "_No .vue files found in components directory._" >> $GITHUB_STEP_SUMMARY
+            fi
           else
             echo "_No components directory found._" >> $GITHUB_STEP_SUMMARY
           fi
@@ -144,35 +148,55 @@ jobs:
       - name: 📊 Analyze build output sizes
         shell: bash
         run: |
+          set -e
           echo "## 📊 Build Output Sizes" >> $GITHUB_STEP_SUMMARY
+
           if [ -d ".output/public" ]; then
-            du -sh .output .output/public >> $GITHUB_STEP_SUMMARY
-            find .output/public -type f -name "*.js" | head -20 > temp_js.txt
-            echo "### 📦 JS Assets (sample):" >> $GITHUB_STEP_SUMMARY
+            echo "### Total Sizes" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
-            cat temp_js.txt >> $GITHUB_STEP_SUMMARY
+            du -sh .output .output/public 2>/dev/null || true
             echo '```' >> $GITHUB_STEP_SUMMARY
+
+            echo "### 📦 Top 20 JS Assets" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            find .output/public -type f -name "*.js" -exec ls -lh {} \; 2>/dev/null | \
+              awk '{print $9, $5}' | sort -k2 -hr | head -20 || true
+            echo '```' >> $GITHUB_STEP_SUMMARY
+
           elif [ -d "dist" ]; then
-            du -sh dist >> $GITHUB_STEP_SUMMARY
-            find dist -type f -name "*.js" | head -20 > temp_js.txt
-            echo "### 📦 JS Assets (sample):" >> $GITHUB_STEP_SUMMARY
+            echo "### Total Sizes" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
-            cat temp_js.txt >> $GITHUB_STEP_SUMMARY
+            du -sh dist 2>/dev/null || true
             echo '```' >> $GITHUB_STEP_SUMMARY
+
+            echo "### 📦 Top 20 JS Assets" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            find dist -type f -name "*.js" -exec ls -lh {} \; 2>/dev/null | \
+              awk '{print $9, $5}' | sort -k2 -hr | head -20 || true
+            echo '```' >> $GITHUB_STEP_SUMMARY
+
           else
-            echo "_No Nuxt output directory (.output/ or dist/) found._" >> $GITHUB_STEP_SUMMARY
+            echo "_No build output directory (.output/ or dist/) found._" >> $GITHUB_STEP_SUMMARY
           fi
 
       - name: 🖼️ Image optimization candidates
         shell: bash
         run: |
+          set -e
           echo "## 🖼️ Image Optimization Candidates" >> $GITHUB_STEP_SUMMARY
+
+          IMAGE_COUNT=0
           if [ -d public ] || [ -d assets ]; then
-            find public assets -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.webp" \) \
-              2>/dev/null | head -20 > temp_imgs.txt
             echo '```' >> $GITHUB_STEP_SUMMARY
-            cat temp_imgs.txt >> $GITHUB_STEP_SUMMARY
+            {
+              find public assets -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.webp" \) \
+                -exec ls -lh {} \; 2>/dev/null | awk '{print $9, $5}' | sort -k2 -hr | head -20
+            } >> $GITHUB_STEP_SUMMARY || true
             echo '```' >> $GITHUB_STEP_SUMMARY
+
+            IMAGE_COUNT=$(find public assets -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.webp" \) 2>/dev/null | wc -l || echo "0")
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Total images found:** $IMAGE_COUNT" >> $GITHUB_STEP_SUMMARY
           else
             echo "_No image directories (public/ or assets/) found._" >> $GITHUB_STEP_SUMMARY
           fi

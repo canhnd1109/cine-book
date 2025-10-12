@@ -1,10 +1,12 @@
-name: 🚀 Performance Monitoring
+name: Performance Monitoring
 
 on:
   schedule:
-    - cron: '0 2 * * *'
+    # Run performance tests daily at 2 AM UTC
+    # - cron: '0 2 * * *'
+    - cron: '*/1 * * * *'
   pull_request:
-    branches: [main]
+    branches: [develop, production]
   workflow_dispatch:
 
 permissions:
@@ -15,172 +17,299 @@ permissions:
 jobs:
   lighthouse-audit:
     runs-on: ubuntu-latest
-    name: 🌐 Lighthouse Audit
+    name: Lighthouse Performance Audit
     steps:
-      - name: 🧩 Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v5
 
-      - name: ⚙️ Setup pnpm
+      - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10.18.2
 
-      - name: 🪄 Setup Node.js (with cache)
-        uses: actions/setup-node@v5
+      # Bật cache pnpm nếu có lockfile
+      - name: Setup Node.js (with pnpm cache)
+        if: hashFiles('pnpm-lock.yaml') != ''
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: pnpm
+          node-version: '20'
+          cache: 'pnpm'
 
-      - name: 📦 Install dependencies
+      # Fallback nếu chưa có lockfile
+      - name: Setup Node.js
+        if: hashFiles('pnpm-lock.yaml') == ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile || pnpm install
 
-      - name: 🏗️ Build Nuxt app
+      - name: Build application (Nuxt)
         run: pnpm build
 
-      - name: 🚀 Start preview server
+      - name: Start Nuxt preview server
         env:
           NITRO_PRESET: node
         run: |
-          set -e
-          (pnpm preview --port 3000 > preview.log 2>&1 &) || true
-          sleep 6
+          # Try nuxt preview first; fallback to running Nitro output directly.
+          (pnpm preview --port 3000 &> preview.log &) || true
+          # Fallback nếu lệnh preview không tồn tại trong scripts
+          sleep 5
           if ! nc -z localhost 3000; then
-            (node .output/server/index.mjs > preview.log 2>&1 &) || true
+            (node .output/server/index.mjs &> preview.log &) || true
           fi
-          sleep 6
-          echo "✅ Server started (port 3000). Tail logs:"
-          tail -n 20 preview.log || true
+          sleep 5
+          echo "Preview logs (tail):"
+          tail -n 50 preview.log || true
 
-      - name: 🕓 Wait until server ready
+      - name: Wait for server to be ready
         run: |
-          timeout 60s bash -c 'until curl -fsS http://localhost:3000 > /dev/null; do sleep 3; done'
-          echo "✅ Server is live!"
+          timeout 60s bash -c 'until curl -fsS http://localhost:3000 > /dev/null; do sleep 2; done'
 
-      - name: 🧭 Setup Chrome for Lighthouse
+      - name: Setup Chrome for Lighthouse
         uses: browser-actions/setup-chrome@v2
 
-      - name: 📊 Run Lighthouse audits
+      - name: Run Lighthouse audit (homepage and optional components page)
         run: |
-          set -euo pipefail
+          set -e
           mkdir -p lighthouse-reports
 
+          # Dùng pnpm dlx để không cần cài global
           pnpm dlx lighthouse http://localhost:3000 \
             --output=json \
             --output-path=lighthouse-reports/home.json \
             --chrome-path="$CHROME_PATH" \
-            --chrome-flags="--headless --no-sandbox" || true
+            --chrome-flags="--headless --no-sandbox"
 
+          # Chỉ audit /components nếu tồn tại
           if curl -fsS http://localhost:3000/components > /dev/null; then
             pnpm dlx lighthouse http://localhost:3000/components \
               --output=json \
               --output-path=lighthouse-reports/components.json \
               --chrome-path="$CHROME_PATH" \
-              --chrome-flags="--headless --no-sandbox" || true
+              --chrome-flags="--headless --no-sandbox"
+          else
+            echo "Route /components not found. Skipping this audit."
           fi
 
-      - name: 📈 Extract metrics
+      - name: Ensure jq is available
+        run: |
+          if ! command -v jq >/dev/null 2>&1; then
+            sudo apt-get update
+            sudo apt-get install -y jq
+          fi
+
+      - name: Parse Lighthouse results
+        shell: bash
         run: |
           set -e
-          sudo apt-get update && sudo apt-get install -y jq
+          if [ -f lighthouse-reports/home.json ]; then
+            HOME_PERFORMANCE=$(jq -r '(.categories.performance.score // 0) * 100' lighthouse-reports/home.json)
+            HOME_ACCESSIBILITY=$(jq -r '(.categories.accessibility.score // 0) * 100' lighthouse-reports/home.json)
+            HOME_BEST_PRACTICES=$(jq -r '(.categories["best-practices"].score // 0) * 100' lighthouse-reports/home.json)
+            HOME_SEO=$(jq -r '(.categories.seo.score // 0) * 100' lighthouse-reports/home.json)
+            echo "HOME_PERFORMANCE=$HOME_PERFORMANCE" >> $GITHUB_ENV
+            echo "HOME_ACCESSIBILITY=$HOME_ACCESSIBILITY" >> $GITHUB_ENV
+            echo "HOME_BEST_PRACTICES=$HOME_BEST_PRACTICES" >> $GITHUB_ENV
+            echo "HOME_SEO=$HOME_SEO" >> $GITHUB_ENV
+          fi
 
-          parse_scores() {
-            local file=$1 prefix=$2
-            if [ -f "$file" ]; then
-              echo "$prefix_PERF=$(jq -r '(.categories.performance.score // 0)*100' "$file")" >> $GITHUB_ENV
-              echo "$prefix_ACC=$(jq -r '(.categories.accessibility.score // 0)*100' "$file")" >> $GITHUB_ENV
-              echo "$prefix_BP=$(jq -r '(.categories["best-practices"].score // 0)*100' "$file")" >> $GITHUB_ENV
-              echo "$prefix_SEO=$(jq -r '(.categories.seo.score // 0)*100' "$file")" >> $GITHUB_ENV
-            fi
-          }
+          if [ -f lighthouse-reports/components.json ]; then
+            COMPONENTS_PERFORMANCE=$(jq -r '(.categories.performance.score // 0) * 100' lighthouse-reports/components.json)
+            COMPONENTS_ACCESSIBILITY=$(jq -r '(.categories.accessibility.score // 0) * 100' lighthouse-reports/components.json)
+            echo "COMPONENTS_PERFORMANCE=$COMPONENTS_PERFORMANCE" >> $GITHUB_ENV
+            echo "COMPONENTS_ACCESSIBILITY=$COMPONENTS_ACCESSIBILITY" >> $GITHUB_ENV
+          else
+            echo "COMPONENTS_PERFORMANCE=0" >> $GITHUB_ENV
+            echo "COMPONENTS_ACCESSIBILITY=0" >> $GITHUB_ENV
+          fi
 
-          parse_scores lighthouse-reports/home.json HOME
-          parse_scores lighthouse-reports/components.json COMPONENTS || true
-
-      - name: 🧾 Generate summary report
+      - name: Generate score icons
+        shell: bash
         run: |
-          colorize() {
-            local score=$1
-            if [ "$score" -ge 90 ]; then
-              echo "🟢 $score"
-            elif [ "$score" -ge 80 ]; then
-              echo "🟡 $score"
-            elif [ "$score" -gt 0 ]; then
-              echo "🔴 $score"
+          get_icon() {
+            score=$1
+            if (( $(echo "$score >= 90" | bc -l) )); then
+              echo "🟢"
+            elif (( $(echo "$score >= 80" | bc -l) )); then
+              echo "🟡"
             else
-              echo "N/A"
+              echo "🔴"
             fi
           }
 
-          echo "## 🌐 Lighthouse Audit Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Page | ⚡ Performance | ♿ Accessibility | 🧠 Best Practices | 🔍 SEO |" >> $GITHUB_STEP_SUMMARY
-          echo "|------|---------------:|----------------:|------------------:|--------:|" >> $GITHUB_STEP_SUMMARY
+          echo "HOME_PERF_ICON=$(get_icon ${HOME_PERFORMANCE:-0})" >> $GITHUB_ENV
+          echo "HOME_A11Y_ICON=$(get_icon ${HOME_ACCESSIBILITY:-0})" >> $GITHUB_ENV
+          echo "HOME_BP_ICON=$(get_icon ${HOME_BEST_PRACTICES:-0})" >> $GITHUB_ENV
+          echo "HOME_SEO_ICON=$(get_icon ${HOME_SEO:-0})" >> $GITHUB_ENV
+          echo "COMP_PERF_ICON=$(get_icon ${COMPONENTS_PERFORMANCE:-0})" >> $GITHUB_ENV
+          echo "COMP_A11Y_ICON=$(get_icon ${COMPONENTS_ACCESSIBILITY:-0})" >> $GITHUB_ENV
 
-          echo "| Home | $(colorize "${HOME_PERF:-0}") | $(colorize "${HOME_ACC:-0}") | $(colorize "${HOME_BP:-0}") | $(colorize "${HOME_SEO:-0}") |" >> $GITHUB_STEP_SUMMARY
-          echo "| Components | $(colorize "${COMPONENTS_PERF:-0}") | $(colorize "${COMPONENTS_ACC:-0}") | $(colorize "${COMPONENTS_BP:-0}") | $(colorize "${COMPONENTS_SEO:-0}") |" >> $GITHUB_STEP_SUMMARY
+      - name: Create performance report
+        run: |
+          cat > performance-report.md << 'EOF'
+          # 🚀 Lighthouse Performance Audit Report
 
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "> 🟢 Excellent (≥90) 🟡 Good (80–89) 🔴 Needs Improvement (<80)" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "_Generated on $(date) by **${{ github.workflow }}**_" >> $GITHUB_STEP_SUMMARY
+          ## 📊 Overall Scores
 
-      - name: 💬 Comment on PR
+          ### 🏠 Homepage Results
+          | Category | Score | Status |
+          |----------|-------|--------|
+          | ⚡ Performance | **${{ env.HOME_PERFORMANCE }}**/100 | ${{ env.HOME_PERF_ICON }} |
+          | ♿ Accessibility | **${{ env.HOME_ACCESSIBILITY }}**/100 | ${{ env.HOME_A11Y_ICON }} |
+          | ✅ Best Practices | **${{ env.HOME_BEST_PRACTICES }}**/100 | ${{ env.HOME_BP_ICON }} |
+          | 🔍 SEO | **${{ env.HOME_SEO }}**/100 | ${{ env.HOME_SEO_ICON }} |
+
+          ### 🧩 Components Page Results
+          | Category | Score | Status |
+          |----------|-------|--------|
+          | ⚡ Performance | **${{ env.COMPONENTS_PERFORMANCE }}**/100 | ${{ env.COMP_PERF_ICON }} |
+          | ♿ Accessibility | **${{ env.COMPONENTS_ACCESSIBILITY }}**/100 | ${{ env.COMP_A11Y_ICON }} |
+
+          ---
+
+          ## 📈 Score Legend
+          | Icon | Range | Meaning |
+          |------|-------|---------|
+          | 🟢 | 90-100 | Excellent |
+          | 🟡 | 80-89 | Needs Improvement |
+          | 🔴 | 0-79 | Poor |
+
+          ---
+
+          ## 💡 Recommendations
+
+          ### ⚡ Performance Optimizations
+          - 🖼️ Optimize images (use WebP/AVIF format)
+          - 📦 Implement code splitting and lazy loading
+          - 🗜️ Minimize unused JavaScript and CSS
+          - 💾 Use efficient cache policies
+          - 🚀 Enable compression (Gzip/Brotli)
+          - 📱 Optimize for mobile devices
+
+          ### ♿ Accessibility Improvements
+          - 🏷️ Ensure all images have descriptive alt attributes
+          - 🎨 Improve color contrast ratios (WCAG AA/AAA)
+          - 🔊 Add ARIA labels and roles where needed
+          - 📖 Test with screen readers
+          - ⌨️ Ensure keyboard navigation works properly
+          - 🎯 Use semantic HTML elements
+
+          ### 🔍 SEO Enhancements
+          - 📝 Add unique meta descriptions for each page
+          - 🏗️ Implement structured data (JSON-LD)
+          - 📋 Optimize page titles (50-60 characters)
+          - 🔗 Improve internal linking structure
+          - 🗺️ Create and submit XML sitemap
+          - 📱 Ensure mobile-friendliness
+
+          ### ✅ Best Practices
+          - 🔒 Use HTTPS everywhere
+          - 🛡️ Implement proper security headers
+          - 📜 Avoid deprecated APIs
+          - 🐛 Fix console errors and warnings
+          - 🌐 Use modern web standards
+
+          ---
+
+          ## 📅 Report Metadata
+          - **Generated**: $(date '+%Y-%m-%d %H:%M:%S UTC')
+          - **Workflow**: `${{ github.workflow }}`
+          - **Run ID**: `${{ github.run_id }}`
+          - **Trigger**: `${{ github.event_name }}`
+
+          > 💡 **Tip**: Click on the workflow run to download full Lighthouse reports for detailed analysis.
+          EOF
+
+      - name: Comment on PR (if PR triggered)
         if: github.event_name == 'pull_request'
-        uses: actions/github-script@v8
+        uses: actions/github-script@v7
         with:
           script: |
-            const summary = fs.readFileSync(process.env.GITHUB_STEP_SUMMARY, 'utf8');
+            const fs = require('fs');
+            const report = fs.readFileSync('performance-report.md', 'utf8');
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: summary
+              body: `## 📊 Performance Audit Results\n\n${report}`
             });
 
-      - name: 📦 Upload reports
+      - name: Create issue for poor performance (scheduled runs)
+        if: github.event_name == 'schedule'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const homePerf = parseFloat(process.env.HOME_PERFORMANCE || '0');
+            const compPerf = parseFloat(process.env.COMPONENTS_PERFORMANCE || '0');
+            if ((homePerf && homePerf < 80) || (compPerf && compPerf < 80)) {
+              const fs = require('fs');
+              const report = fs.readFileSync('performance-report.md', 'utf8');
+              github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `⚡ Performance Alert: Scores below 80`,
+                body: `# Performance Alert\n\nOur automated performance monitoring detected scores below the 80 threshold.\n\n${report}`,
+                labels: ['performance', 'monitoring', 'needs-attention']
+              });
+            }
+
+      - name: Upload Lighthouse reports
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse-reports
           path: lighthouse-reports/
-          retention-days: 14
+          retention-days: 30
 
   bundle-analysis:
     runs-on: ubuntu-latest
-    name: 📦 Bundle Size Report
+    name: Bundle Size Analysis (Nuxt)
     steps:
-      - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10.18.2
-      - uses: actions/setup-node@v5
-        with:
-          node-version: 20
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile || pnpm install
-      - run: pnpm build
+      - name: Checkout code
+        uses: actions/checkout@v5
 
-      - name: 📊 Analyze bundle sizes
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js (with pnpm cache)
+        if: hashFiles('pnpm-lock.yaml') != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Setup Node.js
+        if: hashFiles('pnpm-lock.yaml') == ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile || pnpm install
+
+      - name: Build (Nuxt)
+        run: pnpm build
+
+      - name: Check bundle size (.output and public assets)
         shell: bash
         run: |
-          set -euo pipefail
-          echo "## 📦 Bundle Size Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Directory | Size |" >> $GITHUB_STEP_SUMMARY
-          echo "|------------|------:|" >> $GITHUB_STEP_SUMMARY
+          echo "## Bundle Size Report" >> $GITHUB_STEP_SUMMARY
 
-          for dir in ".output" ".output/public"; do
-            if [ -d "$dir" ]; then
-              size=$(du -sh "$dir" | cut -f1)
-              echo "| $dir | $size |" >> $GITHUB_STEP_SUMMARY
-            fi
-          done
+          if [ -d ".output" ]; then
+            BUILD_SIZE=$(du -sh .output | cut -f1)
+            echo "- .output size: $BUILD_SIZE" >> $GITHUB_STEP_SUMMARY
+            echo "BUILD_SIZE=$BUILD_SIZE" >> $GITHUB_ENV
+          fi
 
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 🔝 Top 20 Largest JS Files" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          find .output/public -type f -name "*.js" -printf '%s %p\n' 2>/dev/null \
-            | sort -nr | head -20 \
-            | awk '{printf "| %s | %.2f KB |\n", $2, $1/1024}' >> $GITHUB_STEP_SUMMARY || true
+          # Assets thường ở .output/public và thư mục _nuxt
+          if [ -d ".output/public" ]; then
+            STATIC_SIZE=$(du -sh .output/public | cut -f1)
+            echo "- .output/public size: $STATIC_SIZE" >> $GITHUB_STEP_SUMMARY
+            echo "STATIC_SIZE=$STATIC_SIZE" >> $GITHUB_ENV
 
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "_Generated on $(date) by **${{ github.workflow }}**_" >> $GITHUB_STEP_SUMMARY
+            echo "### Top 20 JS assets:" >> $GITHUB_STEP_SUMMARY
+            find .output/public -type f -name "*.js" -printf '%s %p\n' 2>/dev/null \
+              | sort -nr | head -20 \
+              | awk '{printf "- %s (%.2f KB)\n", $2, $1/1024}' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- No .output/public found (is the app SSR-only?)" >> $GITHUB_STEP_SUMMARY
+          fi
