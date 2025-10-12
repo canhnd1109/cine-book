@@ -30,7 +30,7 @@ jobs:
         if: hashFiles('pnpm-lock.yaml') != ''
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'pnpm'
 
       # Fallback nếu chưa có lockfile
@@ -38,7 +38,7 @@ jobs:
         if: hashFiles('pnpm-lock.yaml') == ''
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile || pnpm install
@@ -274,14 +274,14 @@ jobs:
         if: hashFiles('pnpm-lock.yaml') != ''
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'pnpm'
 
       - name: Setup Node.js
         if: hashFiles('pnpm-lock.yaml') == ''
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile || pnpm install
