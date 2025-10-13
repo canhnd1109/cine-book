@@ -18,7 +18,7 @@ const refreshCallback = ref<(() => Promise<void>) | null>(null)
 const cinemas = ref<ICinema[]>([])
 const totalRecords = ref(0)
 
-export function useCinameData() {
+export function useCinemaData() {
   const { apply, filters } = useCinemaFilterSync()
 
   const triggerRefresh = async (debounce: boolean = false) => {

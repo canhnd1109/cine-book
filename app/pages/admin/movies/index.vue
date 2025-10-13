@@ -28,6 +28,8 @@ watchEffect(() => {
   totalRecords.value = data.value?.totalElements || 0
 })
 
+setRefreshCallback(refresh)
+
 const handeAddMovie = async (isOpenModal: boolean = false, formData: ICreateMovie) => {
   if (isOpenModal) {
     isOpen.value = true
@@ -62,6 +64,6 @@ const handeAddMovie = async (isOpenModal: boolean = false, formData: ICreateMovi
     <MoviesTabs />
     <MovieFilter @add="handeAddMovie" />
     <MovieModalAdd v-model:is-open="isOpen" :is-processing="isProcessing" @add="handeAddMovie" />
-    <MovieTable :is-fetching="isFetching" />
+    <MovieList :is-fetching="isFetching" />
   </div>
 </template>

@@ -31,7 +31,7 @@ const handleAdd = async (isOpenModal: boolean = false, form: IFormState) => {
   }
 }
 
-const { filters, cinemas, setRefreshCallback } = useCinameData()
+const { filters, cinemas, setRefreshCallback } = useCinemaData()
 
 const {
   data,
@@ -45,11 +45,14 @@ const {
 watchEffect(() => {
   cinemas.value = data.value || []
 })
+
+setRefreshCallback(refresh)
 </script>
 <template>
   <div class="card-box">
     <CinemaFilter @add="handleAdd" />
     <CinemaModalAdd v-model:is-open="isOpen" :is-processing="isProcessing" @add="handleAdd" />
+    <CinemaList :is-fetching="isFetching" />
   </div>
 </template>
 
