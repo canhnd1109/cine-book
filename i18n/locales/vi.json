@@ -117,5 +117,19 @@
   "genres": "Thể loại",
   "order-by": "Sắp Xếp",
   "no-data": "Không có dữ liệu",
-  "showing": "Hiển thị"
+  "showing": "Hiển thị",
+  "add-cinema": "Thêm rạp chiếu phim",
+
+  "name-required": "Vui lòng nhập tên",
+  "text-max-length": "Tên tối đa 255 ký tự",
+  "province-required": "Vui lòng chọn tỉnh/thành phố",
+  "commune-required": "Vui lòng chọn xã/phường",
+  "detail-address-required": "Vui lòng nhập địa chỉ chi tiết",
+  "phone-invalid": "Số điện thoại không hợp lệ",
+  "files": {
+    "required": "Vui lòng tải lên ít nhất một ảnh",
+    "maxSize": "Dung lượng ảnh không vượt quá {size}",
+    "invalidType": "Định dạng ảnh không hợp lệ",
+    "maxLength": "Tối đa {count} ảnh"
+  }
 }

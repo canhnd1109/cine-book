@@ -117,5 +117,19 @@
   "genres": "Genres",
   "order-by": "Order by",
   "no-data": "No data",
-  "showing": "Showing"
+  "showing": "Showing",
+  "add-cinema": "Add cinema",
+
+  "name-required": "Please enter your name",
+  "text-max-length": "Name must not exceed 255 characters",
+  "province-required": "Please select a province/city",
+  "commune-required": "Please select a commune/ward",
+  "phone-invalid": "Invalid phone number",
+  "detail-address-required": "Detail address is required",
+  "files": {
+    "required": "Please upload at least one image",
+    "maxSize": "Image size must not exceed {size}",
+    "invalidType": "Invalid image format",
+    "maxLength": "Maximum {count} images allowed"
+  }
 }
