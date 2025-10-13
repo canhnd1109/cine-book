@@ -2,7 +2,7 @@
 import type { SelectItem } from '@nuxt/ui'
 
 const {
-  item,
+  items,
   labelKey = 'label',
   valueKey = 'value',
   baseStyle = '',
@@ -12,7 +12,7 @@ const {
   multiple = false,
   required = false
 } = defineProps<{
-  item: T
+  items: T
   labelKey?: string
   valueKey?: string
   baseStyle?: string
@@ -44,7 +44,7 @@ function handleChange(value: any) {
 <template>
   <USelect
     v-model="model"
-    :items="[item]"
+    :items="[items]"
     :value-key="valueKey as string"
     :label-key="labelKey as string"
     class="w-40"

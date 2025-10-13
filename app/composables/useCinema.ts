@@ -16,7 +16,7 @@ export const useCinemaFilterSync = createFilterSync<ICinemaFilter>({
 
 const refreshCallback = ref<(() => Promise<void>) | null>(null)
 
-export function useGenreData() {
+export function useCinameData() {
   const { apply, filters } = useCinemaFilterSync()
 
   const triggerRefresh = async (debounce: boolean = false) => {

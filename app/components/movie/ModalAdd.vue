@@ -182,7 +182,7 @@ const formattedPrice = computed({
         <UFormField :label="t('genre')" name="genreIds">
           <BaseSelect
             v-model="form.genreIds"
-            :item="genres"
+            :items="genres"
             label-key="name"
             value-key="id"
             multiple

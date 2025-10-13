@@ -60,13 +60,13 @@ const resetFilter = () => {
       />
       <BaseSelect
         :model-value="filters.orderBy"
-        :item="ORDER_BY_MOVIE"
+        :items="ORDER_BY_MOVIE"
         :placeholder="t('order-by')"
         @change="apply({ orderBy: $event }, { resetPage: true })"
       />
       <BaseSelect
         v-model="filters.genre"
-        :item="genres"
+        :items="genres"
         label-key="name"
         value-key="id"
         :placeholder="t('genre')"
@@ -74,7 +74,7 @@ const resetFilter = () => {
       />
       <BaseSelect
         v-model="filters.rangePrice"
-        :item="LIST_PRICE_MOVIE"
+        :items="LIST_PRICE_MOVIE"
         :placeholder="t('price-ticket')"
         @change="handleSelectedPrice($event)"
       />
