@@ -148,10 +148,7 @@ const canSubmit = computed(() => {
           <UFormField :label="t('phone')" name="phone">
             <UInput v-model="form.phone" :placeholder="t('phone')" :ui="{ base: 'h-10' }" class="w-full" />
           </UFormField>
-        </div>
 
-        <!-- Province & Ward -->
-        <div class="grid grid-cols-2 gap-4">
           <UFormField :label="t('province')" name="province">
             <BaseSelect
               v-model="form.province"

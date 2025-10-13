@@ -143,5 +143,7 @@
   "commune": "Xã / Phường",
   "detail-address": "Địa chỉ chi tiết",
   "description": "Mô tả",
-  "address": "Địa chỉ"
+  "address": "Địa chỉ",
+  "select-province": "Chọn tỉnh / thành phố",
+  "select-ward": "Chọn xã / phường"
 }

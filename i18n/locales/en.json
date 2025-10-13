@@ -143,5 +143,7 @@
   "commune": "Ward / Commune",
   "detail-address": "Detailed address",
   "description": "Description",
-  "address": "Address"
+  "address": "Address",
+  "select-province": "Select province / city",
+  "select-ward": "Select ward / commune"
 }
