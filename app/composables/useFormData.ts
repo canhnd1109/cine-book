@@ -8,7 +8,13 @@ export function useFormData(data: Record<string, any>) {
       formData.append(key, value)
     } else if (Array.isArray(value)) {
       value.forEach((item, index) => {
-        formData.append(`${key}[${index}]`, item.toString())
+        if (item instanceof File) {
+          formData.append(`${key}[${index}]`, item)
+        } else if (typeof item === 'object') {
+          formData.append(`${key}[${index}]`, JSON.stringify(item))
+        } else {
+          formData.append(`${key}[${index}]`, item.toString())
+        }
       })
     } else if (typeof value === 'object') {
       formData.append(key, JSON.stringify(value))

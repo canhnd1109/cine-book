@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { MAX_FILES, MAX_SIZE_IMAGE_UPLOAD } from '~/constants'
-import { createCinemaSchema, type IFormCinema } from '~/schemas/cinema.chema'
+import { createCinemaSchema } from '~/schemas/cinema.chema'
 import type { IWard } from '~/types/location.types'
 import { until } from '@vueuse/core'
+import type { IFormState } from '~/types/cinema.type'
 
 const { t } = useI18n()
 
@@ -16,12 +17,11 @@ const wards = ref<IWard[]>([])
 const loadingWards = ref(false)
 const formRef = ref()
 
-type FormState = Omit<IFormCinema, 'province' | 'commune'> & {
-  province: string
-  commune: string
-}
+const { isProcessing = false } = defineProps<{
+  isProcessing: boolean
+}>()
 
-const form = ref<FormState>({
+const form = ref<IFormState>({
   name: '',
   province: '',
   commune: '',
@@ -32,7 +32,7 @@ const form = ref<FormState>({
 })
 
 const emit = defineEmits<{
-  add: [value: boolean, form: FormState]
+  add: [value: boolean, form: IFormState]
 }>()
 
 const uploadError = ref('')
@@ -194,6 +194,7 @@ const canSubmit = computed(() => {
           class="w-20"
           variant="solid"
           class-name="rounded "
+          :is-loading="isProcessing"
           :is-disable="!canSubmit"
           @click="submitForm"
         />
