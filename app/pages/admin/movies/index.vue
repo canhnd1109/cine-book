@@ -12,6 +12,22 @@ const { t } = useI18n()
 const isOpen = ref(false)
 const isProcessing = ref(false)
 
+const { filters, movies, totalRecords, setRefreshCallback } = useMovieData()
+
+const {
+  data,
+  pending: isFetching,
+  refresh
+} = await useAsyncData('movies-list', async () => {
+  const res = await apiPublic.fetchMovies(filters.value)
+  return res.value
+})
+
+watchEffect(() => {
+  movies.value = data.value?.content || []
+  totalRecords.value = data.value?.totalElements || 0
+})
+
 const handeAddMovie = async (isOpenModal: boolean = false, formData: ICreateMovie) => {
   if (isOpenModal) {
     isOpen.value = true
@@ -31,6 +47,7 @@ const handeAddMovie = async (isOpenModal: boolean = false, formData: ICreateMovi
         color: 'success'
       })
       isOpen.value = false
+      setRefreshCallback(refresh)
     } catch (error) {
       console.log(error)
     } finally {
@@ -38,24 +55,6 @@ const handeAddMovie = async (isOpenModal: boolean = false, formData: ICreateMovi
     }
   }
 }
-
-const { filters, movies, totalRecords, setRefreshCallback } = useMovieData()
-
-const {
-  data,
-  pending: isFetching,
-  refresh
-} = await useAsyncData('movies-list', async () => {
-  const res = await apiPublic.fetchMovies(filters.value)
-  return res.value
-})
-
-watchEffect(() => {
-  movies.value = data.value?.content || []
-  totalRecords.value = data.value?.totalElements || 0
-})
-
-setRefreshCallback(refresh)
 </script>
 
 <template>

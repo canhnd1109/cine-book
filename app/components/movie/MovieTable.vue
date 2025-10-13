@@ -14,12 +14,8 @@ const hoveredItem = ref<string | null>(null)
 <template>
   <BaseSkeletonCard v-if="isFetching" />
   <BaseEmpty v-else-if="!movies.length" />
-  <template v-else>
-    <div
-      v-for="item in movies"
-      :key="item.id"
-      class="grid-cols-5 gap-6 grid max-lg:grid-cols-4 max-md:grid-cols-3 max-sm:grid-cols-2"
-    >
+  <div v-else class="grid-cols-5 gap-6 grid max-lg:grid-cols-4 max-md:grid-cols-3 max-sm:grid-cols-2">
+    <div v-for="item in movies" :key="item.id">
       <BaseCard :item="item" :index="0" class="w-full">
         <template #image>
           <div class="flex items-center justify-center">
@@ -77,17 +73,17 @@ const hoveredItem = ref<string | null>(null)
         </template>
       </BaseCard>
     </div>
-    <BasePagination
-      :current-page="filters.pageIndex"
-      :items-per-page="filters.pageSize"
-      :total="totalRecords"
-      @update:page="
-        page => {
-          filters.pageIndex = page
-        }
-      "
-    />
-  </template>
+  </div>
+  <BasePagination
+    :current-page="filters.pageIndex"
+    :items-per-page="filters.pageSize"
+    :total="totalRecords"
+    @update:page="
+      page => {
+        filters.pageIndex = page
+      }
+    "
+  />
 </template>
 
 <style scoped>

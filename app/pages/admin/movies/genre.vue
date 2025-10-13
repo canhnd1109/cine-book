@@ -39,14 +39,21 @@ const handleAdd = async (isOpenModal: boolean = false) => {
     isOpen.value = true
   } else {
     isProcessing.value = true
-    const { message } = await apiGenre.createGenre(form.value.genreName)
-    toast.add({
-      title: t('success'),
-      description: message,
-      color: 'success'
-    })
-    isProcessing.value = false
-    isOpen.value = false
+    try {
+      const { message } = await apiGenre.createGenre(form.value.genreName)
+      toast.add({
+        title: t('success'),
+        description: message,
+        color: 'success'
+      })
+
+      isOpen.value = false
+      setRefreshCallback(refresh)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      isProcessing.value = false
+    }
   }
 }
 
