@@ -18,13 +18,14 @@ const loadingWards = ref(false)
 const formRef = ref()
 
 const { isProcessing = false } = defineProps<{
-  isProcessing: boolean
+  isProcessing?: boolean
 }>()
 
 const form = ref<IFormState>({
   name: '',
   province: '',
   commune: '',
+  // district: 'string',
   detailAddress: '',
   phone: '',
   description: '',

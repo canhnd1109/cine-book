@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { apiCinema } from '~/services'
+import { apiCinema, apiPublic } from '~/services'
 import type { IFormState } from '~/types/cinema.type'
 
 definePageMeta({ layout: 'admin', middleware: ['admin'] })
@@ -22,6 +22,7 @@ const handleAdd = async (isOpenModal: boolean = false, form: IFormState) => {
         color: 'success'
       })
       isOpen.value = false
+      setRefreshCallback(refresh)
     } catch (error) {
       console.log(error)
     } finally {
@@ -29,6 +30,21 @@ const handleAdd = async (isOpenModal: boolean = false, form: IFormState) => {
     }
   }
 }
+
+const { filters, cinemas, setRefreshCallback } = useCinameData()
+
+const {
+  data,
+  pending: isFetching,
+  refresh
+} = await useAsyncData('movies-list', async () => {
+  const res = await apiPublic.fetchCinemas(filters.value)
+  return res.value
+})
+
+watchEffect(() => {
+  cinemas.value = data.value || []
+})
 </script>
 <template>
   <div class="card-box">

@@ -1,5 +1,5 @@
 import { useDebounceFn } from '@vueuse/core'
-import type { ICinemaFilter } from '~/types/cinema.type'
+import type { ICinema, ICinemaFilter } from '~/types/cinema.type'
 
 export const useCinemaFilterSync = createFilterSync<ICinemaFilter>({
   defaults: {
@@ -15,6 +15,8 @@ export const useCinemaFilterSync = createFilterSync<ICinemaFilter>({
 })
 
 const refreshCallback = ref<(() => Promise<void>) | null>(null)
+const cinemas = ref<ICinema[]>([])
+const totalRecords = ref(0)
 
 export function useCinameData() {
   const { apply, filters } = useCinemaFilterSync()
@@ -40,6 +42,8 @@ export function useCinameData() {
   return {
     // State
     filters,
+    cinemas,
+    totalRecords,
 
     // Method
     apply: applyWithRefresh,
