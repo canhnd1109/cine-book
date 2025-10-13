@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { createSignInSchema, type IFormSignIn } from '~/schemas/auth.schema'
+import { signInSchema, type IFormSignIn } from '~/schemas/auth.schema'
 
 const { t } = useI18n()
 const showPass = ref(false)
-const { schema: signInSchema } = useSchema(createSignInSchema)
+const { schema: signInSchema } = useSchema(signInSchema)
 const isOpen = defineModel('isOpen', { type: Boolean, default: false })
 const formRef = ref()
 

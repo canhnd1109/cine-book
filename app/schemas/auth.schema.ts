@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { PASSWORD_REGEX, PHONE_NUMBER_REGEX } from '~/constants'
 
-export function createSignUpSchema(t: (key: string) => string) {
+export function signUpSchema(t: (key: string) => string) {
   return z
     .object({
       firstName: z.string().min(1, t('auth.first-name-is-required')),
@@ -19,7 +19,7 @@ export function createSignUpSchema(t: (key: string) => string) {
     })
 }
 
-export function createSignInSchema(t: (key: string) => string) {
+export function signInSchema(t: (key: string) => string) {
   return z.object({
     email: z.string().min(1, t('auth.email-is-required')).email(t('auth.invalid-email')),
     password: z.string().regex(PASSWORD_REGEX, {
@@ -29,5 +29,5 @@ export function createSignInSchema(t: (key: string) => string) {
 }
 
 // Types
-export type IFormSignUp = z.infer<ReturnType<typeof createSignUpSchema>>
-export type IFormSignIn = z.infer<ReturnType<typeof createSignInSchema>>
+export type IFormSignUp = z.infer<ReturnType<typeof signUpSchema>>
+export type IFormSignIn = z.infer<ReturnType<typeof signInSchema>>

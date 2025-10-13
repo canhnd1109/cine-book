@@ -1,5 +1,6 @@
 import type { IPagination } from '~/types/query.type'
 
+const MAX_FILES = 5
 const MAX_SIZE_IMAGE_UPLOAD = 5 * 1024 * 1024 // 5MB
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
 const DEFAULT_QUERY_PAGINATION: IPagination = {
@@ -73,5 +74,6 @@ export {
   LIST_PRICE_MOVIE,
   PASSWORD_REGEX,
   PHONE_NUMBER_REGEX,
-  ACCEPTED_IMAGE_TYPES
+  ACCEPTED_IMAGE_TYPES,
+  MAX_FILES
 }

@@ -5,7 +5,7 @@ export class GenreService extends BaseService {
   constructor() {
     super('genre')
   }
-  async addGenre(genreName: string): Promise<IResponseMessage> {
+  async createGenreSchema(genreName: string): Promise<IResponseMessage> {
     return this.post<IResponseMessage, typeof genreName>(`/${genreName}`)
   }
 

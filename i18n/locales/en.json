@@ -119,7 +119,6 @@
   "no-data": "No data",
   "showing": "Showing",
   "add-cinema": "Add cinema",
-
   "name-required": "Please enter your name",
   "text-max-length": "Name must not exceed 255 characters",
   "province-required": "Please select a province/city",
@@ -131,5 +130,17 @@
     "maxSize": "Image size must not exceed {size}",
     "invalidType": "Invalid image format",
     "maxLength": "Maximum {count} images allowed"
-  }
+  },
+
+  "drop-your-images-here": "Drop your images here",
+  "description-upload-multiple-images": "Supports JPG and PNG. Up to 5 images, each under 5MB",
+  "max-files-exceeded": "You can upload up to {max} images only",
+  "file-size-exceeded": "File size must not exceed {max}",
+  "max-files-exceeded-warning": "You have selected {selected} images. Only the first {max} will be kept.",
+  "cinema-name": "Cinema name",
+  "phone": "Phone number",
+  "province": "Province / City",
+  "commune": "Ward / Commune",
+  "detail-address": "Detailed address",
+  "description": "Description"
 }

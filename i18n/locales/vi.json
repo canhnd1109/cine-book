@@ -131,5 +131,16 @@
     "maxSize": "Dung lượng ảnh không vượt quá {size}",
     "invalidType": "Định dạng ảnh không hợp lệ",
     "maxLength": "Tối đa {count} ảnh"
-  }
+  },
+  "drop-your-images-here": "Thả ảnh của bạn vào đây",
+  "description-upload-multiple-images": "Hỗ trợ JPG, PNG. Tối đa 5 ảnh, mỗi ảnh dưới 5MB",
+  "max-files-exceeded": "Bạn chỉ có thể tải lên tối đa {max} ảnh",
+  "file-size-exceeded": "Kích thước file không được vượt quá {max}",
+  "max-files-exceeded-warning": "Bạn đã chọn {selected} ảnh. Chỉ {max} ảnh đầu tiên được chọn.",
+  "cinema-name": "Tên rạp chiếu phim",
+  "phone": "Số điện thoại",
+  "province": "Tỉnh / Thành phố",
+  "commune": "Xã / Phường",
+  "detail-address": "Địa chỉ chi tiết",
+  "description": "Mô tả"
 }

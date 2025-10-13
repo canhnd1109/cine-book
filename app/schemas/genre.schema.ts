@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export function addGenre(t: (key: string) => string) {
+export function createGenreSchema(t: (key: string) => string) {
   return z.object({
     genreName: z
       .string()
@@ -11,4 +11,4 @@ export function addGenre(t: (key: string) => string) {
   })
 }
 
-export type IFormGenre = z.infer<ReturnType<typeof addGenre>>
+export type IFormGenre = z.infer<ReturnType<typeof createGenreSchema>>

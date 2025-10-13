@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DropdownMenuItem, TableColumn } from '@nuxt/ui'
-import { addGenre, type IFormGenre } from '~/schemas/genre.schema'
+import { createGenreSchema, type IFormGenre } from '~/schemas/genre.schema'
 import { apiGenre, apiPublic } from '~/services'
 import type { IGenre } from '~/types/genre.type'
 import { useGenreData } from '../../../composables/useGenre'
@@ -9,7 +9,7 @@ definePageMeta({ layout: 'admin', middleware: ['admin'] })
 
 const { t } = useI18n()
 
-const { schema } = useSchema(addGenre)
+const { schema } = useSchema(createGenreSchema)
 const isOpen = ref(false)
 const formRef = ref()
 const toast = useToast()
@@ -39,7 +39,7 @@ const handleAdd = async (isOpenModal: boolean = false) => {
     isOpen.value = true
   } else {
     isProcessing.value = true
-    const { message } = await apiGenre.addGenre(form.value.genreName)
+    const { message } = await apiGenre.createGenreSchema(form.value.genreName)
     toast.add({
       title: t('success'),
       description: message,

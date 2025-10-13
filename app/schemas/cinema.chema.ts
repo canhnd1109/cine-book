@@ -1,8 +1,8 @@
 import { z } from 'zod'
 import { ACCEPTED_IMAGE_TYPES, MAX_SIZE_IMAGE_UPLOAD, PHONE_NUMBER_REGEX } from '~/constants'
 
-export function createYourSchema(t: (key: string, params?: Record<string, any>) => string) {
-  z.object({
+export function createCinemaSchema(t: (key: string, params?: Record<string, any>) => string) {
+  return z.object({
     name: z
       .string()
       .min(1, { message: t('name-required') })
@@ -16,7 +16,9 @@ export function createYourSchema(t: (key: string, params?: Record<string, any>) 
       .string()
       .min(1, { message: t('detail-address-required') })
       .max(500, { message: t('text-max-length') }),
+
     phone: z.string().regex(PHONE_NUMBER_REGEX, { message: t('phone-invalid') }),
+
     description: z.string().optional(),
 
     files: z
@@ -35,4 +37,4 @@ export function createYourSchema(t: (key: string, params?: Record<string, any>) 
   })
 }
 
-export type YourSchemaType = z.infer<ReturnType<typeof createYourSchema>>
+export type IFormCinema = z.infer<ReturnType<typeof createCinemaSchema>>

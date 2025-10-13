@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { createSignUpSchema, type IFormSignUp } from '~/schemas/auth.schema'
+import { signUpSchema, type IFormSignUp } from '~/schemas/auth.schema'
 
 const { t } = useI18n()
 
-const { schema: signUpSchema } = useSchema(createSignUpSchema)
+const { schema: signUpSchema } = useSchema(signUpSchema)
 
 const emits = defineEmits<{
   'sign-in': []
