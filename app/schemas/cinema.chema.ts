@@ -8,9 +8,13 @@ export function createCinemaSchema(t: (key: string, params?: Record<string, any>
       .min(1, { message: t('name-required') })
       .max(255, { message: t('text-max-length') }),
 
-    province: z.string().min(1, { message: t('province-required') }),
+    province: z
+      .union([z.string().min(1, { message: t('province-required') }), z.number().min(1, { message: t('province-required') })])
+      .transform(val => Number(val)),
 
-    commune: z.string().min(1, { message: t('commune-required') }),
+    commune: z
+      .union([z.string().min(1, { message: t('commune-required') }), z.number().min(1, { message: t('commune-required') })])
+      .transform(val => Number(val)),
 
     detailAddress: z
       .string()

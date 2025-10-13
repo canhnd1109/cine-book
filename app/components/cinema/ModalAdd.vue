@@ -14,8 +14,14 @@ const { data: provinces, pending: loadingProvinces } = getProvinces()
 
 const wards = ref<IWard[]>([])
 const loadingWards = ref(false)
+const formRef = ref()
 
-const form = ref<IFormCinema>({
+type FormState = Omit<IFormCinema, 'province' | 'commune'> & {
+  province: string
+  commune: string
+}
+
+const form = ref<FormState>({
   name: '',
   province: '',
   commune: '',
@@ -26,7 +32,7 @@ const form = ref<IFormCinema>({
 })
 
 const emit = defineEmits<{
-  add: [value: boolean, form: IFormCinema]
+  add: [value: boolean, form: FormState]
 }>()
 
 const uploadError = ref('')
@@ -92,6 +98,23 @@ const wardOptions = computed(() => {
     ...w
   }))
 })
+const submitForm = () => {
+  if (formRef.value) {
+    formRef.value.submit()
+  }
+}
+
+const canSubmit = computed(() => {
+  return (
+    form.value.commune &&
+    form.value.name &&
+    form.value.description &&
+    form.value.detailAddress &&
+    form.value.files.length &&
+    form.value.phone &&
+    form.value.province
+  )
+})
 </script>
 
 <template>
@@ -100,13 +123,6 @@ const wardOptions = computed(() => {
       <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="emit('add', false, form)">
         <!-- File Upload -->
         <UFormField name="files">
-          <template #label>
-            <div class="flex items-center justify-between">
-              <span>{{ t('images') }}</span>
-              <span class="text-sm text-gray-500">{{ form.files.length }}/{{ MAX_FILES }}</span>
-            </div>
-          </template>
-
           <UFileUpload
             v-model="form.files"
             accept="image/*"
@@ -169,17 +185,19 @@ const wardOptions = computed(() => {
         <UFormField :label="t('description')" name="description">
           <UTextarea v-model="form.description" :placeholder="t('description')" :rows="4" class="w-full" />
         </UFormField>
-
-        <!-- Actions -->
-        <div class="flex justify-end gap-3 pt-4">
-          <UButton type="button" variant="outline" @click="isOpen = false">
-            {{ t('cancel') }}
-          </UButton>
-          <UButton type="submit">
-            {{ t('add-cinema') }}
-          </UButton>
-        </div>
       </UForm>
+    </template>
+    <template #footer>
+      <div class="flex justify-end w-full">
+        <BaseButton
+          :text="t('add')"
+          class="w-20"
+          variant="solid"
+          class-name="rounded "
+          :is-disable="!canSubmit"
+          @click="submitForm"
+        />
+      </div>
     </template>
   </UModal>
 </template>
