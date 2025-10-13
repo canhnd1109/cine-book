@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMovieData } from '~/pages/admin/movies/useMovie'
+import { useMovieData } from '~/composables/useMovie'
 import type { ICreateMovie } from '~/schemas/movie.chema'
 import { ORDER_BY_MOVIE, LIST_PRICE_MOVIE, DEFAULT_QUERY_PAGINATION } from '~/constants'
 

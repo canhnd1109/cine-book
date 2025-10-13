@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMovieData } from '~/pages/admin/movies/useMovie'
+import { useMovieData } from '~/composables/useMovie'
 import useFormatDate from '~/composables/useDateFormat'
 
 const { movies, filters, totalRecords } = useMovieData()

@@ -2,7 +2,7 @@
 import type { ICreateMovie } from '~/schemas/movie.chema'
 import { apiMovie, apiPublic } from '~/services'
 import normalizedParamss from '~/utils/normalizedParams'
-import { useMovieData } from './useMovie'
+import { useMovieData } from '../../../composables/useMovie'
 
 definePageMeta({ layout: 'admin', middleware: ['admin'] })
 

@@ -12,6 +12,11 @@ const sidebarAdmin = [
     name: 'Movies',
     icon: 'movie',
     path: '/admin/movies'
+  },
+  {
+    name: 'Cinemas',
+    icon: 'cinema',
+    path: '/admin/cinemas'
   }
 ]
 

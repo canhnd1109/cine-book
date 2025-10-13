@@ -3,7 +3,7 @@ import type { DropdownMenuItem, TableColumn } from '@nuxt/ui'
 import { addGenre, type IFormGenre } from '~/schemas/genre.schema'
 import { apiGenre, apiPublic } from '~/services'
 import type { IGenre } from '~/types/genre.type'
-import { useGenreData } from './useGenre'
+import { useGenreData } from '../../../composables/useGenre'
 
 definePageMeta({ layout: 'admin', middleware: ['admin'] })
 

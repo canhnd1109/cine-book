@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useGenreData } from '~/composables/useGenre'
-
 const { apply, filters } = useGenreData()
 
 const emits = defineEmits<{
