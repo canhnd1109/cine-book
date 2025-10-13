@@ -31,7 +31,7 @@ definePageMeta({ layout: 'blank' })
   max-height: 1572px;
   top: -61px;
   z-index: -1;
-  background-image: url(images/desktop_background.png);
+  background-image: url('/images/desktop_background.png');
   -webkit-background-size: cover;
   background-size: cover;
   -webkit-animation: animation-1o0baec 9s ease infinite;

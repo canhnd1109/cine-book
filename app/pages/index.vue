@@ -7,6 +7,7 @@ import 'swiper/css/pagination'
 
 const { t } = useI18n()
 const items = [
+  '/images/phim-9.png',
   '/images/phim-8.png',
   '/images/phim-7.png',
   '/images/phim-6.png',
@@ -17,7 +18,6 @@ const items = [
   '/images/phim-1.png'
 ]
 const imagesList = [
-  '/images/img-9.png',
   '/images/img-1.png',
   '/images/img-2.png',
   '/images/img-3.png',

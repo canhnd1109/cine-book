@@ -3,7 +3,7 @@ import { signUpSchema, type IFormSignUp } from '~/schemas/auth.schema'
 
 const { t } = useI18n()
 
-const { schema: signUpSchema } = useSchema(signUpSchema)
+const { schema } = useSchema(signUpSchema)
 
 const emits = defineEmits<{
   'sign-in': []
@@ -88,7 +88,7 @@ const canSubmit = computed(() => {
   <ClientOnly>
     <UModal v-model:open="isOpen" :title="t('header.signup')" class="w-1/3">
       <template #body>
-        <UForm ref="formRef" :schema="signUpSchema" :state="form" class="space-y-4" @submit="emits('sign-up', form)">
+        <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="emits('sign-up', form)">
           <div class="grid grid-cols-2 gap-4">
             <UFormField :label="t('auth.last-name')" name="lastName">
               <UInput v-model="form.lastName" :placeholder="t('auth.last-name')" :ui="{ base: 'h-10' }" class="w-full" />

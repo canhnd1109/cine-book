@@ -3,7 +3,7 @@ import { signInSchema, type IFormSignIn } from '~/schemas/auth.schema'
 
 const { t } = useI18n()
 const showPass = ref(false)
-const { schema: signInSchema } = useSchema(signInSchema)
+const { schema } = useSchema(signInSchema)
 const isOpen = defineModel('isOpen', { type: Boolean, default: false })
 const formRef = ref()
 
@@ -35,7 +35,7 @@ const canSubmit = computed(() => {
   <ClientOnly>
     <UModal v-model:open="isOpen" :title="t('header.signin')" class="w-1/3">
       <template #body>
-        <UForm ref="formRef" :schema="signInSchema" :state="form" class="space-y-4" @submit="emits('sign-in', form)">
+        <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="emits('sign-in', form)">
           <UFormField :label="t('auth.email')" name="email">
             <UInput v-model="form.email" :placeholder="t('auth.email')" :ui="{ base: 'h-10' }" class="w-full" />
           </UFormField>
