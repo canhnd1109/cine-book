@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useMovieData } from '~/pages/admin/movies/useMovie'
 import type { ICreateMovie } from '~/schemas/movie.chema'
-import { ORDER_BY_MOVIE, LIST_PRICE_MOVIE } from '~/constants'
+import { ORDER_BY_MOVIE, LIST_PRICE_MOVIE, DEFAULT_QUERY_PAGINATION } from '~/constants'
 
 const { genres } = storeToRefs(useBaseStore())
 
@@ -29,6 +29,22 @@ const handleSelectedPrice = (value: string) => {
   }
   apply(
     { minPrice: filters.value.minPrice, maxPrice: filters.value.maxPrice, rangePrice: filters.value.rangePrice },
+    { resetPage: true }
+  )
+}
+
+const resetFilter = () => {
+  apply(
+    {
+      ...DEFAULT_QUERY_PAGINATION,
+      searchName: '',
+      genre: '',
+      rangePrice: '',
+      maxPrice: '',
+      minPrice: '',
+      orderBy: '',
+      orderType: ''
+    },
     { resetPage: true }
   )
 }
@@ -62,6 +78,7 @@ const handleSelectedPrice = (value: string) => {
         :placeholder="t('price-ticket')"
         @change="handleSelectedPrice($event)"
       />
+      <UIcon name="i-lucide-rotate-ccw" class="size-5 hover:cursor-pointer" @click="resetFilter" />
     </div>
     <div>
       <BaseButton :text="t('add')" variant="solid" class-name="rounded" @click="emits('add', true, {} as ICreateMovie)" />
