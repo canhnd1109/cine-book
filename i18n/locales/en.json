@@ -142,5 +142,6 @@
   "province": "Province / City",
   "commune": "Ward / Commune",
   "detail-address": "Detailed address",
-  "description": "Description"
+  "description": "Description",
+  "address": "Address"
 }

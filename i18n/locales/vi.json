@@ -142,5 +142,6 @@
   "province": "Tỉnh / Thành phố",
   "commune": "Xã / Phường",
   "detail-address": "Địa chỉ chi tiết",
-  "description": "Mô tả"
+  "description": "Mô tả",
+  "address": "Địa chỉ"
 }
