@@ -23,7 +23,7 @@
         {{ t('footer.contact') }}
       </span>
     </p>
-    <div class="flex justify-center items-center mx-auto bg-[#78140f] rounded-full w-84 py-2">
+    <div class="flex justify-center items-center mx-auto bg-[#78140f] rounded-full w-84 py-2 space-x-2">
       <img src="/images/vietnam.png" alt="Vietnam" class="w-6 h-6 object-cover" />
       <span class="text-white">Hoàng Sa & Trường Sa là của Việt Nam!</span>
     </div>
