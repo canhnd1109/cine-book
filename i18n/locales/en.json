@@ -145,5 +145,7 @@
   "description": "Description",
   "address": "Address",
   "select-province": "Select province / city",
-  "select-ward": "Select ward / commune"
+  "select-ward": "Select ward / commune",
+  "edit": "Edit",
+  "view": "View"
 }

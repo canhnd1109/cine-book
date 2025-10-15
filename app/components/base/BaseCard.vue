@@ -1,4 +1,6 @@
 <script setup lang="ts" generic="T extends Record<string, any>">
+const { t } = useI18n()
+
 interface Props {
   item: T
   index?: number
@@ -36,15 +38,27 @@ const handleActionClick = (action: string) => {
 
     <div v-if="showActions" class="action-buttons-wrapper dark:bg-[#0f172a] bg-white flex items-center justify-center space-x-2">
       <slot name="actions" :item="item" :on-action="handleActionClick">
-        <UButton class="hover:cursor-pointer" icon="i-lucide-edit" size="sm" variant="ghost" @click="handleActionClick('edit')" />
-        <UButton class="hover:cursor-pointer" icon="i-lucide-eye" size="sm" variant="ghost" @click="handleActionClick('view')" />
-        <UButton
-          class="hover:cursor-pointer"
-          icon="i-lucide-trash"
-          size="sm"
-          variant="ghost"
-          @click="handleActionClick('delete')"
-        />
+        <UTooltip :text="t('edit')" :delay-duration="0">
+          <UButton class="hover:cursor-pointer" icon="i-lucide-edit" size="sm" variant="ghost" @click="handleActionClick('edit')"
+        /></UTooltip>
+        <UTooltip :text="t('view')" :delay-duration="0">
+          <UButton
+            class="hover:cursor-pointer"
+            icon="i-lucide-eye"
+            size="sm"
+            variant="ghost"
+            @click="handleActionClick('view')"
+          />
+        </UTooltip>
+        <UTooltip :text="t('delete')" :delay-duration="0">
+          <UButton
+            class="hover:cursor-pointer"
+            icon="i-lucide-trash"
+            size="sm"
+            variant="ghost"
+            @click="handleActionClick('delete')"
+          />
+        </UTooltip>
       </slot>
     </div>
   </div>
