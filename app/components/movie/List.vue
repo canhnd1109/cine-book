@@ -14,14 +14,14 @@ const hoveredItem = ref<string | null>(null)
 <template>
   <BaseSkeletonCard v-if="isFetching" />
   <BaseEmpty v-else-if="!movies.length" />
-  <div v-else class="grid-cols-5 gap-6 grid max-lg:grid-cols-4 max-md:grid-cols-3 max-sm:grid-cols-2">
+  <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
     <div v-for="item in movies" :key="item.id">
       <BaseCard :item="item" :index="0" class="w-full">
         <template #image>
           <div class="flex items-center justify-center">
             <div class="relative flex items-center justify-center overflow-hidden rounded-lg w-full h-60">
               <div class="image-container" :class="{ 'slide-active': hoveredItem }">
-                <img :src="item.posterUrl" class="absolute top-0 left-0 h-full w-full object-cover max-sm:object-center" />
+                <img :src="item.posterUrl" class="absolute top-0 left-0 h-full w-full object-cover max-sm:object-center image" />
               </div>
             </div>
           </div>
