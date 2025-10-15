@@ -46,7 +46,7 @@ const imagesList = [
       </SwiperSlide>
     </Swiper>
 
-    <div class="dark:bg-[#111] bg-light-bg rounded-[50px] py-24 mx-12 my-6">
+    <div class="dark:bg-[#111] bg-bg-light rounded-[50px] py-24 mx-12 my-6">
       <div class="px-10 space-y-10">
         <div class="title-wrap bookmb-15 text-center">
           <p class="small-title bookfont-100 text-center">
