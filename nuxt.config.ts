@@ -47,33 +47,12 @@ export default defineNuxtConfig({
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' }
       ],
-      link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-        { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
-        { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
-        { rel: 'dns-prefetch', href: '//fonts.googleapis.com' },
-        { rel: 'dns-prefetch', href: '//fonts.gstatic.com' },
-        { rel: 'dns-prefetch', href: '//images.unsplash.com' },
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }
-      ]
+      link: [{ rel: 'icon', type: 'image/png', href: '/images/favicon.png' }]
     }
   },
 
   css: ['~/assets/css/main.css'],
 
-  mdc: {
-    highlight: {
-      langs: ['diff', 'ts', 'vue', 'css', 'javascript', 'json', 'bash']
-    },
-    remarkPlugins: {
-      'remark-github': {
-        options: {
-          repository: 'nuxt-ui-templates/changelog'
-        }
-      }
-    }
-  },
   ui: {
     theme: {
       defaultVariants: {
@@ -94,66 +73,6 @@ export default defineNuxtConfig({
       siteName: 'CineBook',
       siteDescription: 'Đặt vé xem phim online dễ dàng tại CineBook'
     }
-  },
-
-  routeRules: {
-    '/': {
-      ssr: true,
-      headers: {
-        'cache-control': 's-maxage=31536000',
-        'x-robots-tag': 'index, follow'
-      }
-    }
-    // '/api/**': {
-    //   cors: true,
-    //   headers: {
-    //     'cache-control': 'max-age=300',
-    //     'x-robots-tag': 'noindex'
-    //   }
-    // },
-    // '/admin/**': {
-    //   ssr: false,
-    //   headers: {
-    //     'x-robots-tag': 'noindex, nofollow'
-    //   }
-    // },
-    // '/movies/**': {
-    //   ssr: true,
-    //   headers: {
-    //     'cache-control': 's-maxage=3600',
-    //     'x-robots-tag': 'index, follow'
-    //   }
-    // },
-    // '/theaters/**': {
-    //   ssr: true,
-    //   headers: {
-    //     'cache-control': 's-maxage=7200',
-    //     'x-robots-tag': 'index, follow'
-    //   }
-    // },
-    // '/static/**': {
-    //   headers: {
-    //     'cache-control': 'max-age=31536000, immutable'
-    //   }
-    // },
-    // '/sitemap.xml': {
-    //   prerender: true,
-    //   headers: {
-    //     'cache-control': 'max-age=86400'
-    //   }
-    // },
-    // '/robots.txt': {
-    //   prerender: true,
-    //   headers: {
-    //     'cache-control': 'max-age=86400'
-    //   }
-    // },
-    // '/search': {
-    //   ssr: false
-    // },
-    // '/booking/**': {
-    //   ssr: false
-    // }
   },
 
   experimental: {

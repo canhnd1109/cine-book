@@ -139,7 +139,9 @@ const items: DropdownMenuItem[][] = [
 <template>
   <header class="m-6 mx-10">
     <div class="flex justify-between items-center">
-      <div class="text-xl font-semibold" @click="isOpenModalOtp = true">logo</div>
+      <div class="text-xl font-semibold" @click="isOpenModalOtp = true">
+        <img src="/images/logo.png" alt="logo" />
+      </div>
       <nav aria-label="Primary" class="flex justify-end items-center gap-x-8 text-lg">
         <NuxtLink to="/" class="hover:text-primary">Trang chủ</NuxtLink>
         <!-- /movie-schedules -->
