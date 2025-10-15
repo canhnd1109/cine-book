@@ -147,5 +147,6 @@
   "select-province": "Select province / city",
   "select-ward": "Select ward / commune",
   "edit": "Edit",
-  "view": "View"
+  "view": "View",
+  "reset-filter": "Reset filter"
 }

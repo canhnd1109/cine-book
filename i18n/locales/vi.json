@@ -147,5 +147,6 @@
   "select-province": "Chọn tỉnh / thành phố",
   "select-ward": "Chọn xã / phường",
   "edit": "Sửa",
-  "view": "Xem"
+  "view": "Xem",
+  "reset-filter": "Reset lọc"
 }

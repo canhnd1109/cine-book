@@ -78,7 +78,9 @@ const resetFilter = () => {
         :placeholder="t('price-ticket')"
         @change="handleSelectedPrice($event)"
       />
-      <UIcon name="i-lucide-rotate-ccw" class="size-5 hover:cursor-pointer" @click="resetFilter" />
+      <UTooltip :text="t('reset-filter')" :delay-duration="0">
+        <UIcon name="i-lucide-rotate-ccw" class="size-5 hover:cursor-pointer" @click="resetFilter" />
+      </UTooltip>
     </div>
     <div>
       <BaseButton :text="t('add')" variant="solid" class-name="rounded" @click="emits('add', true, {} as ICreateMovie)" />

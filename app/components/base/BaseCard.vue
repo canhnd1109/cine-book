@@ -37,6 +37,7 @@ const handleActionClick = (action: string) => {
     </div>
 
     <div v-if="showActions" class="action-buttons-wrapper dark:bg-[#0f172a] bg-white flex items-center justify-center space-x-2">
+      <!-- <template #actions="{ item, onAction }"> -->
       <slot name="actions" :item="item" :on-action="handleActionClick">
         <UTooltip :text="t('edit')" :delay-duration="0">
           <UButton class="hover:cursor-pointer" icon="i-lucide-edit" size="sm" variant="ghost" @click="handleActionClick('edit')"
