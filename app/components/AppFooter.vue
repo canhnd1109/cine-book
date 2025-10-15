@@ -1,5 +1,5 @@
 <template>
-  <div class="dark:bg-[#0B0D13] bg-light-bg p-8 mx-auto space-y-6">
+  <div class="dark:bg-[#0B0D13] bg-light-bg p-8 mx-auto space-y-6 background">
     <p class="flex justify-center items-center gap-8 text-base">
       <span class="hover:cursor-pointer hover:scale-110 hover:font-semibold transition-transform duration-200 inline-block">
         {{ t('footer.policy') }}
@@ -23,7 +23,10 @@
         {{ t('footer.contact') }}
       </span>
     </p>
-
+    <div class="flex justify-center items-center mx-auto bg-[#78140f] rounded-full w-84 py-2">
+      <img src="/images/vietnam.png" alt="Vietnam" class="w-6 h-6 object-cover" />
+      <span class="text-white">Hoàng Sa & Trường Sa là của Việt Nam!</span>
+    </div>
     <div class="flex justify-center gap-6">
       <img
         src="/images/fb-logo.png"
@@ -66,4 +69,11 @@
 const { t } = useI18n()
 </script>
 
-<style scoped></style>
+<style scoped>
+.background {
+  background-image: url(/images/footer-image.png);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+</style>
