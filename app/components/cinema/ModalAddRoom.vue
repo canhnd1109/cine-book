@@ -3,17 +3,8 @@ import { cinemaRoomSchema, type CinemaRoomInput } from '~/schemas/cinema.chema'
 import { SEAT_TYPE } from '~/constants'
 const { schema } = useSchema(cinemaRoomSchema)
 
-interface SeatType {
-  label: string
-  color: string
-  price: number
-}
 const type = ref('')
 const price = ref('')
-
-const emit = defineEmits<{
-  save: [data: { room: CinemaRoomInput; seats: Record<string, any> }]
-}>()
 
 const { t } = useI18n()
 const isOpen = defineModel('isOpen', { type: Boolean, default: false })
@@ -25,7 +16,8 @@ const room = ref<CinemaRoomInput>({
   columns: 12
 })
 
-const seatTypes: Record<string, SeatType> = {
+const seatTypes = {
+  UNSET: { label: 'Chưa thiết lập', color: 'bg-gray-900', price: 0 },
   NORMAL: { label: 'Ghế thường', color: 'bg-blue-500', price: 50000 },
   VIP: { label: 'Ghế VIP', color: 'bg-yellow-500', price: 100000 },
   COUPLE: { label: 'Ghế đôi', color: 'bg-pink-500', price: 150000 },
@@ -61,16 +53,16 @@ const initializeSeats = () => {
       newSeats[seatId] = {
         row,
         col,
-        type: 'DISABLED',
-        price: seatTypes?.NORMAL?.price ?? 0,
-        status: 'BOOKED',
+        type: 'UNSET',
+        price: 0,
+        status: 'AVAILABLE',
         rowLabel: String.fromCharCode(65 + row),
         colLabel: col + 1
       }
     }
-    clearSelection()
-    seats.value = newSeats
   }
+  clearSelection()
+  seats.value = newSeats
 }
 
 const selectRow = (rowIndex: number) => {
@@ -99,22 +91,43 @@ const selectAll = () => {
   selectedSeats.value = newSelected
 }
 
-const handleSeatClick = (data: any) => {
-  console.log('Seat clicked:', data)
-}
-
 const handleSave = () => {
-  emit('save', {
-    room: room.value,
-    seats: seats.value
-  })
-  handleClose()
+  const formattedSeats = Object.entries(seats.value).map(([key, seat]) => ({
+    rowIdx: seat.row,
+    colIdx: seat.col,
+    seatName: seat.type,
+    price: seat.price
+  }))
+
+  const body = {
+    room: {
+      name: room.value.name,
+      rows: room.value.rows,
+      columns: room.value.columns,
+      seats: formattedSeats
+    }
+  }
 }
 
-const handleClose = () => {
-  isOpen.value = false
+const handleSeatTypeChange = () => {
+  if (selectedSeats.value.size > 0 && type.value) {
+    // Cập nhật seats với loại ghế mới được chọn
+    const newSeats = { ...seats.value }
+    selectedSeats.value.forEach(seatId => {
+      newSeats[seatId] = {
+        ...newSeats[seatId],
+        type: type.value,
+        price: Number(price.value) || seatTypes[type.value as keyof typeof seatTypes]?.price || 0
+      }
+    })
+    seats.value = newSeats
+  }
 }
 
+// Thêm watch để tự động cập nhật khi chọn type
+watch([type, price], () => {
+  handleSeatTypeChange()
+})
 // Initialize on mount
 onMounted(() => {
   if (room.value.rows > 0 && room.value.columns > 0) {
@@ -188,10 +201,9 @@ onMounted(() => {
               :selection-mode="selectionMode"
               mode="admin"
               @update:selected-seats="selectedSeats = $event"
-              @room-click="handleSeatClick"
             />
           </UCard>
-          <UCard class="mb-4 w-1/3">
+          <UCard class="mb-4 w-1/3 h-fit">
             <UFormField label="Loại ghế" name="price">
               <BaseSelect
                 v-model="type"
@@ -206,10 +218,10 @@ onMounted(() => {
             <UFormField :label="t('price')" name="price" class="my-4">
               <UInput v-model="price" :placeholder="t('price')" :ui="{ base: 'h-10' }" class="w-full" />
             </UFormField>
-
+            <!--
             <div class="flex justify-end">
-              <BaseButton text="Lưu cấu hình" class="w-36" variant="solid" class-name="rounded" />
-            </div>
+              <BaseButton text="Lưu cấu hình" class="w-36" variant="solid" class-name="rounded"  />
+            </div> -->
           </UCard>
         </div>
       </div>
@@ -217,7 +229,7 @@ onMounted(() => {
 
     <template #footer>
       <div class="flex justify-end w-full">
-        <BaseButton :text="t('add')" class="w-20" variant="solid" class-name="rounded " />
+        <BaseButton :text="t('add')" class="w-20" variant="solid" class-name="rounded" @click="handleSave" />
       </div>
     </template>
   </UModal>

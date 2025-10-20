@@ -114,9 +114,11 @@ const props = defineProps({
 const emit = defineEmits<{
   'update:selectedSeats': [seats: Set<string>]
   seatClick: [data: { seatId: string; seat: Seat | undefined; selected: boolean }]
+  updateSeatType: [data: { seatIds: string[]; type: string; price: number }]
 }>()
 
 const seatTypes = {
+  UNSET: { label: 'Chưa thiết lập', color: 'bg-gray-200', price: 0 },
   NORMAL: { label: 'Ghế thường', color: 'bg-blue-500', price: 50000 },
   VIP: { label: 'Ghế VIP', color: 'bg-yellow-500', price: 100000 },
   COUPLE: { label: 'Ghế đôi', color: 'bg-pink-500', price: 150000 },
