@@ -1,19 +1,22 @@
 <script setup lang="ts">
 import { cinemaRoomSchema, type CinemaRoomInput } from '~/schemas/cinema.chema'
 import { SEAT_TYPE } from '~/constants'
+import { apiRoom } from '~/services'
 const { schema } = useSchema(cinemaRoomSchema)
+const { cinameDetail } = useCinemaData()
+const toast = useToast()
 
 const type = ref('')
 const price = ref('')
-
+const isProcessing = ref(false)
 const { t } = useI18n()
 const isOpen = defineModel('isOpen', { type: Boolean, default: false })
 const formRef = ref()
 
 const room = ref<CinemaRoomInput>({
   name: '',
-  rows: 8,
-  columns: 12
+  totalRow: 8,
+  totalCol: 12
 })
 
 const seatTypes = {
@@ -32,7 +35,7 @@ const selectionMode = ref<'click' | 'drag'>('click')
 
 // Watch room dimensions change
 watch(
-  () => [room.value.rows ?? 0, room.value.columns ?? 0],
+  () => [room.value.totalRow ?? 0, room.value.totalCol ?? 0],
   ([newRows, newCols]) => {
     if ((newRows ?? 0) > 0 && (newCols ?? 0) > 0) {
       initializeSeats()
@@ -47,12 +50,12 @@ const clearSelection = () => {
 // Methods
 const initializeSeats = () => {
   const newSeats: Record<string, any> = {}
-  for (let row = 0; row < room.value.rows; row++) {
-    for (let col = 0; col < room.value.columns; col++) {
+  for (let row = 0; row < room.value.totalRow; row++) {
+    for (let col = 0; col < room.value.totalCol; col++) {
       const seatId = `${row}-${col}`
       newSeats[seatId] = {
-        row,
-        col,
+        row: row + 1,
+        col: col + 1,
         type: 'UNSET',
         price: 0,
         status: 'AVAILABLE',
@@ -67,7 +70,7 @@ const initializeSeats = () => {
 
 const selectRow = (rowIndex: number) => {
   const newSelected = new Set<string>()
-  for (let col = 0; col < room.value.columns; col++) {
+  for (let col = 0; col < room.value.totalCol; col++) {
     newSelected.add(`${rowIndex}-${col}`)
   }
   selectedSeats.value = newSelected
@@ -75,7 +78,7 @@ const selectRow = (rowIndex: number) => {
 
 const selectCol = (colIndex: number) => {
   const newSelected = new Set<string>()
-  for (let row = 0; row < room.value.rows; row++) {
+  for (let row = 0; row < room.value.totalRow; row++) {
     newSelected.add(`${row}-${colIndex}`)
   }
   selectedSeats.value = newSelected
@@ -83,15 +86,15 @@ const selectCol = (colIndex: number) => {
 
 const selectAll = () => {
   const newSelected = new Set<string>()
-  for (let row = 0; row < room.value.rows; row++) {
-    for (let col = 0; col < room.value.columns; col++) {
+  for (let row = 0; row < room.value.totalRow; row++) {
+    for (let col = 0; col < room.value.totalCol; col++) {
       newSelected.add(`${row}-${col}`)
     }
   }
   selectedSeats.value = newSelected
 }
 
-const handleSave = () => {
+const handleSave = async () => {
   const formattedSeats = Object.entries(seats.value).map(([key, seat]) => ({
     rowIdx: seat.row,
     colIdx: seat.col,
@@ -100,12 +103,24 @@ const handleSave = () => {
   }))
 
   const body = {
-    room: {
-      name: room.value.name,
-      rows: room.value.rows,
-      columns: room.value.columns,
-      seats: formattedSeats
-    }
+    cinemaId: cinameDetail.value.id,
+    name: room.value.name,
+    totalRow: room.value.totalRow,
+    totalCol: room.value.totalCol,
+    seats: formattedSeats
+  }
+  isProcessing.value = true
+  try {
+    const { message } = await apiRoom.addRoom(body)
+    toast.add({
+      title: t('success'),
+      description: message,
+      color: 'success'
+    })
+  } catch (error) {
+    console.log(error)
+  } finally {
+    isProcessing.value = false
   }
 }
 
@@ -130,7 +145,7 @@ watch([type, price], () => {
 })
 // Initialize on mount
 onMounted(() => {
-  if (room.value.rows > 0 && room.value.columns > 0) {
+  if (room.value.totalRow > 0 && room.value.totalCol > 0) {
     initializeSeats()
   }
 })
@@ -144,15 +159,15 @@ onMounted(() => {
           <UInput v-model="room.name" :placeholder="t('cinema-name')" :ui="{ base: 'h-10' }" class="w-full" />
         </UFormField>
 
-        <UFormField :label="t('row')" name="rows">
-          <UInput v-model.number="room.rows" :placeholder="t('row')" :ui="{ base: 'h-10' }" class="w-full" />
+        <UFormField :label="t('row')" name="totalRow">
+          <UInput v-model.number="room.totalRow" :placeholder="t('row')" :ui="{ base: 'h-10' }" class="w-full" />
         </UFormField>
-        <UFormField :label="t('column')" name="columns">
-          <UInput v-model.number="room.columns" :placeholder="t('column')" :ui="{ base: 'h-10' }" class="w-full" />
+        <UFormField :label="t('column')" name="totalCol">
+          <UInput v-model.number="room.totalCol" :placeholder="t('column')" :ui="{ base: 'h-10' }" class="w-full" />
         </UFormField>
       </UForm>
 
-      <div v-if="room.rows > 0 && room.columns > 0" class="mt-6">
+      <div v-if="room.totalRow > 0 && room.totalCol > 0" class="mt-6">
         <div class="flex gap-4 w-full">
           <UCard class="mb-4">
             <div class="flex flex-wrap gap-3 items-center">
@@ -181,11 +196,11 @@ onMounted(() => {
             </template>
 
             <div class="flex flex-wrap gap-2">
-              <UButton v-for="i in room.rows" :key="`row-${i}`" size="sm" variant="outline" @click="selectRow(i - 1)">
+              <UButton v-for="i in room.totalRow" :key="`row-${i}`" size="sm" variant="outline" @click="selectRow(i - 1)">
                 Hàng {{ String.fromCharCode(64 + i) }}
               </UButton>
 
-              <UButton v-for="i in room.columns" :key="`col-${i}`" size="sm" variant="outline" @click="selectCol(i - 1)">
+              <UButton v-for="i in room.totalCol" :key="`col-${i}`" size="sm" variant="outline" @click="selectCol(i - 1)">
                 Cột {{ i }}
               </UButton>
             </div>
@@ -194,8 +209,8 @@ onMounted(() => {
         <div class="flex gap-4">
           <UCard class="mb-4 w-full">
             <BaseSeatGrid
-              :rows="room.rows"
-              :cols="room.columns"
+              :rows="room.totalRow"
+              :cols="room.totalCol"
               :seats="seats"
               :selected-seats="selectedSeats"
               :selection-mode="selectionMode"

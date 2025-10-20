@@ -45,18 +45,18 @@ export function cinemaRoomSchema(t: (key: string, params?: Record<string, any>) 
   return z
     .object({
       name: z.string().min(1, t('name-room-required')),
-      rows: z
+      totalRow: z
         .number()
         .int({ message: 'Số hàng phải là số nguyên' })
         .min(1, { message: 'Phải có ít nhất 1 hàng' })
         .max(30, { message: 'Tối đa 30 hàng' }),
-      columns: z
+      totalCol: z
         .number()
         .int({ message: 'Số cột phải là số nguyên' })
         .min(1, { message: 'Phải có ít nhất 1 cột' })
         .max(30, { message: 'Tối đa 30 cột' })
     })
-    .refine(data => data.rows * data.columns <= 500, { message: 'Tổng số ghế không được vượt quá 500' })
+    .refine(data => data.totalRow * data.totalCol <= 500, { message: 'Tổng số ghế không được vượt quá 500' })
 }
 
 export type CinemaRoomInput = z.infer<ReturnType<typeof cinemaRoomSchema>>

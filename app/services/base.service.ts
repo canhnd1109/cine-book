@@ -4,6 +4,7 @@ import type { ExtendedFetchOptions } from '~/types/http.type'
 
 type QueryParams = Record<string, string | number | boolean | string[] | number[] | undefined | any>
 type DeleteParams = Record<string, string | number | boolean | undefined>
+type RequestBody = Record<string, unknown> | FormData | string | any
 
 export default class BaseService {
   prefix: string
@@ -31,11 +32,7 @@ export default class BaseService {
     return this.handleRequest<T>(url, { method: 'get', query: params })
   }
 
-  async post<T, B extends Record<string, unknown> | FormData | string | undefined = undefined>(
-    url: string,
-    body?: B,
-    config?: { headers?: Record<string, string> }
-  ): Promise<T> {
+  async post<T>(url: string, body?: RequestBody, config?: { headers?: Record<string, string> }): Promise<T> {
     return this.handleRequest<T>(url, { method: 'post', body, ...config })
   }
 

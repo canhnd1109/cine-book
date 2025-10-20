@@ -21,3 +21,16 @@ export interface ICinema {
   status: string
   urlImages: string[]
 }
+
+export interface IBodyRoom {
+  cinemaId: string
+  name: string
+  totalRow: number
+  totalCol: number
+  seats: {
+    seatName: string
+    price: number
+    rowIdx: number
+    colIdx: number
+  }[]
+}
