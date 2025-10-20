@@ -5,15 +5,15 @@
       <UBadge variant="subtle" class="mt-2">Màn hình</UBadge>
     </div>
 
-    <!-- Seat Grid -->
+    <!-- Seat Grid with Transition -->
     <div class="flex justify-center select-none mb-6" @mouseup="handleMouseUp">
-      <div class="inline-block">
-        <div v-for="row in rows" :key="`row-${row}`" class="flex items-center space-x-2">
+      <TransitionGroup name="seat-grid" tag="div" class="inline-block" :css="true">
+        <div v-for="row in rows" :key="`row-${row}`" class="flex items-center space-x-2 seat-row">
           <UBadge variant="subtle" class="w-8 text-center font-bold flex justify-center items-center">
             {{ String.fromCharCode(64 + row) }}
           </UBadge>
 
-          <div class="flex">
+          <TransitionGroup name="seat" tag="div" class="flex" :css="true">
             <div
               v-for="col in cols"
               :key="`seat-${row}-${col}`"
@@ -35,9 +35,9 @@
                 class="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full"
               />
             </div>
-          </div>
+          </TransitionGroup>
         </div>
-      </div>
+      </TransitionGroup>
     </div>
 
     <!-- Legend -->
@@ -301,5 +301,58 @@ const handleMouseUp = () => {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+}
+
+/* Row Animation */
+.seat-row {
+  transform-origin: left center;
+}
+
+.seat-grid-enter-active,
+.seat-grid-leave-active {
+  transition: all 0.3s ease;
+}
+
+.seat-grid-enter-from {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+}
+
+.seat-grid-leave-to {
+  opacity: 0;
+  transform: translateY(10px) scale(0.95);
+}
+
+.seat-grid-move {
+  transition: transform 0.3s ease;
+}
+
+/* Individual Seat Animation */
+.seat-enter-active {
+  transition: all 0.2s ease;
+  transition-delay: calc(var(--seat-index, 0) * 0.02s);
+}
+
+.seat-leave-active {
+  transition: all 0.2s ease;
+}
+
+.seat-enter-from {
+  opacity: 0;
+  transform: scale(0.5) rotate(-5deg);
+}
+
+.seat-leave-to {
+  opacity: 0;
+  transform: scale(0.5) rotate(5deg);
+}
+
+.seat-move {
+  transition: transform 0.2s ease;
+}
+
+/* Smooth layout changes */
+.inline-block {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 </style>
