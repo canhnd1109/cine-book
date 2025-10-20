@@ -19,19 +19,24 @@ const room = ref<CinemaRoomInput>({
   totalCol: 12
 })
 
-const seatTypes = {
-  UNSET: { label: 'Chưa thiết lập', color: 'bg-gray-900', price: 0 },
-  NORMAL: { label: 'Ghế thường', color: 'bg-blue-500', price: 50000 },
-  VIP: { label: 'Ghế VIP', color: 'bg-yellow-500', price: 100000 },
-  COUPLE: { label: 'Ghế đôi', color: 'bg-pink-500', price: 150000 },
-  DISABLED: { label: 'Không hoạt động', color: 'bg-gray-400', price: 0 },
-  EMPTY: { label: 'Vị trí trống', color: 'bg-transparent border-2 border-dashed border-gray-300', price: 0 }
+type SeatType = 'NORMAL' | 'VIP' | 'COUPLE' | 'DISABLED' | 'EMPTY' | 'UNSET'
+
+interface LocalSeat {
+  row: number
+  col: number
+  type: SeatType
+  price: number
+  status?: 'AVAILABLE' | 'BOOKED' | 'LOCKED'
+  rowLabel?: string
+  colLabel?: number
 }
 
 // State
 const seats = ref<Record<string, any>>({})
 const selectedSeats = ref(new Set<string>())
 const selectionMode = ref<'click' | 'drag'>('click')
+// Stored configs: allow multiple batch configs (each = seatIds + type + price)
+const seatConfigs = ref<Array<{ seatIds: string[]; type: SeatType; price: number }>>([])
 
 // Watch room dimensions change
 watch(
@@ -49,7 +54,7 @@ const clearSelection = () => {
 
 // Methods
 const initializeSeats = () => {
-  const newSeats: Record<string, any> = {}
+  const newSeats: Record<string, LocalSeat> = {}
   for (let row = 0; row < room.value.totalRow; row++) {
     for (let col = 0; col < room.value.totalCol; col++) {
       const seatId = `${row}-${col}`
@@ -95,12 +100,15 @@ const selectAll = () => {
 }
 
 const handleSave = async () => {
-  const formattedSeats = Object.entries(seats.value).map(([key, seat]) => ({
-    rowIdx: seat.row,
-    colIdx: seat.col,
-    seatName: seat.type,
-    price: seat.price
-  }))
+  // Only send seats that have been configured (type !== 'UNSET')
+  const formattedSeats = Object.entries(seats.value)
+    .filter(([_, seat]) => seat.type && seat.type !== 'UNSET')
+    .map(([_key, seat]) => ({
+      rowIdx: seat.row,
+      colIdx: seat.col,
+      seatName: seat.type,
+      price: seat.price
+    }))
 
   const body = {
     cinemaId: cinameDetail.value.id,
@@ -109,19 +117,59 @@ const handleSave = async () => {
     totalCol: room.value.totalCol,
     seats: formattedSeats
   }
-  isProcessing.value = true
-  try {
-    const { message } = await apiRoom.addRoom(body)
-    toast.add({
-      title: t('success'),
-      description: message,
-      color: 'success'
-    })
-  } catch (error) {
-    console.log(error)
-  } finally {
-    isProcessing.value = false
-  }
+  console.log('🚀 ~ handleSave ~ body:', body)
+  // isProcessing.value = true
+  // try {
+  //   const { message } = await apiRoom.addRoom(body)
+  //   toast.add({
+  //     title: t('success'),
+  //     description: message,
+  //     color: 'success'
+  //   })
+  // } catch (error) {
+  //   console.log(error)
+  // } finally {
+  //   isProcessing.value = false
+  // }
+}
+
+// const handleSaveConfig = () => {
+//   if (!type.value) {
+//     toast.add({ title: t('error'), description: 'Vui lòng chọn loại ghế', color: 'error' })
+//     return
+//   }
+//   if (selectedSeats.value.size === 0) {
+//     toast.add({ title: t('error'), description: 'Vui lòng chọn ít nhất 1 ghế', color: 'error' })
+//     return
+//   }
+
+//   const seatIds = Array.from(selectedSeats.value)
+
+//   // apply to seats immediately
+//   const newSeats = { ...seats.value }
+//   seatIds.forEach(seatId => {
+//     const existing = newSeats[seatId] as LocalSeat | undefined
+//     if (existing) {
+//       newSeats[seatId] = {
+//         ...existing,
+//         type: type.value as SeatType,
+//         price: Number(price.value) || 0
+//       }
+//     }
+//   })
+//   seats.value = newSeats
+
+//   // push to configs for later review / combined save
+//   seatConfigs.value.push({ seatIds, type: type.value as SeatType, price: Number(price.value) || 0 })
+
+//   // clear selection
+//   selectedSeats.value = new Set()
+
+//   toast.add({ title: t('success'), description: 'Lưu cấu hình thành công', color: 'success' })
+// }
+
+const removeConfig = (index: number) => {
+  seatConfigs.value.splice(index, 1)
 }
 
 const handleSeatTypeChange = () => {
@@ -131,8 +179,8 @@ const handleSeatTypeChange = () => {
     selectedSeats.value.forEach(seatId => {
       newSeats[seatId] = {
         ...newSeats[seatId],
-        type: type.value,
-        price: Number(price.value) || seatTypes[type.value as keyof typeof seatTypes]?.price || 0
+        type: type.value as SeatType,
+        price: Number(price.value)
       }
     })
     seats.value = newSeats
@@ -233,9 +281,9 @@ onMounted(() => {
             <UFormField :label="t('price')" name="price" class="my-4">
               <UInput v-model="price" :placeholder="t('price')" :ui="{ base: 'h-10' }" class="w-full" />
             </UFormField>
-            <!--
-            <div class="flex justify-end">
-              <BaseButton text="Lưu cấu hình" class="w-36" variant="solid" class-name="rounded"  />
+
+            <!-- <div class="flex justify-end">
+              <BaseButton text="Lưu cấu hình" class="w-36" variant="solid" class-name="rounded" @click="handleSaveConfig" />
             </div> -->
           </UCard>
         </div>

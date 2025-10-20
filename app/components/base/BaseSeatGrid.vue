@@ -1,74 +1,8 @@
-<template>
-  <div>
-    <!-- Screen -->
-    <div class="mb-6 flex flex-col items-center">
-      <UBadge variant="subtle" class="mt-2">Màn hình</UBadge>
-    </div>
-
-    <!-- Seat Grid with Transition -->
-    <div class="flex justify-center select-none mb-6" @mouseup="handleMouseUp">
-      <TransitionGroup name="seat-grid" tag="div" class="inline-block" :css="true">
-        <div v-for="row in rows" :key="`row-${row}`" class="flex items-center space-x-2 seat-row">
-          <UBadge variant="subtle" class="w-8 text-center font-bold flex justify-center items-center">
-            {{ String.fromCharCode(64 + row) }}
-          </UBadge>
-
-          <TransitionGroup name="seat" tag="div" class="flex" :css="true">
-            <div
-              v-for="col in cols"
-              :key="`seat-${row}-${col}`"
-              :class="getSeatClass(row - 1, col - 1)"
-              @click="handleSeatClick(row - 1, col - 1, $event)"
-              @mousedown="handleMouseDown(row - 1, col - 1)"
-              @mouseenter="handleMouseEnter(row - 1, col - 1)"
-            >
-              <div
-                v-if="getSeat(row - 1, col - 1)?.type !== 'EMPTY'"
-                class="absolute inset-0 flex items-center justify-center text-white text-xs font-bold"
-              >
-                {{ String.fromCharCode(64 + row) }}{{ col }}
-              </div>
-
-              <!-- Status indicator for booked seats -->
-              <div
-                v-if="mode === 'booking' && getSeat(row - 1, col - 1)?.status === 'BOOKED'"
-                class="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full"
-              />
-            </div>
-          </TransitionGroup>
-        </div>
-      </TransitionGroup>
-    </div>
-
-    <!-- Legend -->
-    <div class="flex flex-wrap gap-4 justify-center">
-      <div v-for="(type, key) in displayedSeatTypes" :key="key" class="flex items-center gap-2">
-        <div :class="['w-6 h-6 rounded', type.color]" />
-        <span class="text-sm text-gray-700">{{ type.label }}</span>
-      </div>
-
-      <!-- Additional legend for booking mode -->
-      <template v-if="mode === 'booking'">
-        <div class="flex items-center gap-2">
-          <div class="w-6 h-6 rounded bg-gray-600 relative">
-            <div class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full" />
-          </div>
-          <span class="text-sm text-gray-700">Đã đặt</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <div class="w-6 h-6 rounded bg-blue-500 ring-4 ring-green-400" />
-          <span class="text-sm text-gray-700">Đang chọn</span>
-        </div>
-      </template>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 interface Seat {
   row: number
   col: number
-  type: 'NORMAL' | 'VIP' | 'COUPLE' | 'DISABLED' | 'EMPTY'
+  type: 'NORMAL' | 'VIP' | 'COUPLE' | 'DISABLED' | 'EMPTY' | 'UNSET'
   price: number
   status?: 'AVAILABLE' | 'BOOKED' | 'LOCKED'
   rowLabel?: string
@@ -118,12 +52,12 @@ const emit = defineEmits<{
 }>()
 
 const seatTypes = {
-  UNSET: { label: 'Chưa thiết lập', color: 'bg-gray-200', price: 0 },
-  NORMAL: { label: 'Ghế thường', color: 'bg-blue-500', price: 50000 },
-  VIP: { label: 'Ghế VIP', color: 'bg-yellow-500', price: 100000 },
-  COUPLE: { label: 'Ghế đôi', color: 'bg-pink-500', price: 150000 },
-  DISABLED: { label: 'Không hoạt động', color: 'bg-gray-400', price: 0 },
-  EMPTY: { label: 'Vị trí trống', color: 'bg-transparent border-2 border-dashed border-gray-300', price: 0 }
+  UNSET: { label: 'Chưa thiết lập', color: 'bg-gray-200' },
+  NORMAL: { label: 'Ghế thường', color: 'bg-blue-500' },
+  VIP: { label: 'Ghế VIP', color: 'bg-yellow-500' },
+  COUPLE: { label: 'Ghế đôi', color: 'bg-pink-500' },
+  DISABLED: { label: 'Không hoạt động', color: 'bg-gray-400' },
+  EMPTY: { label: 'Vị trí trống', color: 'bg-transparent border-2 border-dashed border-gray-300' }
 }
 
 // State
@@ -296,6 +230,71 @@ const handleMouseUp = () => {
   isSelecting.value = false
 }
 </script>
+<template>
+  <div>
+    <!-- Screen -->
+    <div class="mb-6 flex flex-col items-center">
+      <UBadge variant="subtle" class="mt-2">Màn hình</UBadge>
+    </div>
+
+    <!-- Seat Grid with Transition -->
+    <div class="flex justify-center select-none mb-6" @mouseup="handleMouseUp">
+      <TransitionGroup name="seat-grid" tag="div" class="inline-block" :css="true">
+        <div v-for="row in rows" :key="`row-${row}`" class="flex items-center space-x-2 seat-row">
+          <UBadge variant="subtle" class="w-8 text-center font-bold flex justify-center items-center">
+            {{ String.fromCharCode(64 + row) }}
+          </UBadge>
+
+          <TransitionGroup name="seat" tag="div" class="flex" :css="true">
+            <div
+              v-for="col in cols"
+              :key="`seat-${row}-${col}`"
+              :class="getSeatClass(row - 1, col - 1)"
+              @click="handleSeatClick(row - 1, col - 1, $event)"
+              @mousedown="handleMouseDown(row - 1, col - 1)"
+              @mouseenter="handleMouseEnter(row - 1, col - 1)"
+            >
+              <div
+                v-if="getSeat(row - 1, col - 1)?.type !== 'EMPTY'"
+                class="absolute inset-0 flex items-center justify-center text-white text-xs font-bold"
+              >
+                {{ String.fromCharCode(64 + row) }}{{ col }}
+              </div>
+
+              <!-- Status indicator for booked seats -->
+              <div
+                v-if="mode === 'booking' && getSeat(row - 1, col - 1)?.status === 'BOOKED'"
+                class="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full"
+              />
+            </div>
+          </TransitionGroup>
+        </div>
+      </TransitionGroup>
+    </div>
+
+    <!-- Legend -->
+    <div class="flex flex-wrap gap-4 justify-center">
+      <div v-for="(type, key) in displayedSeatTypes" :key="key" class="flex items-center gap-2">
+        <div :class="['w-6 h-6 rounded', type.color]" />
+        <span class="text-sm text-gray-700">{{ type.label }}</span>
+      </div>
+
+      <!-- Additional legend for booking mode -->
+      <template v-if="mode === 'booking'">
+        <div class="flex items-center gap-2">
+          <div class="w-6 h-6 rounded bg-gray-600 relative">
+            <div class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full" />
+          </div>
+          <span class="text-sm text-gray-700">Đã đặt</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="w-6 h-6 rounded bg-blue-500 ring-4 ring-green-400" />
+          <span class="text-sm text-gray-700">Đang chọn</span>
+        </div>
+      </template>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .select-none {
