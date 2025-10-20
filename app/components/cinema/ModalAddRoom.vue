@@ -8,13 +8,6 @@ interface SeatType {
   price: number
 }
 
-const props = defineProps({
-  title: {
-    type: String,
-    default: 'Cấu hình sơ đồ ghế'
-  }
-})
-
 const emit = defineEmits<{
   save: [data: { seat: CinemaSeatInput; seats: Record<string, any> }]
 }>()
@@ -139,42 +132,44 @@ onMounted(() => {
       </UForm>
 
       <div v-if="seat.rows > 0 && seat.columns > 0" class="mt-6">
-        <UCard class="mb-4">
-          <div class="flex flex-wrap gap-3 items-center">
-            <div class="flex gap-2">
-              <UButton :variant="selectionMode === 'click' ? 'solid' : 'outline'" @click="selectionMode = 'click'">
-                Click (Ctrl/Shift)
+        <div class="flex gap-4 w-full">
+          <UCard class="mb-4">
+            <div class="flex flex-wrap gap-3 items-center">
+              <div class="flex gap-2">
+                <UButton :variant="selectionMode === 'click' ? 'solid' : 'outline'" @click="selectionMode = 'click'">
+                  Click (Ctrl/Shift)
+                </UButton>
+                <UButton :variant="selectionMode === 'drag' ? 'solid' : 'outline'" @click="selectionMode = 'drag'">
+                  Kéo vùng
+                </UButton>
+              </div>
+
+              <UButton icon="i-heroicons-check-circle" @click="selectAll"> Chọn tất cả </UButton>
+
+              <UButton icon="i-heroicons-x-circle" @click="clearSelection"> Bỏ chọn </UButton>
+
+              <!-- <UButton icon="i-heroicons-cog-6-tooth" :disabled="selectedSeats.size === 0" @click="showBatchConfig = true">
+                Cấu hình ({{ selectedSeats.size }})
+              </UButton> -->
+            </div>
+          </UCard>
+
+          <UCard class="mb-4 w-full">
+            <template #header>
+              <p class="text-sm font-semibold">Chọn nhanh:</p>
+            </template>
+
+            <div class="flex flex-wrap gap-2">
+              <UButton v-for="i in seat.rows" :key="`row-${i}`" size="sm" variant="outline" @click="selectRow(i - 1)">
+                Hàng {{ String.fromCharCode(64 + i) }}
               </UButton>
-              <UButton :variant="selectionMode === 'drag' ? 'solid' : 'outline'" @click="selectionMode = 'drag'">
-                Kéo vùng
+
+              <UButton v-for="i in seat.columns" :key="`col-${i}`" size="sm" variant="outline" @click="selectCol(i - 1)">
+                Cột {{ i }}
               </UButton>
             </div>
-
-            <UButton icon="i-heroicons-check-circle" @click="selectAll"> Chọn tất cả </UButton>
-
-            <UButton icon="i-heroicons-x-circle" @click="clearSelection"> Bỏ chọn </UButton>
-
-            <!-- <UButton icon="i-heroicons-cog-6-tooth" :disabled="selectedSeats.size === 0" @click="showBatchConfig = true">
-              Cấu hình ({{ selectedSeats.size }})
-            </UButton> -->
-          </div>
-        </UCard>
-
-        <UCard class="mb-4">
-          <template #header>
-            <p class="text-sm font-semibold">Chọn nhanh:</p>
-          </template>
-
-          <div class="flex flex-wrap gap-2">
-            <UButton v-for="i in seat.rows" :key="`row-${i}`" size="sm" variant="outline" @click="selectRow(i - 1)">
-              Hàng {{ String.fromCharCode(64 + i) }}
-            </UButton>
-
-            <UButton v-for="i in seat.columns" :key="`col-${i}`" size="sm" variant="outline" @click="selectCol(i - 1)">
-              Cột {{ i }}
-            </UButton>
-          </div>
-        </UCard>
+          </UCard>
+        </div>
 
         <BaseSeatGrid
           :rows="seat.rows"
