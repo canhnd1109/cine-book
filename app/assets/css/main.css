@@ -2,6 +2,7 @@
 @import '@nuxt/ui';
 
 @theme static {
+  --ui-secondary: #90a1b9;
   --color-primary: #00e080;
   /* Light */
   --color-bg-light: #f5f5f8;
@@ -10,11 +11,11 @@
   /* Dark */
   --color-bg-primary-dark: #1d2a3d;
   --color-bg-seconary-dark: #0f172a;
-  --color-text-seconary: #90a1b9;
   --color-border-dark: #314158;
 
   /* Error */
   --color-text-error: #d10000;
+  --color-text-seconary: #90a1b9;
 
   --container-lg: 100vw;
 }

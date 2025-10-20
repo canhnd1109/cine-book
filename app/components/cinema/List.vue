@@ -56,15 +56,15 @@ const actionClick = (action: IActionCard, data: ICinema) => {
             {{ item.name }}
           </p>
           <p>
-            <span class="text-[#90a1b9] text-sm">{{ $t('address') }}: </span>
+            <span class="text-secondary text-sm">{{ $t('address') }}: </span>
             <span>{{ item.province }} - {{ item.commune }} - {{ item.detailAddress }}</span>
           </p>
           <p>
-            <span class="text-[#90a1b9] text-sm">{{ $t('phone') }}: </span>
+            <span class="text-secondary text-sm">{{ $t('phone') }}: </span>
             <span>{{ item.phone }}</span>
           </p>
           <p>
-            <span class="text-[#90a1b9] text-sm">{{ $t('description') }}: </span>
+            <span class="text-secondary text-sm">{{ $t('description') }}: </span>
             <span>{{ item.description }}</span>
           </p>
         </template>

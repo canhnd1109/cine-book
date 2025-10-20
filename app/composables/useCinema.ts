@@ -1,6 +1,8 @@
 import { useDebounceFn } from '@vueuse/core'
 import type { ICinema, ICinemaFilter } from '~/types/cinema.type'
 
+const cinameDetail = ref<ICinema>({} as ICinema)
+
 export const useCinemaFilterSync = createFilterSync<ICinemaFilter>({
   defaults: {
     keyWord: ''
@@ -38,9 +40,6 @@ export function useCinemaData() {
       await triggerRefresh(opts?.debounce)
     }
   }
-
-  // TODO:CINEMA DETAIL
-  const cinameDetail = ref<ICinema>({} as ICinema)
 
   return {
     // State
