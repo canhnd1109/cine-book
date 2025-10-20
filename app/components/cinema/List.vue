@@ -1,10 +1,24 @@
 <script setup lang="ts">
-const { cinemas } = useCinemaData()
+import type { ICinema } from '~/types/cinema.type'
+import type { IActionCard } from '~/types/constant.type'
+
+const { cinemas, cinameDetail } = useCinemaData()
 
 const { isFetching = false } = defineProps<{
   isFetching?: boolean
 }>()
 const hoveredItem = ref<string | null>(null)
+
+const actionClick = (action: IActionCard, data: ICinema) => {
+  if (action === 'EDIT') {
+    console.log(action)
+  } else if (action === 'VIEW') {
+    cinameDetail.value = data
+    navigateTo({ name: 'admin-cinemas-id', params: { id: cinameDetail.value.id } })
+  } else {
+    console.log(action)
+  }
+}
 </script>
 
 <template>
@@ -12,7 +26,7 @@ const hoveredItem = ref<string | null>(null)
   <BaseEmpty v-else-if="!cinemas.length" />
   <div v-else class="grid-cols-5 gap-6 grid max-lg:grid-cols-4 max-md:grid-cols-3 max-sm:grid-cols-2">
     <div v-for="item in cinemas" :key="item.id">
-      <BaseCard :item="item" :index="0" class="w-full">
+      <BaseCard :item="item" :index="0" class="w-full" @action-click="actionClick">
         <template #image>
           <div class="flex items-center justify-center">
             <div

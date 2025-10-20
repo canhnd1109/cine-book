@@ -1,4 +1,6 @@
 <script setup lang="ts" generic="T extends Record<string, any>">
+import type { IActionCard } from '~/types/constant.type'
+
 const { t } = useI18n()
 
 interface Props {
@@ -15,12 +17,12 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<{
-  'action-click': [action: string, item: T]
+  'action-click': [action: IActionCard, item: T]
 }>()
 
 const delay = computed(() => `${props.index * props.animationDelay}ms`)
 
-const handleActionClick = (action: string) => {
+const handleActionClick = (action: IActionCard) => {
   emit('action-click', action, props.item)
 }
 </script>
@@ -40,7 +42,7 @@ const handleActionClick = (action: string) => {
       <!-- <template #actions="{ item, onAction }"> -->
       <slot name="actions" :item="item" :on-action="handleActionClick">
         <UTooltip :text="t('edit')" :delay-duration="0">
-          <UButton class="hover:cursor-pointer" icon="i-lucide-edit" size="sm" variant="ghost" @click="handleActionClick('edit')"
+          <UButton class="hover:cursor-pointer" icon="i-lucide-edit" size="sm" variant="ghost" @click="handleActionClick('EDIT')"
         /></UTooltip>
         <UTooltip :text="t('view')" :delay-duration="0">
           <UButton
@@ -48,7 +50,7 @@ const handleActionClick = (action: string) => {
             icon="i-lucide-eye"
             size="sm"
             variant="ghost"
-            @click="handleActionClick('view')"
+            @click="handleActionClick('VIEW')"
           />
         </UTooltip>
         <UTooltip :text="t('delete')" :delay-duration="0">
@@ -57,7 +59,7 @@ const handleActionClick = (action: string) => {
             icon="i-lucide-trash"
             size="sm"
             variant="ghost"
-            @click="handleActionClick('delete')"
+            @click="handleActionClick('DELETE')"
           />
         </UTooltip>
       </slot>

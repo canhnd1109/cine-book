@@ -39,11 +39,15 @@ export function useCinemaData() {
     }
   }
 
+  // TODO:CINEMA DETAIL
+  const cinameDetail = ref<ICinema>({} as ICinema)
+
   return {
     // State
     filters,
     cinemas,
     totalRecords,
+    cinameDetail,
 
     // Method
     apply: applyWithRefresh,

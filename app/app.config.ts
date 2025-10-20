@@ -12,6 +12,20 @@ export default defineAppConfig({
       path: '/admin',
       name: 'Admin'
     },
+    movies: {
+      name: 'Movies',
+      path: '/admin/movies'
+    },
+    cinemas: {
+      name: 'Cinemas',
+      icon: 'cinema',
+      path: '/admin/cinemas'
+    },
+    'admin-cinemas-id': {
+      name: 'CinemaDetail',
+      icon: 'cinema',
+      path: '/admin/cinemas/:id'
+    },
     'not-found': {
       path: '/:pathMatch(.*)*',
       title: 'Page Not Found'
