@@ -148,5 +148,8 @@
   "select-ward": "Select ward / commune",
   "edit": "Edit",
   "view": "View",
-  "reset-filter": "Reset filter"
+  "reset-filter": "Reset filter",
+  "status": "Status",
+  "room-management": "Room management",
+  "theater-information": "Theater information"
 }

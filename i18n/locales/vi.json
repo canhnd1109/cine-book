@@ -148,5 +148,8 @@
   "select-ward": "Chọn xã / phường",
   "edit": "Sửa",
   "view": "Xem",
-  "reset-filter": "Reset lọc"
+  "reset-filter": "Reset lọc",
+  "status": "Trạng thái",
+  "room-management": "Quản lý phòng",
+  "theater-information": "Thông tin rạp chiếu"
 }
