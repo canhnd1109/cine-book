@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { cinemaSeatSchema, type CinemaSeatInput } from '~/schemas/cinema.chema'
-const { schema } = useSchema(cinemaSeatSchema)
+import { cinemaRoomSchema, type CinemaRoomInput } from '~/schemas/cinema.chema'
+const { schema } = useSchema(cinemaRoomSchema)
 
 interface SeatType {
   label: string
@@ -9,14 +9,15 @@ interface SeatType {
 }
 
 const emit = defineEmits<{
-  save: [data: { seat: CinemaSeatInput; seats: Record<string, any> }]
+  save: [data: { room: CinemaRoomInput; seats: Record<string, any> }]
 }>()
 
 const { t } = useI18n()
 const isOpen = defineModel('isOpen', { type: Boolean, default: false })
 const formRef = ref()
 
-const seat = ref<CinemaSeatInput>({
+const room = ref<CinemaRoomInput>({
+  name: '',
   rows: 8,
   columns: 12
 })
@@ -34,9 +35,9 @@ const seats = ref<Record<string, any>>({})
 const selectedSeats = ref(new Set<string>())
 const selectionMode = ref<'click' | 'drag'>('click')
 
-// Watch seat dimensions change
+// Watch room dimensions change
 watch(
-  () => [seat.value.rows ?? 0, seat.value.columns ?? 0],
+  () => [room.value.rows ?? 0, room.value.columns ?? 0],
   ([newRows, newCols]) => {
     if ((newRows ?? 0) > 0 && (newCols ?? 0) > 0) {
       initializeSeats()
@@ -51,15 +52,15 @@ const clearSelection = () => {
 // Methods
 const initializeSeats = () => {
   const newSeats: Record<string, any> = {}
-  for (let row = 0; row < seat.value.rows; row++) {
-    for (let col = 0; col < seat.value.columns; col++) {
+  for (let row = 0; row < room.value.rows; row++) {
+    for (let col = 0; col < room.value.columns; col++) {
       const seatId = `${row}-${col}`
       newSeats[seatId] = {
         row,
         col,
-        type: 'NORMAL',
+        type: 'DISABLED',
         price: seatTypes?.NORMAL?.price ?? 0,
-        status: 'AVAILABLE',
+        status: 'BOOKED',
         rowLabel: String.fromCharCode(65 + row),
         colLabel: col + 1
       }
@@ -71,7 +72,7 @@ const initializeSeats = () => {
 
 const selectRow = (rowIndex: number) => {
   const newSelected = new Set<string>()
-  for (let col = 0; col < seat.value.columns; col++) {
+  for (let col = 0; col < room.value.columns; col++) {
     newSelected.add(`${rowIndex}-${col}`)
   }
   selectedSeats.value = newSelected
@@ -79,7 +80,7 @@ const selectRow = (rowIndex: number) => {
 
 const selectCol = (colIndex: number) => {
   const newSelected = new Set<string>()
-  for (let row = 0; row < seat.value.rows; row++) {
+  for (let row = 0; row < room.value.rows; row++) {
     newSelected.add(`${row}-${colIndex}`)
   }
   selectedSeats.value = newSelected
@@ -87,8 +88,8 @@ const selectCol = (colIndex: number) => {
 
 const selectAll = () => {
   const newSelected = new Set<string>()
-  for (let row = 0; row < seat.value.rows; row++) {
-    for (let col = 0; col < seat.value.columns; col++) {
+  for (let row = 0; row < room.value.rows; row++) {
+    for (let col = 0; col < room.value.columns; col++) {
       newSelected.add(`${row}-${col}`)
     }
   }
@@ -101,7 +102,7 @@ const handleSeatClick = (data: any) => {
 
 const handleSave = () => {
   emit('save', {
-    seat: seat.value,
+    room: room.value,
     seats: seats.value
   })
   handleClose()
@@ -113,7 +114,7 @@ const handleClose = () => {
 
 // Initialize on mount
 onMounted(() => {
-  if (seat.value.rows > 0 && seat.value.columns > 0) {
+  if (room.value.rows > 0 && room.value.columns > 0) {
     initializeSeats()
   }
 })
@@ -122,16 +123,20 @@ onMounted(() => {
 <template>
   <UModal v-model:open="isOpen" :title="t('add-room')">
     <template #body>
-      <UForm ref="formRef" :schema :state="seat" class="grid grid-cols-2 gap-4">
+      <UForm ref="formRef" :schema :state="room" class="grid grid-cols-3 gap-4">
+        <UFormField :label="t('cinema-name')" name="name">
+          <UInput v-model="room.name" :placeholder="t('cinema-name')" :ui="{ base: 'h-10' }" class="w-full" />
+        </UFormField>
+
         <UFormField :label="t('row')" name="rows">
-          <UInput v-model.number="seat.rows" :placeholder="t('row')" :ui="{ base: 'h-10' }" class="w-full" />
+          <UInput v-model.number="room.rows" :placeholder="t('row')" :ui="{ base: 'h-10' }" class="w-full" />
         </UFormField>
         <UFormField :label="t('column')" name="columns">
-          <UInput v-model.number="seat.columns" :placeholder="t('column')" :ui="{ base: 'h-10' }" class="w-full" />
+          <UInput v-model.number="room.columns" :placeholder="t('column')" :ui="{ base: 'h-10' }" class="w-full" />
         </UFormField>
       </UForm>
 
-      <div v-if="seat.rows > 0 && seat.columns > 0" class="mt-6">
+      <div v-if="room.rows > 0 && room.columns > 0" class="mt-6">
         <div class="flex gap-4 w-full">
           <UCard class="mb-4">
             <div class="flex flex-wrap gap-3 items-center">
@@ -160,11 +165,11 @@ onMounted(() => {
             </template>
 
             <div class="flex flex-wrap gap-2">
-              <UButton v-for="i in seat.rows" :key="`row-${i}`" size="sm" variant="outline" @click="selectRow(i - 1)">
+              <UButton v-for="i in room.rows" :key="`row-${i}`" size="sm" variant="outline" @click="selectRow(i - 1)">
                 Hàng {{ String.fromCharCode(64 + i) }}
               </UButton>
 
-              <UButton v-for="i in seat.columns" :key="`col-${i}`" size="sm" variant="outline" @click="selectCol(i - 1)">
+              <UButton v-for="i in room.columns" :key="`col-${i}`" size="sm" variant="outline" @click="selectCol(i - 1)">
                 Cột {{ i }}
               </UButton>
             </div>
@@ -172,14 +177,14 @@ onMounted(() => {
         </div>
 
         <BaseSeatGrid
-          :rows="seat.rows"
-          :cols="seat.columns"
+          :rows="room.rows"
+          :cols="room.columns"
           :seats="seats"
           :selected-seats="selectedSeats"
           :selection-mode="selectionMode"
           mode="admin"
           @update:selected-seats="selectedSeats = $event"
-          @seat-click="handleSeatClick"
+          @room-click="handleSeatClick"
         />
       </div>
     </template>

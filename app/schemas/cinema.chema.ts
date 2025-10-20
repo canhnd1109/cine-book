@@ -41,9 +41,10 @@ export function createCinemaSchema(t: (key: string, params?: Record<string, any>
   })
 }
 
-export function cinemaSeatSchema(t: (key: string, params?: Record<string, any>) => string) {
+export function cinemaRoomSchema(t: (key: string, params?: Record<string, any>) => string) {
   return z
     .object({
+      name: z.string().min(1, t('name-room-required')),
       rows: z
         .number()
         .int({ message: 'Số hàng phải là số nguyên' })
@@ -58,6 +59,6 @@ export function cinemaSeatSchema(t: (key: string, params?: Record<string, any>) 
     .refine(data => data.rows * data.columns <= 500, { message: 'Tổng số ghế không được vượt quá 500' })
 }
 
-export type CinemaSeatInput = z.infer<ReturnType<typeof cinemaSeatSchema>>
+export type CinemaRoomInput = z.infer<ReturnType<typeof cinemaRoomSchema>>
 
 export type IFormCinema = z.infer<ReturnType<typeof createCinemaSchema>>

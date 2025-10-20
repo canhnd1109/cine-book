@@ -151,5 +151,6 @@
   "status": "Status",
   "room-management": "Room management",
   "theater-information": "Theater information",
-  "add-room": "Add room"
+  "add-room": "Add room",
+  "name-room-required": "Name room is required"
 }
