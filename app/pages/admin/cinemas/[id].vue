@@ -4,8 +4,9 @@ definePageMeta({
   middleware: ['admin']
 })
 const { cinameDetail } = useCinemaData()
-
 const { t } = useI18n()
+
+const isOpen = ref(false)
 </script>
 <template>
   <div class="card-box">
@@ -36,8 +37,9 @@ const { t } = useI18n()
     </div>
     <div class="flex justify-between items-center">
       <p class="text-lg font-medium text-primary">{{ t('room-management') }}</p>
-      <BaseButton :text="t('add')" variant="solid" class-name="rounded" />
+      <BaseButton :text="t('add')" variant="solid" class-name="rounded" @click="isOpen = true" />
     </div>
+    <CinemaModalAddRoom v-model:is-open="isOpen" />
   </div>
 </template>
 

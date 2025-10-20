@@ -2,15 +2,14 @@
   <div>
     <!-- Screen -->
     <div class="mb-6 flex flex-col items-center">
-      <div class="w-full max-w-4xl h-3 bg-gradient-to-b from-gray-800 to-gray-600 rounded-t-3xl shadow-lg" />
-      <UBadge color="gray" variant="subtle" class="mt-2">Màn hình</UBadge>
+      <UBadge variant="subtle" class="mt-2">Màn hình</UBadge>
     </div>
 
     <!-- Seat Grid -->
     <div class="flex justify-center select-none mb-6" @mouseup="handleMouseUp">
       <div class="inline-block">
-        <div v-for="row in rows" :key="`row-${row}`" class="flex items-center">
-          <UBadge color="gray" variant="subtle" class="w-8 text-center font-bold">
+        <div v-for="row in rows" :key="`row-${row}`" class="flex items-center space-x-2">
+          <UBadge variant="subtle" class="w-8 text-center font-bold flex justify-center items-center">
             {{ String.fromCharCode(64 + row) }}
           </UBadge>
 
@@ -65,7 +64,17 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+interface Seat {
+  row: number
+  col: number
+  type: 'NORMAL' | 'VIP' | 'COUPLE' | 'DISABLED' | 'EMPTY'
+  price: number
+  status?: 'AVAILABLE' | 'BOOKED' | 'LOCKED'
+  rowLabel?: string
+  colLabel?: number
+}
+
 const props = defineProps({
   rows: {
     type: Number,
@@ -76,20 +85,20 @@ const props = defineProps({
     required: true
   },
   seats: {
-    type: Object,
-    required: true
+    type: Object as PropType<Record<string, Seat>>,
+    default: () => ({})
   },
   selectedSeats: {
-    type: Set,
+    type: Set as PropType<Set<string>>,
     default: () => new Set()
   },
   mode: {
-    type: String,
-    default: 'admin', // 'admin' or 'booking'
-    validator: value => ['admin', 'booking'].includes(value)
+    type: String as PropType<'admin' | 'booking'>,
+    default: 'admin',
+    validator: (value: string) => ['admin', 'booking'].includes(value)
   },
   selectionMode: {
-    type: String,
+    type: String as PropType<'click' | 'drag'>,
     default: 'click'
   },
   enableMultiSelect: {
@@ -98,11 +107,14 @@ const props = defineProps({
   },
   maxSeatsSelect: {
     type: Number,
-    default: null // null = unlimited
+    default: null
   }
 })
 
-const emit = defineEmits(['update:selectedSeats', 'seatClick'])
+const emit = defineEmits<{
+  'update:selectedSeats': [seats: Set<string>]
+  seatClick: [data: { seatId: string; seat: Seat | undefined; selected: boolean }]
+}>()
 
 const seatTypes = {
   NORMAL: { label: 'Ghế thường', color: 'bg-blue-500', price: 50000 },
@@ -114,12 +126,11 @@ const seatTypes = {
 
 // State
 const isSelecting = ref(false)
-const selectionStart = ref(null)
+const selectionStart = ref<string | null>(null)
 
 // Computed
 const displayedSeatTypes = computed(() => {
   if (props.mode === 'booking') {
-    // Hide EMPTY and DISABLED in booking mode
     const { EMPTY, DISABLED, ...bookingSeatTypes } = seatTypes
     return bookingSeatTypes
   }
@@ -127,12 +138,12 @@ const displayedSeatTypes = computed(() => {
 })
 
 // Methods
-const getSeat = (row, col) => {
+const getSeat = (row: number, col: number): Seat | undefined => {
   const seatId = `${row}-${col}`
   return props.seats[seatId]
 }
 
-const getSeatClass = (row, col) => {
+const getSeatClass = (row: number, col: number): string => {
   const seatId = `${row}-${col}`
   const seat = getSeat(row, col)
   const isSelected = props.selectedSeats.has(seatId)
@@ -144,24 +155,20 @@ const getSeatClass = (row, col) => {
   const isDisabled = seat.type === 'DISABLED'
   const isBooked = props.mode === 'booking' && seat.status === 'BOOKED'
 
-  // Base classes
   const baseClasses = ['relative w-10 h-10 m-0.5 rounded transition-all', seat.type === 'COUPLE' ? 'w-20' : '']
 
-  // Color classes
   if (isBooked) {
     baseClasses.push('bg-gray-600 cursor-not-allowed')
   } else {
     baseClasses.push(seatType.color)
   }
 
-  // Interaction classes
   if (isEmpty || isDisabled || isBooked) {
     baseClasses.push('cursor-not-allowed opacity-50')
   } else {
     baseClasses.push('cursor-pointer hover:scale-105')
   }
 
-  // Selection classes
   if (isSelected && !isBooked) {
     baseClasses.push('ring-4 ring-green-400 scale-110 z-10')
   }
@@ -169,15 +176,13 @@ const getSeatClass = (row, col) => {
   return baseClasses.filter(Boolean).join(' ')
 }
 
-const canSelectSeat = seatId => {
+const canSelectSeat = (seatId: string): boolean => {
   const seat = props.seats[seatId]
   if (!seat) return false
 
-  // Can't select empty, disabled or booked seats
   if (seat.type === 'EMPTY' || seat.type === 'DISABLED') return false
   if (props.mode === 'booking' && seat.status === 'BOOKED') return false
 
-  // Check max seats limit
   if (props.maxSeatsSelect && !props.selectedSeats.has(seatId)) {
     return props.selectedSeats.size < props.maxSeatsSelect
   }
@@ -185,7 +190,7 @@ const canSelectSeat = seatId => {
   return true
 }
 
-const handleSeatClick = (row, col, event) => {
+const handleSeatClick = (row: number, col: number, event: MouseEvent) => {
   const seatId = `${row}-${col}`
 
   if (!canSelectSeat(seatId) && !props.selectedSeats.has(seatId)) {
@@ -194,7 +199,6 @@ const handleSeatClick = (row, col, event) => {
 
   const newSelected = new Set(props.selectedSeats)
 
-  // Admin mode: support multi-select with Ctrl/Shift
   if (props.mode === 'admin' && props.enableMultiSelect) {
     if (event.ctrlKey || event.metaKey) {
       if (newSelected.has(seatId)) {
@@ -204,18 +208,24 @@ const handleSeatClick = (row, col, event) => {
       }
     } else if (event.shiftKey && newSelected.size > 0) {
       const lastSelected = Array.from(newSelected).pop()
-      const [lastRow, lastCol] = lastSelected.split('-').map(Number)
+      if (lastSelected) {
+        const [lastRowStr, lastColStr] = lastSelected.split('-')
+        const lastRow = Number(lastRowStr)
+        const lastCol = Number(lastColStr)
 
-      const minRow = Math.min(lastRow, row)
-      const maxRow = Math.max(lastRow, row)
-      const minCol = Math.min(lastCol, col)
-      const maxCol = Math.max(lastCol, col)
+        if (Number.isNaN(lastRow) || Number.isNaN(lastCol)) return
 
-      for (let r = minRow; r <= maxRow; r++) {
-        for (let c = minCol; c <= maxCol; c++) {
-          const id = `${r}-${c}`
-          if (canSelectSeat(id)) {
-            newSelected.add(id)
+        const minRow = Math.min(lastRow, row)
+        const maxRow = Math.max(lastRow, row)
+        const minCol = Math.min(lastCol, col)
+        const maxCol = Math.max(lastCol, col)
+
+        for (let r = minRow; r <= maxRow; r++) {
+          for (let c = minCol; c <= maxCol; c++) {
+            const id = `${r}-${c}`
+            if (canSelectSeat(id)) {
+              newSelected.add(id)
+            }
           }
         }
       }
@@ -223,16 +233,15 @@ const handleSeatClick = (row, col, event) => {
       newSelected.clear()
       newSelected.add(seatId)
     }
-  }
-  // Booking mode: simple toggle
-  else {
+  } else {
     if (newSelected.has(seatId)) {
       newSelected.delete(seatId)
     } else {
       if (props.maxSeatsSelect && newSelected.size >= props.maxSeatsSelect) {
-        // Remove first selected seat if limit reached
         const firstSeat = Array.from(newSelected)[0]
-        newSelected.delete(firstSeat)
+        if (typeof firstSeat === 'string') {
+          newSelected.delete(firstSeat)
+        }
       }
       newSelected.add(seatId)
     }
@@ -242,7 +251,7 @@ const handleSeatClick = (row, col, event) => {
   emit('seatClick', { seatId, seat: getSeat(row, col), selected: newSelected.has(seatId) })
 }
 
-const handleMouseDown = (row, col) => {
+const handleMouseDown = (row: number, col: number) => {
   if (props.mode === 'admin' && props.selectionMode === 'drag') {
     const seatId = `${row}-${col}`
     if (canSelectSeat(seatId)) {
@@ -253,16 +262,22 @@ const handleMouseDown = (row, col) => {
   }
 }
 
-const handleMouseEnter = (row, col) => {
+const handleMouseEnter = (row: number, col: number) => {
   if (isSelecting.value && selectionStart.value && props.mode === 'admin') {
-    const [startRow, startCol] = selectionStart.value.split('-').map(Number)
+    const [startRowStr, startColStr] = selectionStart.value.split('-')
+    const startRow = Number(startRowStr)
+    const startCol = Number(startColStr)
+
+    if (Number.isNaN(startRow) || Number.isNaN(startCol) || typeof row !== 'number' || typeof col !== 'number') {
+      return
+    }
 
     const minRow = Math.min(startRow, row)
     const maxRow = Math.max(startRow, row)
     const minCol = Math.min(startCol, col)
     const maxCol = Math.max(startCol, col)
 
-    const newSelected = new Set()
+    const newSelected = new Set<string>()
     for (let r = minRow; r <= maxRow; r++) {
       for (let c = minCol; c <= maxCol; c++) {
         const id = `${r}-${c}`

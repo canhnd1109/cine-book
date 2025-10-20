@@ -131,7 +131,6 @@
     "invalidType": "Invalid image format",
     "maxLength": "Maximum {count} images allowed"
   },
-
   "drop-your-images-here": "Drop your images here",
   "description-upload-multiple-images": "Supports JPG and PNG. Up to 5 images, each under 5MB",
   "max-files-exceeded": "You can upload up to {max} images only",
@@ -151,5 +150,6 @@
   "reset-filter": "Reset filter",
   "status": "Status",
   "room-management": "Room management",
-  "theater-information": "Theater information"
+  "theater-information": "Theater information",
+  "add-room": "Add room"
 }
