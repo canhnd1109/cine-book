@@ -41,17 +41,27 @@ export function useCinemaData() {
     }
   }
 
+  const typeSeat = ref('')
+  const priceSeat = ref('')
+
+  const restSeat = () => {
+    typeSeat.value = ''
+    priceSeat.value = ''
+  }
   return {
     // State
     filters,
     cinemas,
     totalRecords,
     cinameDetail,
+    typeSeat,
+    priceSeat,
 
     // Method
     apply: applyWithRefresh,
     setRefreshCallback: (cb: () => Promise<void>) => {
       refreshCallback.value = cb
-    }
+    },
+    restSeat
   }
 }

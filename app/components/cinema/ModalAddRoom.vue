@@ -3,11 +3,9 @@ import { cinemaRoomSchema, type CinemaRoomInput } from '~/schemas/cinema.chema'
 import { SEAT_TYPE } from '~/constants'
 import { apiRoom } from '~/services'
 const { schema } = useSchema(cinemaRoomSchema)
-const { cinameDetail } = useCinemaData()
+const { cinameDetail, typeSeat, priceSeat, restSeat } = useCinemaData()
 const toast = useToast()
 
-const type = ref('')
-const price = ref('')
 const isProcessing = ref(false)
 const { t } = useI18n()
 const isOpen = defineModel('isOpen', { type: Boolean, default: false })
@@ -74,6 +72,7 @@ const initializeSeats = () => {
 }
 
 const selectRow = (rowIndex: number) => {
+  restSeat()
   const newSelected = new Set<string>()
   for (let col = 0; col < room.value.totalCol; col++) {
     newSelected.add(`${rowIndex}-${col}`)
@@ -82,6 +81,7 @@ const selectRow = (rowIndex: number) => {
 }
 
 const selectCol = (colIndex: number) => {
+  restSeat()
   const newSelected = new Set<string>()
   for (let row = 0; row < room.value.totalRow; row++) {
     newSelected.add(`${row}-${colIndex}`)
@@ -90,6 +90,7 @@ const selectCol = (colIndex: number) => {
 }
 
 const selectAll = () => {
+  restSeat()
   const newSelected = new Set<string>()
   for (let row = 0; row < room.value.totalRow; row++) {
     for (let col = 0; col < room.value.totalCol; col++) {
@@ -133,54 +134,19 @@ const handleSave = async () => {
   // }
 }
 
-// const handleSaveConfig = () => {
-//   if (!type.value) {
-//     toast.add({ title: t('error'), description: 'Vui lòng chọn loại ghế', color: 'error' })
-//     return
-//   }
-//   if (selectedSeats.value.size === 0) {
-//     toast.add({ title: t('error'), description: 'Vui lòng chọn ít nhất 1 ghế', color: 'error' })
-//     return
-//   }
-
-//   const seatIds = Array.from(selectedSeats.value)
-
-//   // apply to seats immediately
-//   const newSeats = { ...seats.value }
-//   seatIds.forEach(seatId => {
-//     const existing = newSeats[seatId] as LocalSeat | undefined
-//     if (existing) {
-//       newSeats[seatId] = {
-//         ...existing,
-//         type: type.value as SeatType,
-//         price: Number(price.value) || 0
-//       }
-//     }
-//   })
-//   seats.value = newSeats
-
-//   // push to configs for later review / combined save
-//   seatConfigs.value.push({ seatIds, type: type.value as SeatType, price: Number(price.value) || 0 })
-
-//   // clear selection
-//   selectedSeats.value = new Set()
-
-//   toast.add({ title: t('success'), description: 'Lưu cấu hình thành công', color: 'success' })
-// }
-
 const removeConfig = (index: number) => {
   seatConfigs.value.splice(index, 1)
 }
 
 const handleSeatTypeChange = () => {
-  if (selectedSeats.value.size > 0 && type.value) {
+  if (selectedSeats.value.size > 0 && typeSeat.value) {
     // Cập nhật seats với loại ghế mới được chọn
     const newSeats = { ...seats.value }
     selectedSeats.value.forEach(seatId => {
       newSeats[seatId] = {
         ...newSeats[seatId],
-        type: type.value as SeatType,
-        price: Number(price.value)
+        type: typeSeat.value as SeatType,
+        price: Number(priceSeat.value)
       }
     })
     seats.value = newSeats
@@ -188,7 +154,7 @@ const handleSeatTypeChange = () => {
 }
 
 // Thêm watch để tự động cập nhật khi chọn type
-watch([type, price], () => {
+watch([typeSeat, priceSeat], () => {
   handleSeatTypeChange()
 })
 // Initialize on mount
@@ -264,12 +230,13 @@ onMounted(() => {
               :selection-mode="selectionMode"
               mode="admin"
               @update:selected-seats="selectedSeats = $event"
+              @seat-click="restSeat"
             />
           </UCard>
           <UCard class="mb-4 w-1/3 h-fit">
             <UFormField label="Loại ghế" name="price">
               <BaseSelect
-                v-model="type"
+                v-model="typeSeat"
                 :items="SEAT_TYPE"
                 label-key="label"
                 value-key="value"
@@ -279,7 +246,7 @@ onMounted(() => {
             </UFormField>
 
             <UFormField :label="t('price')" name="price" class="my-4">
-              <UInput v-model="price" :placeholder="t('price')" :ui="{ base: 'h-10' }" class="w-full" />
+              <UInput v-model="priceSeat" :placeholder="t('price')" :ui="{ base: 'h-10' }" class="w-full" />
             </UFormField>
 
             <!-- <div class="flex justify-end">
