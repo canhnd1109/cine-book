@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { cinemaRoomSchema, type CinemaRoomInput } from '~/schemas/cinema.chema'
+import { SEAT_TYPE } from '~/constants'
 const { schema } = useSchema(cinemaRoomSchema)
 
 interface SeatType {
@@ -7,6 +8,8 @@ interface SeatType {
   color: string
   price: number
 }
+const type = ref('')
+const price = ref('')
 
 const emit = defineEmits<{
   save: [data: { room: CinemaRoomInput; seats: Record<string, any> }]
@@ -175,17 +178,40 @@ onMounted(() => {
             </div>
           </UCard>
         </div>
+        <div class="flex gap-4">
+          <UCard class="mb-4 w-full">
+            <BaseSeatGrid
+              :rows="room.rows"
+              :cols="room.columns"
+              :seats="seats"
+              :selected-seats="selectedSeats"
+              :selection-mode="selectionMode"
+              mode="admin"
+              @update:selected-seats="selectedSeats = $event"
+              @room-click="handleSeatClick"
+            />
+          </UCard>
+          <UCard class="mb-4 w-1/3">
+            <UFormField label="Loại ghế" name="price">
+              <BaseSelect
+                v-model="type"
+                :items="SEAT_TYPE"
+                label-key="label"
+                value-key="value"
+                placeholder="Chọn loại ghế"
+                class="w-full"
+              />
+            </UFormField>
 
-        <BaseSeatGrid
-          :rows="room.rows"
-          :cols="room.columns"
-          :seats="seats"
-          :selected-seats="selectedSeats"
-          :selection-mode="selectionMode"
-          mode="admin"
-          @update:selected-seats="selectedSeats = $event"
-          @room-click="handleSeatClick"
-        />
+            <UFormField :label="t('price')" name="price" class="my-4">
+              <UInput v-model="price" :placeholder="t('price')" :ui="{ base: 'h-10' }" class="w-full" />
+            </UFormField>
+
+            <div class="flex justify-end">
+              <BaseButton text="Lưu cấu hình" class="w-36" variant="solid" class-name="rounded" />
+            </div>
+          </UCard>
+        </div>
       </div>
     </template>
 

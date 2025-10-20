@@ -67,6 +67,29 @@ const LIST_PRICE_MOVIE = [
   }
 ]
 
+const SEAT_TYPE = [
+  {
+    label: 'Ghế thường',
+    value: 'NORMAL'
+  },
+  {
+    label: 'Ghế VIP',
+    value: 'VIP'
+  },
+  {
+    label: 'Ghế đôi',
+    value: 'COUPLE'
+  },
+  {
+    label: 'Không hoạt động',
+    value: 'DISABLED'
+  },
+  {
+    label: 'Vị trí trống',
+    value: 'EMPTY'
+  }
+]
+
 export {
   MAX_SIZE_IMAGE_UPLOAD,
   DEFAULT_QUERY_PAGINATION,
@@ -75,5 +98,6 @@ export {
   PASSWORD_REGEX,
   PHONE_NUMBER_REGEX,
   ACCEPTED_IMAGE_TYPES,
-  MAX_FILES
+  MAX_FILES,
+  SEAT_TYPE
 }
