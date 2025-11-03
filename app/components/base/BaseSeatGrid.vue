@@ -91,7 +91,7 @@ const getSeatClass = (row: number, col: number): string => {
   const isDisabled = seat.type === 'DISABLED'
   const isBooked = props.mode === 'booking' && seat.status === 'BOOKED'
 
-  const baseClasses = ['relative w-10 h-10 m-0.5 rounded transition-all', seat.type === 'COUPLE' ? 'w-20' : '']
+  const baseClasses = ['relative w-10 h-10 m-0.5 rounded transition-all']
 
   if (isBooked) {
     baseClasses.push('bg-gray-600 cursor-not-allowed')

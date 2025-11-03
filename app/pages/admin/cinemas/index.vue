@@ -37,7 +37,7 @@ const {
   data,
   pending: isFetching,
   refresh
-} = await useAsyncData('movies-list', async () => {
+} = await useAsyncData('cinemas-list', async () => {
   const res = await apiPublic.fetchCinemas(filters.value)
   return res.value
 })
