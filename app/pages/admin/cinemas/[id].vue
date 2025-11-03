@@ -50,6 +50,29 @@ const getSeatsMap = (room: IRoom): Record<string, Seat> => {
   }
   return transformSeats(room.seats)
 }
+
+// Get unique prices by seat type for a room
+const getSeatTypePrices = (room: IRoom): Record<string, number> => {
+  if (!room?.seats || !Array.isArray(room.seats)) {
+    return {}
+  }
+  const priceMap: Record<string, number> = {}
+  room.seats.forEach(seat => {
+    const seatType = (seat.seatName || 'UNSET').toUpperCase()
+    priceMap[seatType] = seat.price || 0
+  })
+  return priceMap
+}
+
+// Seat type labels
+const seatTypeLabels: Record<string, string> = {
+  NORMAL: 'Ghế thường',
+  VIP: 'Ghế VIP',
+  COUPLE: 'Ghế đôi',
+  DISABLED: 'Không hoạt động',
+  EMPTY: 'Vị trí trống',
+  UNSET: 'Chưa thiết lập'
+}
 </script>
 <template>
   <div class="card-box">
@@ -89,6 +112,14 @@ const getSeatsMap = (room: IRoom): Record<string, Seat> => {
           <p>Name: {{ item.name }}</p>
 
           <p>Tổng số ghế: {{ item.totalCol * item.totalRow }} ( {{ item.totalRow }} x {{ item.totalCol }})</p>
+
+          <!-- Seat type prices -->
+          <div class="flex flex-wrap gap-4 my-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            <div v-for="(price, type) in getSeatTypePrices(item)" :key="type" class="flex items-center gap-2">
+              <span class="font-medium text-sm">{{ seatTypeLabels[type] || type }}:</span>
+              <span class="text-primary font-bold">{{ price.toLocaleString('vi-VN') }} đ</span>
+            </div>
+          </div>
 
           <BaseSeatGrid :rows="item.totalRow" :cols="item.totalCol" :seats="getSeatsMap(item)" mode="booking" />
         </template>
