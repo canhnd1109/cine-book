@@ -127,7 +127,7 @@ const seatTypeLabels: Record<string, string> = {
         </template>
       </BaseCard>
     </div>
-    <CinemaModalAddRoom v-model:is-open="isOpen" />
+    <CinemaModalAddRoom v-model:is-open="isOpen" @saved="isOpen = false" />
   </div>
 </template>
 

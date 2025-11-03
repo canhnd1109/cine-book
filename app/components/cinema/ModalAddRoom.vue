@@ -11,6 +11,10 @@ const { t } = useI18n()
 const isOpen = defineModel('isOpen', { type: Boolean, default: false })
 const formRef = ref()
 
+const emit = defineEmits<{
+  saved: []
+}>()
+
 const room = ref<CinemaRoomInput>({
   name: '',
   totalRow: 8,
@@ -177,6 +181,7 @@ const handleSave = async () => {
       description: message,
       color: 'success'
     })
+    emit('saved')
   } catch (error) {
     console.log(error)
   } finally {
@@ -216,7 +221,16 @@ watch(
   { deep: true }
 )
 
-// Initialize on mount
+const formattedPrice = computed({
+  get: () => {
+    if (!priceSeat.value) return 0
+    return new Intl.NumberFormat('vi-VN').format(+priceSeat.value)
+  },
+  set: (value: string) => {
+    const numberValue = value.replace(/[^\d]/g, '')
+    priceSeat.value = numberValue ? numberValue : ''
+  }
+})
 onMounted(() => {
   if (room.value.totalRow > 0 && room.value.totalCol > 0) {
     initializeSeats()
@@ -317,7 +331,7 @@ onMounted(() => {
             </UFormField>
 
             <UFormField :label="t('price')" name="price" class="my-4">
-              <UInput v-model="priceSeat" :placeholder="t('price')" :ui="{ base: 'h-10' }" class="w-full" />
+              <UInput v-model="formattedPrice" :placeholder="t('price')" :ui="{ base: 'h-10' }" class="w-full" />
             </UFormField>
 
             <!-- <div class="flex justify-end">
@@ -330,7 +344,14 @@ onMounted(() => {
 
     <template #footer>
       <div class="flex justify-end w-full">
-        <BaseButton :text="t('add')" class="w-20" variant="solid" class-name="rounded" @click="handleSave" />
+        <BaseButton
+          :text="t('add')"
+          :is-loading="isProcessing"
+          class="w-20"
+          variant="solid"
+          class-name="rounded"
+          @click="handleSave"
+        />
       </div>
     </template>
   </UModal>

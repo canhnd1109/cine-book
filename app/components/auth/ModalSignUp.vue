@@ -182,7 +182,7 @@ const canSubmit = computed(() => {
           variant="solid"
           class-name="w-full mt-6 flex justify-center"
           :disabled="!canSubmit"
-          :loading="isLoading"
+          :is-loading="isLoading"
           @click="submitForm"
         />
 
