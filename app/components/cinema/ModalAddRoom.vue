@@ -131,6 +131,28 @@ const selectAll = () => {
   syncSeatInputsFromSelection()
 }
 
+// Check if a row is fully selected
+const isRowSelected = (rowIndex: number): boolean => {
+  if (selectedSeats.value.size === 0) return false
+  for (let col = 0; col < room.value.totalCol; col++) {
+    if (!selectedSeats.value.has(`${rowIndex}-${col}`)) {
+      return false
+    }
+  }
+  return true
+}
+
+// Check if a column is fully selected
+const isColSelected = (colIndex: number): boolean => {
+  if (selectedSeats.value.size === 0) return false
+  for (let row = 0; row < room.value.totalRow; row++) {
+    if (!selectedSeats.value.has(`${row}-${colIndex}`)) {
+      return false
+    }
+  }
+  return true
+}
+
 const handleSave = async () => {
   // Only send seats that have been configured (type !== 'UNSET')
   const formattedSeats = Object.entries(seats.value).map(([_key, seat]) => ({
@@ -247,11 +269,23 @@ onMounted(() => {
             </template>
 
             <div class="flex flex-wrap gap-2">
-              <UButton v-for="i in room.totalRow" :key="`row-${i}`" size="sm" variant="outline" @click="selectRow(i - 1)">
+              <UButton
+                v-for="i in room.totalRow"
+                :key="`row-${i}`"
+                size="sm"
+                :variant="isRowSelected(i - 1) ? 'solid' : 'outline'"
+                @click="selectRow(i - 1)"
+              >
                 Hàng {{ String.fromCharCode(64 + i) }}
               </UButton>
 
-              <UButton v-for="i in room.totalCol" :key="`col-${i}`" size="sm" variant="outline" @click="selectCol(i - 1)">
+              <UButton
+                v-for="i in room.totalCol"
+                :key="`col-${i}`"
+                size="sm"
+                :variant="isColSelected(i - 1) ? 'solid' : 'outline'"
+                @click="selectCol(i - 1)"
+              >
                 Cột {{ i }}
               </UButton>
             </div>
