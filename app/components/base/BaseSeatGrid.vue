@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 interface Seat {
   row: number
   col: number
@@ -52,12 +54,12 @@ const emit = defineEmits<{
 }>()
 
 const seatTypes = {
-  UNSET: { label: 'Chưa thiết lập', color: 'bg-gray-200 text-gray-200' },
-  NORMAL: { label: 'Ghế thường', color: 'bg-blue-500 text-blue-500' },
-  VIP: { label: 'Ghế VIP', color: 'bg-yellow-500 text-yellow-500' },
-  COUPLE: { label: 'Ghế đôi', color: 'bg-pink-500 text-pink-500' },
-  DISABLED: { label: 'Không hoạt động', color: 'bg-gray-400 text-gray-400' },
-  EMPTY: { label: 'Vị trí trống', color: 'bg-transparent border-2 border-dashed border-gray-300' }
+  UNSET: { label: t('unset'), color: 'bg-gray-200 text-gray-200' },
+  NORMAL: { label: t('normal'), color: 'bg-blue-500 text-blue-500' },
+  VIP: { label: t('vip'), color: 'bg-yellow-500 text-yellow-500' },
+  COUPLE: { label: t('couple'), color: 'bg-pink-500 text-pink-500' },
+  DISABLED: { label: t('disabled'), color: 'bg-gray-400 text-gray-400' },
+  EMPTY: { label: t('empty'), color: 'bg-transparent border-2 border-dashed border-gray-300' }
 }
 
 // State
@@ -234,7 +236,7 @@ const handleMouseUp = () => {
   <div>
     <!-- Screen -->
     <div class="mb-6 flex flex-col items-center">
-      <UBadge variant="subtle" class="mt-2">Màn hình</UBadge>
+      <UBadge variant="subtle" class="mt-2">{{ t('screen') }}</UBadge>
     </div>
 
     <!-- Seat Grid with Transition -->
@@ -281,7 +283,7 @@ const handleMouseUp = () => {
       </div>
 
       <!-- Additional legend for booking mode -->
-      <template v-if="mode === 'booking'">
+      <!-- <template v-if="mode === 'booking'">
         <div class="flex items-center gap-2">
           <div class="w-6 h-6 rounded bg-gray-600 relative">
             <div class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full" />
@@ -292,7 +294,7 @@ const handleMouseUp = () => {
           <div class="w-6 h-6 rounded bg-blue-500 ring-4 ring-green-400" />
           <span class="text-sm">Đang chọn</span>
         </div>
-      </template>
+      </template> -->
     </div>
   </div>
 </template>

@@ -155,5 +155,20 @@
   "name-room-required": "Name room is required",
   "room-name": "Room name",
   "row-number": "Row",
-  "column-number": "Column number"
+  "column-number": "Column number",
+  "unset": "Not set",
+  "normal": "Regular seat",
+  "vip": "VIP seat",
+  "couple": "Couple seat",
+  "disabled": "Disabled",
+  "empty": "Empty spot",
+  "screen": "Screen",
+  "drag": "Drag",
+  "select-all": "Select all",
+  "clear-selection": "Clear selection",
+  "quick-select": "Quick select",
+  "column": "Column",
+  "row": "Row",
+  "name": "Name",
+  "total-seat": "Total seat"
 }

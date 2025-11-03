@@ -2,12 +2,13 @@
 import { cinemaRoomSchema, type CinemaRoomInput } from '~/schemas/cinema.chema'
 import { SEAT_TYPE } from '~/constants'
 import { apiRoom } from '~/services'
+
 const { schema } = useSchema(cinemaRoomSchema)
 const { cinameDetail, typeSeat, priceSeat, restSeat } = useCinemaData()
 const toast = useToast()
+const { t } = useI18n()
 
 const isProcessing = ref(false)
-const { t } = useI18n()
 const isOpen = defineModel('isOpen', { type: Boolean, default: false })
 const formRef = ref()
 
@@ -269,13 +270,13 @@ onMounted(() => {
                   Click (Ctrl/Shift)
                 </UButton>
                 <UButton :variant="selectionMode === 'drag' ? 'solid' : 'outline'" @click="selectionMode = 'drag'">
-                  Kéo vùng
+                  {{ t('drag') }}
                 </UButton>
               </div>
 
-              <UButton icon="i-heroicons-check-circle" @click="selectAll"> Chọn tất cả </UButton>
+              <UButton icon="i-heroicons-check-circle" @click="selectAll">{{ t('select-all') }}</UButton>
 
-              <UButton icon="i-heroicons-x-circle" @click="clearSelection"> Bỏ chọn </UButton>
+              <UButton icon="i-heroicons-x-circle" @click="clearSelection">{{ t('clear-selection') }}</UButton>
 
               <!-- <UButton icon="i-heroicons-cog-6-tooth" :disabled="selectedSeats.size === 0" @click="showBatchConfig = true">
                 Cấu hình ({{ selectedSeats.size }})
@@ -285,7 +286,7 @@ onMounted(() => {
 
           <UCard class="mb-4 w-full">
             <template #header>
-              <p class="text-sm font-semibold">Chọn nhanh:</p>
+              <p class="text-sm font-semibold">{{ t('quick-select') }}:</p>
             </template>
 
             <div class="flex flex-wrap gap-2">
@@ -296,7 +297,7 @@ onMounted(() => {
                 :variant="isRowSelected(i - 1) ? 'solid' : 'outline'"
                 @click="selectRow(i - 1)"
               >
-                Hàng {{ String.fromCharCode(64 + i) }}
+                {{ t('row') }} {{ String.fromCharCode(64 + i) }}
               </UButton>
 
               <UButton
@@ -306,7 +307,7 @@ onMounted(() => {
                 :variant="isColSelected(i - 1) ? 'solid' : 'outline'"
                 @click="selectCol(i - 1)"
               >
-                Cột {{ i }}
+                {{ t('column') }} {{ i }}
               </UButton>
             </div>
           </UCard>

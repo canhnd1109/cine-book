@@ -68,12 +68,12 @@ const getSeatTypePrices = (room: IRoom): Record<string, number> => {
 
 // Seat type labels
 const seatTypeLabels: Record<string, string> = {
-  NORMAL: 'Ghế thường',
-  VIP: 'Ghế VIP',
-  COUPLE: 'Ghế đôi',
-  DISABLED: 'Không hoạt động',
-  EMPTY: 'Vị trí trống',
-  UNSET: 'Chưa thiết lập'
+  NORMAL: t('normal'),
+  VIP: t('vip'),
+  COUPLE: t('couple'),
+  DISABLED: t('disabled'),
+  EMPTY: t('empty'),
+  UNSET: t('unset')
 }
 </script>
 <template>
@@ -111,9 +111,9 @@ const seatTypeLabels: Record<string, string> = {
     <div v-for="item in rooms" :key="item.roomId">
       <BaseCard :item="item" :index="0" class="w-full" :can-scale="false" :show-border="true">
         <template #content>
-          <p>Name: {{ item.name }}</p>
+          <p>{{ t('room-name') }}: {{ item.name }}</p>
 
-          <p>Tổng số ghế: {{ item.totalCol * item.totalRow }} ( {{ item.totalRow }} x {{ item.totalCol }})</p>
+          <p>{{ t('total-seat') }}: {{ item.totalCol * item.totalRow }} ( {{ item.totalRow }} x {{ item.totalCol }})</p>
 
           <div class="space-x-2 mt-2">
             <UButton v-for="(price, type) in getSeatTypePrices(item)" :key="type" size="sm" :variant="'outline'">
