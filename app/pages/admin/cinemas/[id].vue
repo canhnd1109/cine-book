@@ -25,15 +25,18 @@ const transformSeats = (seats: ISeat[]): Record<string, Seat> => {
   const seatsMap: Record<string, Seat> = {}
 
   seats.forEach(seat => {
-    const key = `${seat.rowIdx}-${seat.colIdx}`
+    // Convert from 1-indexed (API) to 0-indexed (BaseSeatGrid expects)
+    const rowIdx = seat.rowIdx - 1
+    const colIdx = seat.colIdx - 1
+    const key = `${rowIdx}-${colIdx}`
     seatsMap[key] = {
-      row: seat.rowIdx + 1, // Convert to 1-indexed for display
-      col: seat.colIdx + 1,
+      row: seat.rowIdx, // Keep 1-indexed for display
+      col: seat.colIdx,
       type: (seat.seatName || 'UNSET').toUpperCase() as 'NORMAL' | 'VIP' | 'COUPLE' | 'DISABLED' | 'EMPTY' | 'UNSET',
       price: seat.price || 0,
       status: seat.booked ? 'BOOKED' : (seat.status as 'AVAILABLE' | 'BOOKED' | 'LOCKED') || 'AVAILABLE',
-      rowLabel: String.fromCharCode(65 + seat.rowIdx),
-      colLabel: seat.colIdx + 1
+      rowLabel: String.fromCharCode(65 + rowIdx),
+      colLabel: seat.colIdx
     }
   })
 

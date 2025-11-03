@@ -255,7 +255,7 @@ const handleMouseUp = () => {
               @mouseenter="handleMouseEnter(row - 1, col - 1)"
             >
               <div
-                v-if="getSeat(row - 1, col - 1)?.type !== 'EMPTY'"
+                v-if="getSeat(row - 1, col - 1)?.type !== 'EMPTY' && mode === 'admin'"
                 class="absolute inset-0 flex items-center justify-center text-white text-xs font-bold"
               >
                 {{ String.fromCharCode(64 + row) }}{{ col }}
