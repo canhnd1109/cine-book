@@ -102,14 +102,12 @@ const selectAll = () => {
 
 const handleSave = async () => {
   // Only send seats that have been configured (type !== 'UNSET')
-  const formattedSeats = Object.entries(seats.value)
-    .filter(([_, seat]) => seat.type && seat.type !== 'UNSET')
-    .map(([_key, seat]) => ({
-      rowIdx: seat.row,
-      colIdx: seat.col,
-      seatName: seat.type,
-      price: seat.price
-    }))
+  const formattedSeats = Object.entries(seats.value).map(([_key, seat]) => ({
+    rowIdx: seat.row,
+    colIdx: seat.col,
+    seatName: seat.type,
+    price: seat.price
+  }))
 
   const body = {
     cinemaId: cinameDetail.value.id,
@@ -118,20 +116,19 @@ const handleSave = async () => {
     totalCol: room.value.totalCol,
     seats: formattedSeats
   }
-  console.log('🚀 ~ handleSave ~ body:', body)
-  // isProcessing.value = true
-  // try {
-  //   const { message } = await apiRoom.addRoom(body)
-  //   toast.add({
-  //     title: t('success'),
-  //     description: message,
-  //     color: 'success'
-  //   })
-  // } catch (error) {
-  //   console.log(error)
-  // } finally {
-  //   isProcessing.value = false
-  // }
+  isProcessing.value = true
+  try {
+    const { message } = await apiRoom.addRoom(body)
+    toast.add({
+      title: t('success'),
+      description: message,
+      color: 'success'
+    })
+  } catch (error) {
+    console.log(error)
+  } finally {
+    isProcessing.value = false
+  }
 }
 
 const removeConfig = (index: number) => {

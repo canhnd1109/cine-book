@@ -1,12 +1,52 @@
 <script setup lang="ts">
+import type { ISeat, IRoom } from '~/types/cinema.type'
+
+interface Seat {
+  row: number
+  col: number
+  type: 'NORMAL' | 'VIP' | 'COUPLE' | 'DISABLED' | 'EMPTY' | 'UNSET'
+  price: number
+  status?: 'AVAILABLE' | 'BOOKED' | 'LOCKED'
+  rowLabel?: string
+  colLabel?: number
+}
+
 definePageMeta({
   layout: 'admin',
   middleware: ['admin']
 })
-const { cinameDetail } = useCinemaData()
+const { cinameDetail, rooms } = useCinemaData()
 const { t } = useI18n()
 
 const isOpen = ref(false)
+
+// Transform seats array to Record format for BaseSeatGrid
+const transformSeats = (seats: ISeat[]): Record<string, Seat> => {
+  const seatsMap: Record<string, Seat> = {}
+
+  seats.forEach(seat => {
+    const key = `${seat.rowIdx}-${seat.colIdx}`
+    seatsMap[key] = {
+      row: seat.rowIdx + 1, // Convert to 1-indexed for display
+      col: seat.colIdx + 1,
+      type: (seat.seatName || 'UNSET').toUpperCase() as 'NORMAL' | 'VIP' | 'COUPLE' | 'DISABLED' | 'EMPTY' | 'UNSET',
+      price: seat.price || 0,
+      status: seat.booked ? 'BOOKED' : (seat.status as 'AVAILABLE' | 'BOOKED' | 'LOCKED') || 'AVAILABLE',
+      rowLabel: String.fromCharCode(65 + seat.rowIdx),
+      colLabel: seat.colIdx + 1
+    }
+  })
+
+  return seatsMap
+}
+
+// Get seats map for a specific room
+const getSeatsMap = (room: IRoom): Record<string, Seat> => {
+  if (!room?.seats || !Array.isArray(room.seats)) {
+    return {}
+  }
+  return transformSeats(room.seats)
+}
 </script>
 <template>
   <div class="card-box">
@@ -38,6 +78,18 @@ const isOpen = ref(false)
     <div class="flex justify-between items-center">
       <p class="text-lg font-medium text-primary">{{ t('room-management') }}</p>
       <BaseButton :text="t('add')" variant="solid" class-name="rounded" @click="isOpen = true" />
+    </div>
+
+    <div v-for="item in rooms" :key="item.roomId">
+      <BaseCard :item="item" :index="0" class="w-full" :can-scale="false" :show-border="true">
+        <template #content>
+          <p>Name: {{ item.name }}</p>
+
+          <p>Tổng số ghế: {{ item.totalCol * item.totalRow }} ( {{ item.totalRow }} x {{ item.totalCol }})</p>
+
+          <BaseSeatGrid :rows="item.totalRow" :cols="item.totalCol" :seats="getSeatsMap(item)" mode="booking" />
+        </template>
+      </BaseCard>
     </div>
     <CinemaModalAddRoom v-model:is-open="isOpen" />
   </div>

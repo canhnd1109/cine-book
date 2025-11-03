@@ -8,12 +8,16 @@ interface Props {
   index?: number
   showActions?: boolean
   animationDelay?: number
+  canScale?: boolean
+  showBorder?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   index: 0,
   showActions: true,
-  animationDelay: 200
+  animationDelay: 200,
+  canScale: true,
+  showBorder: false
 })
 
 const emit = defineEmits<{
@@ -29,8 +33,9 @@ const handleActionClick = (action: IActionCard) => {
 
 <template>
   <div
-    class="card fade-in transform cursor-pointer rounded-lg p-4 transition duration-500 hover:scale-105 border border-solid border-border-light dark:border-border-dark"
+    class="card fade-in transform cursor-pointer rounded-lg p-4 transition duration-500 border border-solid border-border-light dark:border-border-dark"
     :style="{ animationDelay: delay }"
+    :class="{ 'hover:scale-105': canScale, 'hover:border-primary': showBorder }"
   >
     <div>
       <slot name="image" />

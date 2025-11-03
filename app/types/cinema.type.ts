@@ -34,3 +34,22 @@ export interface IBodyRoom {
     colIdx: number
   }[]
 }
+
+export interface IRoom {
+  name: string
+  roomId: string
+  seats: ISeat[]
+  totalCol: number
+  totalRow: number
+}
+
+export interface ISeat {
+  booked: boolean
+  colIdx: number
+  price: number
+  rowIdx: number
+  seatId: string
+  seatName: string
+  seatType: string
+  status: string
+}

@@ -2,7 +2,7 @@ import type { IResponseData, IResponsePagination } from '~/types/response.type'
 import BaseService from './base.service'
 import type { IGenre, IGenreFilter } from '~/types/genre.type'
 import type { IMovie, IMovieFilter } from '~/types/movie.type'
-import type { ICinema, ICinemaFilter } from '~/types/cinema.type'
+import type { ICinema, ICinemaFilter, IRoom } from '~/types/cinema.type'
 
 export class PublicService extends BaseService {
   constructor() {
@@ -22,5 +22,10 @@ export class PublicService extends BaseService {
   //TODO: CINEMA
   async fetchCinemas(params: ICinemaFilter): Promise<IResponseData<ICinema[]>> {
     return this.get<IResponseData<ICinema[]>>('/cinema/key', normalizedParams(params))
+  }
+
+  //TODO: ROOM
+  async fetchRooms(cinemaId: string): Promise<IResponseData<IRoom[]>> {
+    return this.get<IResponseData<IRoom[]>>(`/room/cinema/${cinemaId}`)
   }
 }
