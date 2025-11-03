@@ -276,7 +276,7 @@ const handleMouseUp = () => {
     <div class="flex flex-wrap gap-4 justify-center">
       <div v-for="(type, key) in displayedSeatTypes" :key="key" class="flex items-center gap-2">
         <div :class="['w-6 h-6 rounded', type.color]" />
-        <span class="text-sm text-gray-700">{{ type.label }}</span>
+        <span class="text-sm">{{ type.label }}</span>
       </div>
 
       <!-- Additional legend for booking mode -->
@@ -285,11 +285,11 @@ const handleMouseUp = () => {
           <div class="w-6 h-6 rounded bg-gray-600 relative">
             <div class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full" />
           </div>
-          <span class="text-sm text-gray-700">Đã đặt</span>
+          <span class="text-sm">Đã đặt</span>
         </div>
         <div class="flex items-center gap-2">
           <div class="w-6 h-6 rounded bg-blue-500 ring-4 ring-green-400" />
-          <span class="text-sm text-gray-700">Đang chọn</span>
+          <span class="text-sm">Đang chọn</span>
         </div>
       </template>
     </div>

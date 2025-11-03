@@ -231,6 +231,12 @@ const formattedPrice = computed({
     priceSeat.value = numberValue ? numberValue : ''
   }
 })
+
+const submitForm = () => {
+  if (formRef.value) {
+    formRef.value.submit()
+  }
+}
 onMounted(() => {
   if (room.value.totalRow > 0 && room.value.totalCol > 0) {
     initializeSeats()
@@ -241,16 +247,16 @@ onMounted(() => {
 <template>
   <UModal v-model:open="isOpen" :title="t('add-room')">
     <template #body>
-      <UForm ref="formRef" :schema :state="room" class="grid grid-cols-3 gap-4">
-        <UFormField :label="t('cinema-name')" name="name">
-          <UInput v-model="room.name" :placeholder="t('cinema-name')" :ui="{ base: 'h-10' }" class="w-full" />
+      <UForm ref="formRef" :schema :state="room" class="grid grid-cols-3 gap-4" @submit="handleSave">
+        <UFormField :label="t('room-name')" name="name">
+          <UInput v-model="room.name" :placeholder="t('room-name')" :ui="{ base: 'h-10' }" class="w-full" />
         </UFormField>
 
-        <UFormField :label="t('row')" name="totalRow">
-          <UInput v-model.number="room.totalRow" :placeholder="t('row')" :ui="{ base: 'h-10' }" class="w-full" />
+        <UFormField :label="t('row-number')" name="totalRow">
+          <UInput v-model.number="room.totalRow" :placeholder="t('row-number')" :ui="{ base: 'h-10' }" class="w-full" />
         </UFormField>
-        <UFormField :label="t('column')" name="totalCol">
-          <UInput v-model.number="room.totalCol" :placeholder="t('column')" :ui="{ base: 'h-10' }" class="w-full" />
+        <UFormField :label="t('column-number')" name="totalCol">
+          <UInput v-model.number="room.totalCol" :placeholder="t('column-number')" :ui="{ base: 'h-10' }" class="w-full" />
         </UFormField>
       </UForm>
 
@@ -350,7 +356,7 @@ onMounted(() => {
           class="w-20"
           variant="solid"
           class-name="rounded"
-          @click="handleSave"
+          @click="submitForm"
         />
       </div>
     </template>

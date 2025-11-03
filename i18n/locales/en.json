@@ -152,5 +152,8 @@
   "room-management": "Room management",
   "theater-information": "Theater information",
   "add-room": "Add room",
-  "name-room-required": "Name room is required"
+  "name-room-required": "Name room is required",
+  "room-name": "Room name",
+  "row-number": "Row",
+  "column-number": "Column number"
 }

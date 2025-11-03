@@ -153,5 +153,8 @@
   "room-management": "Quản lý phòng",
   "theater-information": "Thông tin rạp chiếu",
   "add-room": "Thêm phòng chiếu",
-  "name-room-required": "Tên phòng là bắt buộc"
+  "name-room-required": "Tên phòng là bắt buộc",
+  "room-name": "Tên phòng chiếu",
+  "row-number": "Số hàng",
+  "column-number": "Số cột"
 }
