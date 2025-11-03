@@ -52,11 +52,11 @@ const emit = defineEmits<{
 }>()
 
 const seatTypes = {
-  UNSET: { label: 'Chưa thiết lập', color: 'bg-gray-200' },
-  NORMAL: { label: 'Ghế thường', color: 'bg-blue-500' },
-  VIP: { label: 'Ghế VIP', color: 'bg-yellow-500' },
-  COUPLE: { label: 'Ghế đôi', color: 'bg-pink-500' },
-  DISABLED: { label: 'Không hoạt động', color: 'bg-gray-400' },
+  UNSET: { label: 'Chưa thiết lập', color: 'bg-gray-200 text-gray-200' },
+  NORMAL: { label: 'Ghế thường', color: 'bg-blue-500 text-blue-500' },
+  VIP: { label: 'Ghế VIP', color: 'bg-yellow-500 text-yellow-500' },
+  COUPLE: { label: 'Ghế đôi', color: 'bg-pink-500 text-pink-500' },
+  DISABLED: { label: 'Không hoạt động', color: 'bg-gray-400 text-gray-400' },
   EMPTY: { label: 'Vị trí trống', color: 'bg-transparent border-2 border-dashed border-gray-300' }
 }
 
@@ -246,9 +246,11 @@ const handleMouseUp = () => {
           </UBadge>
 
           <TransitionGroup name="seat" tag="div" class="flex" :css="true">
-            <div
+            <UIcon
               v-for="col in cols"
               :key="`seat-${row}-${col}`"
+              name="i-lucide-armchair"
+              class="size-5"
               :class="getSeatClass(row - 1, col - 1)"
               @click="handleSeatClick(row - 1, col - 1, $event)"
               @mousedown="handleMouseDown(row - 1, col - 1)"
@@ -265,8 +267,7 @@ const handleMouseUp = () => {
               <div
                 v-if="mode === 'booking' && getSeat(row - 1, col - 1)?.status === 'BOOKED'"
                 class="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full"
-              />
-            </div>
+            /></UIcon>
           </TransitionGroup>
         </div>
       </TransitionGroup>
