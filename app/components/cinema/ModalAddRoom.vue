@@ -30,11 +30,9 @@ interface LocalSeat {
 }
 
 // State
-const seats = ref<Record<string, any>>({})
+const seats = ref<Record<string, LocalSeat>>({})
 const selectedSeats = ref(new Set<string>())
 const selectionMode = ref<'click' | 'drag'>('click')
-// Stored configs: allow multiple batch configs (each = seatIds + type + price)
-const seatConfigs = ref<Array<{ seatIds: string[]; type: SeatType; price: number }>>([])
 
 // Watch room dimensions change
 watch(
@@ -48,6 +46,39 @@ watch(
 
 const clearSelection = () => {
   selectedSeats.value = new Set()
+}
+
+// Sync typeSeat and priceSeat from selected seats
+const syncSeatInputsFromSelection = () => {
+  if (selectedSeats.value.size === 0) {
+    restSeat()
+    return
+  }
+
+  // Get unique types and prices from selected seats
+  const seatTypes = new Set<string>()
+  const seatPrices = new Set<number>()
+
+  selectedSeats.value.forEach(seatId => {
+    const seat = seats.value[seatId]
+    if (seat && seat.type !== 'UNSET') {
+      seatTypes.add(seat.type)
+      seatPrices.add(seat.price)
+    }
+  })
+
+  // If all selected seats have the same type and price, fill the inputs
+  if (seatTypes.size === 1 && seatPrices.size === 1) {
+    const typeArray = Array.from(seatTypes)
+    const priceArray = Array.from(seatPrices)
+    if (typeArray[0] && priceArray[0] !== undefined) {
+      typeSeat.value = typeArray[0]
+      priceSeat.value = String(priceArray[0])
+    }
+  } else {
+    // If seats have different types or prices, clear inputs
+    restSeat()
+  }
 }
 
 // Methods
@@ -72,25 +103,24 @@ const initializeSeats = () => {
 }
 
 const selectRow = (rowIndex: number) => {
-  restSeat()
   const newSelected = new Set<string>()
   for (let col = 0; col < room.value.totalCol; col++) {
     newSelected.add(`${rowIndex}-${col}`)
   }
   selectedSeats.value = newSelected
+  syncSeatInputsFromSelection()
 }
 
 const selectCol = (colIndex: number) => {
-  restSeat()
   const newSelected = new Set<string>()
   for (let row = 0; row < room.value.totalRow; row++) {
     newSelected.add(`${row}-${colIndex}`)
   }
   selectedSeats.value = newSelected
+  syncSeatInputsFromSelection()
 }
 
 const selectAll = () => {
-  restSeat()
   const newSelected = new Set<string>()
   for (let row = 0; row < room.value.totalRow; row++) {
     for (let col = 0; col < room.value.totalCol; col++) {
@@ -98,6 +128,7 @@ const selectAll = () => {
     }
   }
   selectedSeats.value = newSelected
+  syncSeatInputsFromSelection()
 }
 
 const handleSave = async () => {
@@ -131,19 +162,18 @@ const handleSave = async () => {
   }
 }
 
-const removeConfig = (index: number) => {
-  seatConfigs.value.splice(index, 1)
-}
-
 const handleSeatTypeChange = () => {
   if (selectedSeats.value.size > 0 && typeSeat.value) {
     // Cập nhật seats với loại ghế mới được chọn
     const newSeats = { ...seats.value }
     selectedSeats.value.forEach(seatId => {
-      newSeats[seatId] = {
-        ...newSeats[seatId],
-        type: typeSeat.value as SeatType,
-        price: Number(priceSeat.value)
+      const existingSeat = newSeats[seatId]
+      if (existingSeat) {
+        newSeats[seatId] = {
+          ...existingSeat,
+          type: typeSeat.value as SeatType,
+          price: Number(priceSeat.value)
+        }
       }
     })
     seats.value = newSeats
@@ -154,6 +184,16 @@ const handleSeatTypeChange = () => {
 watch([typeSeat, priceSeat], () => {
   handleSeatTypeChange()
 })
+
+// Watch selectedSeats to sync inputs when selection changes (from grid clicks)
+watch(
+  selectedSeats,
+  () => {
+    syncSeatInputsFromSelection()
+  },
+  { deep: true }
+)
+
 // Initialize on mount
 onMounted(() => {
   if (room.value.totalRow > 0 && room.value.totalCol > 0) {
