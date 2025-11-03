@@ -1,4 +1,4 @@
-export function useFormatPrice(amount: number | string): string {
+export function formatPrice(amount: number | string): string {
   if (amount == null || amount === '') return '0 ₫'
 
   const number = Number(amount)

@@ -32,7 +32,7 @@ const transformSeats = (seats: ISeat[]): Record<string, Seat> => {
     seatsMap[key] = {
       row: seat.rowIdx, // Keep 1-indexed for display
       col: seat.colIdx,
-      type: (seat.seatName || 'UNSET').toUpperCase() as 'NORMAL' | 'VIP' | 'COUPLE' | 'DISABLED' | 'EMPTY' | 'UNSET',
+      type: seat.seatName.toUpperCase() as 'NORMAL' | 'VIP' | 'COUPLE' | 'DISABLED' | 'EMPTY' | 'UNSET',
       price: seat.price || 0,
       status: seat.booked ? 'BOOKED' : (seat.status as 'AVAILABLE' | 'BOOKED' | 'LOCKED') || 'AVAILABLE',
       rowLabel: String.fromCharCode(65 + rowIdx),
@@ -57,10 +57,12 @@ const getSeatTypePrices = (room: IRoom): Record<string, number> => {
     return {}
   }
   const priceMap: Record<string, number> = {}
-  room.seats.forEach(seat => {
-    const seatType = (seat.seatName || 'UNSET').toUpperCase()
-    priceMap[seatType] = seat.price || 0
-  })
+  room.seats
+    .filter(s => s.seatName !== 'UNSET')
+    .forEach(seat => {
+      const seatType = seat.seatName.toUpperCase()
+      priceMap[seatType] = seat.price || 0
+    })
   return priceMap
 }
 
@@ -113,12 +115,12 @@ const seatTypeLabels: Record<string, string> = {
 
           <p>Tổng số ghế: {{ item.totalCol * item.totalRow }} ( {{ item.totalRow }} x {{ item.totalCol }})</p>
 
-          <!-- Seat type prices -->
-          <div class="flex flex-wrap gap-4 my-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-            <div v-for="(price, type) in getSeatTypePrices(item)" :key="type" class="flex items-center gap-2">
-              <span class="font-medium text-sm">{{ seatTypeLabels[type] || type }}:</span>
-              <span class="text-primary font-bold">{{ price.toLocaleString('vi-VN') }} đ</span>
-            </div>
+          <div class="space-x-2 mt-2">
+            <UButton v-for="(price, type) in getSeatTypePrices(item)" :key="type" size="sm" :variant="'outline'">
+              <span class="font-medium text-sm">{{ seatTypeLabels[type] }}:</span>
+
+              <span class="text-primary font-bold">{{ formatPrice(price) }} </span>
+            </UButton>
           </div>
 
           <BaseSeatGrid :rows="item.totalRow" :cols="item.totalCol" :seats="getSeatsMap(item)" mode="booking" />
