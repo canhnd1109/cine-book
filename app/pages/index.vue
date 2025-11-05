@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay, EffectFade, Pagination } from 'swiper/modules'
+import useFormatDate from '~/composables/useDateFormat'
 import 'swiper/css'
 import 'swiper/css/effect-fade'
 import 'swiper/css/pagination'
+import { apiPublic } from '~/services'
+import type { IMovieFilter } from '~/types/movie.type'
 
 const { t } = useI18n()
+const { top10MostViewedMovies } = useMovieData()
+
 const items = [
   '/images/phim-9.png',
   '/images/phim-8.png',
@@ -27,6 +32,15 @@ const imagesList = [
   '/images/img-7.png',
   '/images/img-8.png'
 ]
+
+const { data, pending: isFetching } = await useAsyncData('top-10-most-viewed-movies', async () => {
+  const res = await apiPublic.fetchMovies({ orderBy: '4' } as IMovieFilter)
+  return res.value
+})
+
+watchEffect(() => {
+  top10MostViewedMovies.value = data.value?.content || []
+})
 </script>
 
 <template>
@@ -45,6 +59,28 @@ const imagesList = [
         <img :src="img" class="w-full h-auto mx-auto" />
       </SwiperSlide>
     </Swiper>
+
+    <div class="mx-12 mt-6">
+      <p class="text-3xl font-bold">Top 10 bộ phim có lượt xem nhiều nhất</p>
+
+      <UCarousel v-slot="{ item, index }" :items="top10MostViewedMovies" :ui="{ item: 'basis-1/6' }" class="mt-6">
+        <div class="cursor-pointer" :class="index !== 0 ? 'ps-8' : ''">
+          <img
+            :src="item.posterUrl"
+            class="object-cover image max-sm:object-center image h-[445px] hover:scale-102 transition duration-500"
+            :class="index % 2 === 0 ? 'clip-shape-right' : 'clip-shape-left'"
+          />
+          <p class="flex justify-between items-center text-[#999] mt-2">
+            <span>{{ item.genres.join(',') }}</span>
+            <span>{{ useFormatDate(item.releaseDate, 'DD/MM/YYYY') }}</span>
+          </p>
+          <p class="flex justify-between items-center">
+            <span class="text-xl font-bold">{{ item.name }}</span>
+            <span>{{ minutesToHours(item.duration) }}</span>
+          </p>
+        </div>
+      </UCarousel>
+    </div>
 
     <div class="dark:bg-[#111] bg-bg-light rounded-[50px] py-24 mx-12 my-6">
       <div class="px-10 space-y-10">
