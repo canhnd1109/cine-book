@@ -4,6 +4,7 @@ import type { ICinema, ICinemaFilter, IRoom } from '~/types/cinema.type'
 
 const cinameDetail = ref<ICinema>({} as ICinema)
 const rooms = ref<IRoom[]>([])
+const roomDetail = ref<IRoom>({} as IRoom)
 
 export const useCinemaFilterSync = createFilterSync<ICinemaFilter>({
   defaults: {
@@ -62,6 +63,7 @@ export function useCinemaData() {
     rooms.value = data.value ?? []
     console.log('🚀 ~ fetchRooms ~  rooms.value:', rooms.value)
   }
+
   return {
     // State
     filters,
@@ -71,6 +73,7 @@ export function useCinemaData() {
     typeSeat,
     priceSeat,
     rooms,
+    roomDetail,
 
     // Method
     apply: applyWithRefresh,

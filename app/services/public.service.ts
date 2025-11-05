@@ -28,4 +28,8 @@ export class PublicService extends BaseService {
   async fetchRooms(cinemaId: string): Promise<IResponseData<IRoom[]>> {
     return this.get<IResponseData<IRoom[]>>(`/room/cinema/${cinemaId}`)
   }
+
+  async getRoomDetail(roomId: string): Promise<IResponseData<IRoom>> {
+    return this.get<IResponseData<IRoom>>(`/room/${roomId}`)
+  }
 }

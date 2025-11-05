@@ -62,8 +62,14 @@ watchEffect(() => {
 
     <div class="mx-12 mt-6">
       <p class="text-3xl font-bold">Top 10 bộ phim có lượt xem nhiều nhất</p>
-
-      <UCarousel v-slot="{ item, index }" :items="top10MostViewedMovies" :ui="{ item: 'basis-1/6' }" class="mt-6">
+      {{ top10MostViewedMovies.length }}
+      <UCarousel
+        v-if="top10MostViewedMovies.length"
+        v-slot="{ item, index }"
+        :items="top10MostViewedMovies"
+        :ui="{ item: 'basis-1/6' }"
+        class="mt-6"
+      >
         <div class="cursor-pointer" :class="index !== 0 ? 'ps-8' : ''">
           <img
             :src="item.posterUrl"
@@ -80,6 +86,7 @@ watchEffect(() => {
           </p>
         </div>
       </UCarousel>
+      <BaseEmpty v-else />
     </div>
 
     <div class="dark:bg-[#111] bg-bg-light rounded-[50px] py-24 mx-12 my-6">
