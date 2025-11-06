@@ -42,18 +42,17 @@ const submitForm = () => {
   }
 }
 
-const dateReleaseInput = ref<HTMLInputElement | null>(null)
-function focusReleaseInput() {
-  const el = (dateReleaseInput.value as any)?.$el?.querySelector('input') as HTMLInputElement | null
-  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  el?.showPicker?.() || el?.focus()
+const { focusDateInput } = useDateInput()
+
+const dateReleaseInput = ref<{ $el?: HTMLElement } | null>(null)
+const dateCloseInput = ref<{ $el?: HTMLElement } | null>(null)
+
+const handleReleaseDateClick = () => {
+  focusDateInput(dateReleaseInput)
 }
 
-const dateCloseInput = ref<HTMLInputElement | null>(null)
-function focusCloseInput() {
-  const el = (dateCloseInput.value as any)?.$el?.querySelector('input') as HTMLInputElement | null
-  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-  el?.showPicker?.() || el?.focus()
+const handleCloseDateClick = () => {
+  focusDateInput(dateCloseInput)
 }
 
 const handleFileSelect = (file: File | null | undefined) => {
@@ -157,7 +156,7 @@ const formattedPrice = computed({
               :placeholder="t('choose-release-date')"
               :ui="{ base: 'h-10', root: 'w-full' }"
               class="w-full"
-              @click="focusReleaseInput"
+              @click="handleReleaseDateClick"
             />
           </UFormField>
           <UFormField :label="t('close-date')" name="closeDate">
@@ -168,7 +167,7 @@ const formattedPrice = computed({
               :placeholder="t('choose-close-date')"
               :ui="{ base: 'h-10 w-full' }"
               class="w-full"
-              @click="focusCloseInput"
+              @click="handleCloseDateClick"
             />
           </UFormField>
 

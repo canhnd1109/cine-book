@@ -55,13 +55,14 @@ function handleChange(value: any) {
     :label-key="labelKey as string"
     :placeholder="placeholder"
     :multiple
+    class="w-40"
     :searchable
     :searchable-placeholder="searchablePlaceholder"
     :required
     :disabled
     :ui="{
-      base: `hover:cursor-pointer ${baseStyle}`,
-      value: `hover:cursor-pointer ${valueStyle}`,
+      base: `h-10 hover:cursor-pointer ${baseStyle}`,
+      value: `ml-2 hover:cursor-pointer ${valueStyle}`,
       content: `hover:cursor-pointer ${contentStyle}`,
       trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200'
     }"
