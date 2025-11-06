@@ -16,7 +16,7 @@ const isOpenModalSetting = ref(false)
 const isProcessing = ref(false)
 
 const { filters, movies, totalRecords, setRefreshCallback } = useMovieData()
-
+const { fetchAllCinemas } = useCinemaData()
 const {
   data,
   pending: isFetching,
@@ -66,6 +66,10 @@ const handleAction = (action: IActionCard, item: IMovie) => {
     isOpenModalSetting.value = true
   }
 }
+
+onMounted(() => {
+  fetchAllCinemas()
+})
 </script>
 
 <template>

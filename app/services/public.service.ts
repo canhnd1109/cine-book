@@ -27,6 +27,10 @@ export class PublicService extends BaseService {
     return this.get<IResponseData<ICinema[]>>('/cinema/key', normalizedParams(params))
   }
 
+  async fetchAllCinemas(): Promise<IResponseData<ICinema[]>> {
+    return this.get<IResponseData<ICinema[]>>('/cinema/key')
+  }
+
   //TODO: ROOM
   async fetchRooms(cinemaId: string): Promise<IResponseData<IRoom[]>> {
     return this.get<IResponseData<IRoom[]>>(`/room/cinema/${cinemaId}`)
@@ -34,5 +38,9 @@ export class PublicService extends BaseService {
 
   async getRoomDetail(roomId: string): Promise<IResponseData<IRoom>> {
     return this.get<IResponseData<IRoom>>(`/room/${roomId}`)
+  }
+
+  async fetchRoomsOfCinema(cinemaId: string): Promise<IResponseData<{ roomId: string; name: string }>> {
+    return this.get<IResponseData<{ roomId: string; name: string }>>(`/room/cinema/${cinemaId}/simple`)
   }
 }

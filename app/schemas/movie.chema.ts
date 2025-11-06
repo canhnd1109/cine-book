@@ -49,6 +49,7 @@ export function createMovieSchema(t: (key: string) => string) {
 export function createShowtimeSchema(t: (key: string) => string) {
   return z
     .object({
+      cinemaId: z.string().min(1, t('cinema-id-required')),
       roomId: z.string().min(1, t('room-id-required')),
       movieId: z.string().min(1, t('movie-id-required')),
       startTime: z

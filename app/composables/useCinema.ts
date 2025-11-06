@@ -20,7 +20,9 @@ export const useCinemaFilterSync = createFilterSync<ICinemaFilter>({
 
 const refreshCallback = ref<(() => Promise<void>) | null>(null)
 const cinemas = ref<ICinema[]>([])
+const allCinemas = ref<ICinema[]>([])
 const totalRecords = ref(0)
+const roomsOfCinema = ref<{ roomId: string; name: string }[]>([])
 
 export function useCinemaData() {
   const { apply, filters } = useCinemaFilterSync()
@@ -51,16 +53,60 @@ export function useCinemaData() {
   }
 
   const fetchRooms = async () => {
-    const {
-      data,
-      pending: isFetching,
-      refresh
-    } = await useAsyncData('rooms-list', async () => {
+    const { data } = await useAsyncData('rooms-list', async () => {
       const res = await apiPublic.fetchRooms(cinameDetail.value.id)
       return res.value ?? []
     })
     rooms.value = data.value ?? []
-    console.log('🚀 ~ fetchRooms ~  rooms.value:', rooms.value)
+  }
+
+  const fetchAllCinemas = async () => {
+    const { data, refresh, execute } = useAsyncData(
+      'all-cinemas',
+      async () => {
+        const res = await apiPublic.fetchAllCinemas()
+        return res.value ?? []
+      },
+      {
+        server: true,
+        lazy: true,
+        default: () => []
+      }
+    )
+
+    if (!data.value || data.value.length === 0) {
+      await execute()
+    } else {
+      await refresh()
+    }
+
+    allCinemas.value = data.value ?? []
+  }
+
+  const fetchRoomsOfCinema = async (cinemaId: string) => {
+    if (!cinemaId) {
+      roomsOfCinema.value = []
+      return
+    }
+
+    const { data, execute } = useAsyncData(
+      `room-of:${cinemaId}`,
+      async () => {
+        const { value } = await apiPublic.fetchRoomsOfCinema(cinemaId)
+
+        return Array.isArray(value) ? value : []
+      },
+      {
+        getCachedData: key => {
+          const nuxtApp = useNuxtApp()
+          return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+        },
+        immediate: false
+      }
+    )
+
+    await execute()
+    roomsOfCinema.value = data.value ?? []
   }
 
   return {
@@ -72,6 +118,8 @@ export function useCinemaData() {
     typeSeat,
     priceSeat,
     rooms,
+    allCinemas,
+    roomsOfCinema,
 
     // Method
     apply: applyWithRefresh,
@@ -79,6 +127,8 @@ export function useCinemaData() {
       refreshCallback.value = cb
     },
     restSeat,
-    fetchRooms
+    fetchRooms,
+    fetchAllCinemas,
+    fetchRoomsOfCinema
   }
 }

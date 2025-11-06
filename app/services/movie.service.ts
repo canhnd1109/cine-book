@@ -6,6 +6,6 @@ export class MovieService extends BaseService {
     super('movie')
   }
   async addMovie(formData: FormData): Promise<IResponseMessage> {
-    return this.post<IResponseMessage, FormData>('', formData)
+    return this.post<IResponseMessage>('', formData)
   }
 }

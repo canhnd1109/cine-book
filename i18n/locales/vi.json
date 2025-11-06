@@ -173,6 +173,7 @@
   "total-seat": "Tổng số ghế",
   "settings": "Cài đặt",
   "setting-movie": "Cài đặt phim",
+  "cinema-id-required": "Vui lòng chọn rạp chiếu",
   "room-id-required": "Vui lòng chọn phòng chiếu",
   "movie-id-required": "Vui lòng chọn phim",
   "start-time-required": "Vui lòng nhập thời gian bắt đầu",
@@ -182,5 +183,9 @@
   "end-time-invalid": "Thời gian kết thúc không hợp lệ",
   "end-time-format-invalid": "Thời gian kết thúc phải có định dạng YYYY-MM-DDTHH:mm",
   "end-time-must-be-after-start-time": "Thời gian kết thúc phải sau thời gian bắt đầu",
-  "ward": "Xã"
+  "ward": "Xã",
+  "room": "Phòng chiếu",
+  "select-room": "Chọn phòng chiếu",
+  "cinema": "Rạp chiếu",
+  "select-cinema": "Chọn rạp chiếu"
 }
