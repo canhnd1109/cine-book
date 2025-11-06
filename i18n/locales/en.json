@@ -187,5 +187,9 @@
   "room": "Room",
   "select-room": "Select room",
   "cinema": "Cinema",
-  "select-cinema": "Select cinema"
+  "select-cinema": "Select cinema",
+  "start-time-show": "Start time of the show",
+  "choose-start-time": "Choose start time",
+  "end-time-show": "End time of the show",
+  "choose-end-time": "Choose end time"
 }

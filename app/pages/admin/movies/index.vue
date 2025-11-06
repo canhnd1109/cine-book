@@ -15,7 +15,7 @@ const isOpen = ref(false)
 const isOpenModalSetting = ref(false)
 const isProcessing = ref(false)
 
-const { filters, movies, totalRecords, setRefreshCallback } = useMovieData()
+const { filters, movies, totalRecords, movieDetail, setRefreshCallback } = useMovieData()
 const { fetchAllCinemas } = useCinemaData()
 const {
   data,
@@ -62,6 +62,7 @@ const handeAddMovie = async (isOpenModal: boolean = false, formData: ICreateMovi
 }
 
 const handleAction = (action: IActionCard, item: IMovie) => {
+  movieDetail.value = item
   if (action === 'SETTING') {
     isOpenModalSetting.value = true
   }

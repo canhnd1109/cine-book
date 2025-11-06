@@ -176,10 +176,10 @@
   "cinema-id-required": "Vui lòng chọn rạp chiếu",
   "room-id-required": "Vui lòng chọn phòng chiếu",
   "movie-id-required": "Vui lòng chọn phim",
-  "start-time-required": "Vui lòng nhập thời gian bắt đầu",
+  "start-time-required": "Vui lòng chọn thời gian bắt đầu",
   "start-time-invalid": "Thời gian bắt đầu không hợp lệ",
   "start-time-format-invalid": "Thời gian bắt đầu phải có định dạng YYYY-MM-DDTHH:mm",
-  "end-time-required": "Vui lòng nhập thời gian kết thúc",
+  "end-time-required": "Vui lòng chọn thời gian kết thúc",
   "end-time-invalid": "Thời gian kết thúc không hợp lệ",
   "end-time-format-invalid": "Thời gian kết thúc phải có định dạng YYYY-MM-DDTHH:mm",
   "end-time-must-be-after-start-time": "Thời gian kết thúc phải sau thời gian bắt đầu",
@@ -187,5 +187,9 @@
   "room": "Phòng chiếu",
   "select-room": "Chọn phòng chiếu",
   "cinema": "Rạp chiếu",
-  "select-cinema": "Chọn rạp chiếu"
+  "select-cinema": "Chọn rạp chiếu",
+  "start-time-show": "Thời gian bắt đầu chiếu",
+  "choose-start-time": "Chọn thời gian bắt đầu",
+  "end-time-show": "Thời gian kết thúc chiếu",
+  "choose-end-time": "Chọn thời gian kết thúc"
 }
