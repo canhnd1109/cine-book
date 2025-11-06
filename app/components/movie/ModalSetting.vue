@@ -6,19 +6,37 @@ const { schema } = useSchema(createShowtimeSchema)
 const { allCinemas, roomsOfCinema, fetchRoomsOfCinema } = useCinemaData()
 const { movieDetail } = useMovieData()
 
+const { isProcessing = false } = defineProps<{
+  isProcessing?: boolean
+}>()
+
 const loadingRooms = ref(false)
 const isOpen = defineModel<boolean>({
   required: true,
   default: false
 })
 
-const form = ref<ICreateShowtime>({
+const initialFormState: ICreateShowtime = {
   cinemaId: '',
   roomId: '',
-  movieId: '',
+  movieId: movieDetail.value.id,
   startTime: '',
   endTime: ''
-})
+}
+watch(
+  () => isOpen.value,
+  newValue => {
+    if (newValue && movieDetail.value?.id) {
+      form.value.movieId = movieDetail.value.id
+    }
+  }
+)
+
+const form = ref<ICreateShowtime>({ ...initialFormState })
+
+const emit = defineEmits<{
+  setting: [form: ICreateShowtime]
+}>()
 
 const cinemaOptions = computed(() => {
   return allCinemas.value.map(cinema => ({
@@ -68,12 +86,33 @@ const startTime = ref<{ $el?: HTMLElement } | null>(null)
 const focusStartTimeInput = () => {
   focusDateInput(startTime)
 }
+
+const canSubmit = computed(() => {
+  return form.value.movieId && form.value.roomId && form.value.startTime
+})
+
+const formRef = ref()
+
+const resetForm = () => {
+  form.value = { ...initialFormState }
+  formRef.value?.clear()
+}
+
+const submitForm = () => {
+  if (formRef.value) {
+    formRef.value.submit()
+  }
+}
+
+defineExpose({
+  resetForm
+})
 </script>
 
 <template>
-  <UModal v-model:open="isOpen" :title="t('setting-movie')" class="!w-[800px]">
+  <UModal v-model:open="isOpen" :title="t('setting-movie')" class="!w-[800px]" @close:prevent="resetForm">
     <template #body>
-      <UForm ref="formRef" :schema :state="form" class="space-y-4">
+      <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="emit('setting', form)">
         <div class="grid grid-cols-2 gap-6">
           <UFormField :label="t('cinema')" name="cinemaId">
             <BaseSelectMenu
@@ -119,6 +158,19 @@ const focusStartTimeInput = () => {
           </UFormField>
         </div>
       </UForm>
+    </template>
+    <template #footer>
+      <div class="flex justify-end w-full">
+        <BaseButton
+          :text="t('setting')"
+          class="w-26"
+          variant="solid"
+          class-name="rounded "
+          :is-disable="!canSubmit"
+          :is-loading="isProcessing"
+          @click="submitForm"
+        />
+      </div>
     </template>
   </UModal>
 </template>

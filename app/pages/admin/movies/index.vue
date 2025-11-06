@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ICreateMovie } from '~/schemas/movie.chema'
-import { apiMovie, apiPublic } from '~/services'
+import type { ICreateMovie, ICreateShowtime } from '~/schemas/movie.chema'
+import { apiMovie, apiPublic, apiShowtime } from '~/services'
 import normalizedParamss from '~/utils/normalizedParams'
 import { useMovieData } from '../../../composables/useMovie'
 import type { IActionCard } from '~/types/constant.type'
@@ -14,7 +14,7 @@ const { t } = useI18n()
 const isOpen = ref(false)
 const isOpenModalSetting = ref(false)
 const isProcessing = ref(false)
-
+const modalRef = ref()
 const { filters, movies, totalRecords, movieDetail, setRefreshCallback } = useMovieData()
 const { fetchAllCinemas } = useCinemaData()
 const {
@@ -68,6 +68,29 @@ const handleAction = (action: IActionCard, item: IMovie) => {
   }
 }
 
+const handleSetting = async (form: ICreateShowtime) => {
+  const fd = {
+    ...form,
+    startTime: toMidnight(form.startTime),
+    endTime: toMidnight(form.endTime)
+  }
+  isProcessing.value = true
+  try {
+    const { message } = await apiShowtime.addShowtime(fd)
+    toast.add({
+      title: t('success'),
+      description: message,
+      color: 'success'
+    })
+    isOpenModalSetting.value = false
+    modalRef.value?.resetForm()
+  } catch (error) {
+    console.log(error)
+  } finally {
+    isProcessing.value = false
+  }
+}
+
 onMounted(() => {
   fetchAllCinemas()
 })
@@ -79,6 +102,6 @@ onMounted(() => {
     <MovieFilter @add="handeAddMovie" />
     <MovieModalAdd v-model:is-open="isOpen" :is-processing="isProcessing" @add="handeAddMovie" />
     <MovieList :is-fetching="isFetching" @action-click="handleAction" />
-    <MovieModalSetting v-model="isOpenModalSetting" />
+    <MovieModalSetting ref="modalRef" v-model="isOpenModalSetting" :is-processing="isProcessing" @setting="handleSetting" />
   </div>
 </template>
