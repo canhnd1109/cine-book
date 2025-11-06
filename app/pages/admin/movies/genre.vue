@@ -30,7 +30,10 @@ const {
   const res = await apiPublic.fetchGenre(filters.value)
   return res.value
 })
-genres.value = data.value || []
+
+watchEffect(() => {
+  genres.value = data.value || []
+})
 
 setRefreshCallback(refresh)
 
@@ -133,7 +136,7 @@ function getDropdownActions(row: IGenre): DropdownMenuItem[][] {
         </template>
       </UTable>
     </div>
-    <UModal v-model:open="isOpen" :title="t('add-genre')">
+    <UModal v-model:open="isOpen" :title="t('add-genre')" class="w-[600px]">
       <template #body>
         <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="handleAdd(false)">
           <UFormField :label="t('genre-name')" name="genreName">

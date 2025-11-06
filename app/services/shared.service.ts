@@ -8,6 +8,6 @@ export class SharedService extends BaseService {
   }
 
   async fetchAllGenre(): Promise<IResponseData<IGenre[]>> {
-    return this.get<IResponseData<IGenre[]>>(`/public-api`)
+    return this.get<IResponseData<IGenre[]>>(`/public-api/genre`)
   }
 }

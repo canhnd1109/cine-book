@@ -11,7 +11,7 @@ export class PublicService extends BaseService {
 
   // TODO: GENRE
   async fetchGenre(params: IGenreFilter): Promise<IResponseData<IGenre[]>> {
-    return this.get<IResponseData<IGenre[]>>(``, normalizedParams(params))
+    return this.get<IResponseData<IGenre[]>>(`/genre`, normalizedParams(params))
   }
 
   // TODO: MOVIE
