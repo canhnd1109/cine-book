@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ICreateMovie, ICreateShowtime } from '~/schemas/movie.chema'
 import { apiMovie, apiPublic, apiShowtime } from '~/services'
-import normalizedParamss from '~/utils/normalizedParams'
+import normalizedParamss from '~/utils/normalized-params'
 import { useMovieData } from '../../../composables/useMovie'
 import type { IActionCard } from '~/types/constant.type'
 import type { IMovie } from '~/types/movie.type'
@@ -39,8 +39,8 @@ const handeAddMovie = async (isOpenModal: boolean = false, formData: ICreateMovi
   } else {
     const _fd = normalizedParamss({
       ...formData,
-      releaseDate: toMidnight(formData.releaseDate),
-      closeDate: toMidnight(formData.closeDate)
+      releaseDate: formatDateTime(formData.releaseDate),
+      closeDate: formatDateTime(formData.closeDate)
     })
     const fd = useFormData(_fd)
     isProcessing.value = true
@@ -71,8 +71,8 @@ const handleAction = (action: IActionCard, item: IMovie) => {
 const handleSetting = async (form: ICreateShowtime) => {
   const fd = {
     ...form,
-    startTime: toMidnight(form.startTime),
-    endTime: toMidnight(form.endTime)
+    startTime: formatDateTime(form.startTime),
+    endTime: formatDateTime(form.endTime)
   }
   isProcessing.value = true
   try {

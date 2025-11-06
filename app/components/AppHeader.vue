@@ -8,6 +8,7 @@ const { userInfo, isAuthenticated } = storeToRefs(useAuthStore())
 
 const toast = useToast()
 const { t } = useI18n()
+const router = useRouter()
 
 const isOpenModalSignUp = ref(false)
 const isOpenModalSignIn = ref(false)
@@ -139,7 +140,7 @@ const items: DropdownMenuItem[][] = [
 <template>
   <header class="m-6 mx-10">
     <div class="flex justify-between items-center">
-      <div class="text-xl font-semibold" @click="isOpenModalOtp = true">
+      <div class="hover:cursor-pointer" @click="router.push('/')">
         <img src="/images/logo.png" alt="logo" />
       </div>
       <nav aria-label="Primary" class="flex justify-end items-center gap-x-8 text-lg">

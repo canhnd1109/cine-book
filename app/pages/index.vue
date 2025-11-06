@@ -33,7 +33,7 @@ const imagesList = [
   '/images/img-8.png'
 ]
 
-const { data, pending: isFetching } = await useAsyncData('top-10-most-viewed-movies', async () => {
+const { data } = await useAsyncData('top-10-most-viewed-movies', async () => {
   const res = await apiPublic.fetchMovies({ orderBy: '4' } as IMovieFilter)
   return res.value
 })
