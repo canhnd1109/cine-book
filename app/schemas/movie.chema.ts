@@ -46,4 +46,27 @@ export function createMovieSchema(t: (key: string) => string) {
     })
 }
 
+export function createShowtimeSchema(t: (key: string) => string) {
+  return z
+    .object({
+      roomId: z.string().min(1, t('room-id-required')),
+      movieId: z.string().min(1, t('movie-id-required')),
+      startTime: z
+        .string()
+        .min(1, t('start-time-required'))
+        .regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/, t('start-time-format-invalid'))
+        .refine(val => !isNaN(Date.parse(val)), t('start-time-invalid')),
+      endTime: z
+        .string()
+        .min(1, t('end-time-required'))
+        .regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/, t('end-time-format-invalid'))
+        .refine(val => !isNaN(Date.parse(val)), t('end-time-invalid'))
+    })
+    .refine(data => new Date(data.endTime) > new Date(data.startTime), {
+      message: t('end-time-must-be-after-start-time'),
+      path: ['endTime']
+    })
+}
+
 export type ICreateMovie = z.infer<ReturnType<typeof createMovieSchema>>
+export type ICreateShowtime = z.infer<ReturnType<typeof createShowtimeSchema>>

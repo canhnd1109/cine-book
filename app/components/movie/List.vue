@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useMovieData } from '~/composables/useMovie'
 import useFormatDate from '~/composables/useDateFormat'
+import type { IActionCard } from '~/types/constant.type'
+import type { IMovie } from '~/types/movie.type'
 
 const { movies, filters, totalRecords } = useMovieData()
 
@@ -9,6 +11,14 @@ const { isFetching } = defineProps<{
 }>()
 
 const hoveredItem = ref<string | null>(null)
+
+const emit = defineEmits<{
+  'action-click': [action: IActionCard, item: IMovie]
+}>()
+
+const action = (action: IActionCard, item: IMovie) => {
+  emit('action-click', action, item)
+}
 </script>
 
 <template>
@@ -16,7 +26,7 @@ const hoveredItem = ref<string | null>(null)
   <BaseEmpty v-else-if="!movies.length" />
   <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
     <div v-for="item in movies" :key="item.id">
-      <BaseCard :item="item" :index="0" class="w-full">
+      <BaseCard :item="item" :index="0" class="w-full" @action-click="action">
         <template #image>
           <div class="flex items-center justify-center">
             <div class="relative flex items-center justify-center overflow-hidden rounded-lg w-full h-60">

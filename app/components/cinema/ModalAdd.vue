@@ -148,9 +148,8 @@ const canSubmit = computed(() => {
           <UFormField :label="t('phone')" name="phone">
             <UInput v-model="form.phone" :placeholder="t('phone')" :ui="{ base: 'h-10' }" class="w-full" />
           </UFormField>
-
           <UFormField :label="t('province')" name="province">
-            <BaseSelect
+            <BaseSelectMenu
               v-model="form.province"
               :items="provinceOptions"
               label-key="label"
@@ -162,7 +161,7 @@ const canSubmit = computed(() => {
           </UFormField>
 
           <UFormField :label="t('ward')" name="commune">
-            <BaseSelect
+            <BaseSelectMenu
               v-model="form.commune"
               :items="wardOptions"
               label-key="label"

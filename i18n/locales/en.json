@@ -145,6 +145,7 @@
   "address": "Address",
   "select-province": "Select province / city",
   "select-ward": "Select ward / commune",
+  "ward": "Ward",
   "edit": "Edit",
   "view": "View",
   "reset-filter": "Reset filter",
@@ -170,5 +171,16 @@
   "column": "Column",
   "row": "Row",
   "name": "Name",
-  "total-seat": "Total seat"
+  "total-seat": "Total seat",
+  "settings": "Settings",
+  "setting-movie": "Setting movie",
+  "room-id-required": "Room ID is required",
+  "movie-id-required": "Movie ID is required",
+  "start-time-required": "Start time is required",
+  "start-time-invalid": "Start time is not a valid date",
+  "start-time-format-invalid": "Start time must be in format YYYY-MM-DDTHH:mm",
+  "end-time-required": "End time is required",
+  "end-time-invalid": "End time is not a valid date",
+  "end-time-format-invalid": "End time must be in format YYYY-MM-DDTHH:mm",
+  "end-time-must-be-after-start-time": "End time must be after start time"
 }

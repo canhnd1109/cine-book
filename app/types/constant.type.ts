@@ -1,1 +1,1 @@
-export type IActionCard = 'EDIT' | 'VIEW' | 'DELETE'
+export type IActionCard = 'EDIT' | 'VIEW' | 'DELETE' | 'SETTING'

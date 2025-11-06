@@ -3,6 +3,8 @@ import type { ICreateMovie } from '~/schemas/movie.chema'
 import { apiMovie, apiPublic } from '~/services'
 import normalizedParamss from '~/utils/normalizedParams'
 import { useMovieData } from '../../../composables/useMovie'
+import type { IActionCard } from '~/types/constant.type'
+import type { IMovie } from '~/types/movie.type'
 
 definePageMeta({ layout: 'admin', middleware: ['admin'] })
 
@@ -10,6 +12,7 @@ const toast = useToast()
 const { t } = useI18n()
 
 const isOpen = ref(false)
+const isOpenModalSetting = ref(false)
 const isProcessing = ref(false)
 
 const { filters, movies, totalRecords, setRefreshCallback } = useMovieData()
@@ -57,6 +60,12 @@ const handeAddMovie = async (isOpenModal: boolean = false, formData: ICreateMovi
     }
   }
 }
+
+const handleAction = (action: IActionCard, item: IMovie) => {
+  if (action === 'SETTING') {
+    isOpenModalSetting.value = true
+  }
+}
 </script>
 
 <template>
@@ -64,6 +73,7 @@ const handeAddMovie = async (isOpenModal: boolean = false, formData: ICreateMovi
     <MoviesTabs />
     <MovieFilter @add="handeAddMovie" />
     <MovieModalAdd v-model:is-open="isOpen" :is-processing="isProcessing" @add="handeAddMovie" />
-    <MovieList :is-fetching="isFetching" />
+    <MovieList :is-fetching="isFetching" @action-click="handleAction" />
+    <MovieModalSetting v-model="isOpenModalSetting" />
   </div>
 </template>

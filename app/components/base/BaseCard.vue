@@ -49,6 +49,14 @@ const handleActionClick = (action: IActionCard) => {
         <UTooltip :text="t('edit')" :delay-duration="0">
           <UButton class="hover:cursor-pointer" icon="i-lucide-edit" size="sm" variant="ghost" @click="handleActionClick('EDIT')"
         /></UTooltip>
+        <UTooltip :text="t('settings')" :delay-duration="0">
+          <UButton
+            class="hover:cursor-pointer"
+            icon="i-lucide-settings"
+            size="sm"
+            variant="ghost"
+            @click="handleActionClick('SETTING')"
+        /></UTooltip>
         <UTooltip :text="t('view')" :delay-duration="0">
           <UButton
             class="hover:cursor-pointer"
