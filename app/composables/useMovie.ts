@@ -38,6 +38,7 @@ const refreshCallback = ref<(() => Promise<void>) | null>(null)
 const movies = ref<IMovie[]>([])
 const totalRecords = ref(0)
 const top10MostViewedMovies = ref<IMovie[]>([])
+const movieDetail = ref<IMovie>({} as IMovie)
 
 export function useMovieData() {
   const { apply, filters } = useMovieFilterSync()
@@ -66,6 +67,7 @@ export function useMovieData() {
     movies,
     totalRecords,
     top10MostViewedMovies,
+    movieDetail,
 
     // Method
     apply: applyWithRefresh,

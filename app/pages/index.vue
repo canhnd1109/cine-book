@@ -62,7 +62,7 @@ watchEffect(() => {
 
     <div class="mx-12 mt-6">
       <p class="text-3xl font-bold">Top 10 bộ phim có lượt xem nhiều nhất</p>
-      {{ top10MostViewedMovies.length }}
+
       <UCarousel
         v-if="top10MostViewedMovies.length"
         v-slot="{ item, index }"
@@ -70,12 +70,17 @@ watchEffect(() => {
         :ui="{ item: 'basis-1/6' }"
         class="mt-6"
       >
-        <div class="cursor-pointer" :class="index !== 0 ? 'ps-8' : ''">
+        <div
+          class="cursor-pointer"
+          :class="index !== 0 ? 'ps-8' : ''"
+          @click="$router.push({ name: 'movie-id', params: { id: item.id } })"
+        >
           <img
             :src="item.posterUrl"
-            class="object-cover image max-sm:object-center image h-[445px] hover:scale-102 transition duration-500"
+            class="object-cover image max-sm:object-center h-[445px] hover:scale-102 transition duration-500"
             :class="index % 2 === 0 ? 'clip-shape-right' : 'clip-shape-left'"
           />
+
           <p class="flex justify-between items-center text-[#999] mt-2">
             <span>{{ item.genres.join(',') }}</span>
             <span>{{ useFormatDate(item.releaseDate, 'DD/MM/YYYY') }}</span>
