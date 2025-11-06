@@ -41,9 +41,6 @@ const submitForm = () => {
     formRef.value.submit()
   }
 }
-
-const { focusDateInput } = useDateInput()
-
 const dateReleaseInput = ref<{ $el?: HTMLElement } | null>(null)
 const dateCloseInput = ref<{ $el?: HTMLElement } | null>(null)
 
