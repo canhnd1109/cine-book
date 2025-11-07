@@ -25,7 +25,6 @@ const form = ref<IFormState>({
   name: '',
   province: '',
   commune: '',
-  // district: 'string',
   detailAddress: '',
   phone: '',
   description: '',

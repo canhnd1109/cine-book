@@ -66,7 +66,6 @@ const embedUrl = computed(() => {
       }
     }
 
-    // Return original URL if not YouTube or if conversion failed
     return url
   } catch {
     return url

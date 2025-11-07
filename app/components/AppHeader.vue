@@ -83,7 +83,17 @@ const handleVedifyOtp = async () => {
     isLoading.value = true
     const _otp = otp.value.join('')
     await verifyOtp(_otp, tokenOtp.value)
+
+    // Đợi userInfo được cập nhật
+    await nextTick()
+
     isOpenModalOtp.value = false
+
+    toast.add({
+      title: t('success'),
+      description: 'Đăng nhập thành công!',
+      color: 'success'
+    })
   } catch (error) {
     console.log(error)
   } finally {
