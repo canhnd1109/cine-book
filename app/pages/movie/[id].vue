@@ -53,6 +53,19 @@ const showTimeData = computed(() => {
   return processTimelineArray(timelineItems)
 })
 
+// Selected date index for horizontal date navigation
+const selectedDateIndex = ref(0)
+
+// Auto-reset selected date when showTimeData changes
+watch(showTimeData, () => {
+  selectedDateIndex.value = 0
+})
+
+// Get selected date data
+const selectedDate = computed(() => {
+  return showTimeData.value[selectedDateIndex.value] || null
+})
+
 const isValidTrailerUrl = computed(() => {
   const url = movieDetail.value?.trailerUrl
   if (!url || typeof url !== 'string' || url.trim() === '') {
@@ -142,22 +155,35 @@ const embedUrl = computed(() => {
     <!-- Showtimes Display -->
     <div v-if="showTimeData.length > 0" class="max-w-4xl mx-auto my-6">
       <h3 class="text-xl font-semibold mb-4">Lịch chiếu</h3>
-      <div class="space-y-4">
-        <div v-for="(day, dayIndex) in showTimeData" :key="dayIndex">
-          <div class="mb-2">
-            <span class="font-medium">{{ day.weekday }}</span>
-            <span class="text-gray-600 ml-2">{{ day.fullDate }}</span>
-            <span v-if="day.isToday" class="ml-2 text-sm bg-blue-100 text-blue-600 px-2 py-1 rounded">Hôm nay</span>
-          </div>
-          <div class="flex flex-wrap gap-2">
-            <BaseButton
-              v-for="timeSlot in day.timeSlots"
-              :key="timeSlot.id"
-              :text="timeSlot.time"
-              variant="outline"
-              class-name="text-sm"
-            />
-          </div>
+
+      <!-- Horizontal Date Cards -->
+      <div class="flex gap-3 mb-6 overflow-x-auto pb-2">
+        <div
+          v-for="(day, dayIndex) in showTimeData"
+          :key="dayIndex"
+          :class="[
+            'flex flex-col items-center justify-center min-w-[100px] px-4 py-3 rounded-lg cursor-pointer transition-colors',
+            selectedDateIndex === dayIndex
+              ? 'bg-red-500 text-white'
+              : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700'
+          ]"
+          @click="selectedDateIndex = dayIndex"
+        >
+          <span class="text-sm font-medium">Th. {{ day.fullDate.split(':')[1] }}</span>
+          <span class="text-2xl font-bold my-1">{{ day.fullDate.split(':')[2] }}</span>
+          <span class="text-sm">{{ day.weekday }}</span>
+        </div>
+      </div>
+      <!-- Time Slots for Selected Date -->
+      <div v-if="selectedDate" class="mt-6">
+        <div class="flex flex-wrap gap-3">
+          <BaseButton
+            v-for="timeSlot in selectedDate.timeSlots"
+            :key="timeSlot.id"
+            :text="timeSlot.time"
+            variant="outline"
+            class-name="min-w-[100px]"
+          />
         </div>
       </div>
     </div>
