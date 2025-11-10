@@ -45,10 +45,10 @@ export function useCinemaData() {
     }
   }
 
-  const typeSeat = ref('')
+  const typeSeat = ref('NORMAL')
   const priceSeat = ref('')
   const restSeat = () => {
-    typeSeat.value = ''
+    typeSeat.value = 'NORMAL'
     priceSeat.value = ''
   }
 

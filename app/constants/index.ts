@@ -81,12 +81,8 @@ const SEAT_TYPE = [
     value: 'COUPLE'
   },
   {
-    label: 'Chưa thiết lập',
+    label: 'Ghế không hoạt động',
     value: 'DISABLED'
-  },
-  {
-    label: 'Vị trí trống',
-    value: 'EMPTY'
   }
 ]
 

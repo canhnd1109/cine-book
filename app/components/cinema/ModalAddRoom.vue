@@ -94,7 +94,7 @@ const initializeSeats = () => {
       newSeats[seatId] = {
         row: row + 1,
         col: col + 1,
-        type: 'DISABLED',
+        type: 'NORMAL',
         price: 0,
         status: 'AVAILABLE',
         rowLabel: String.fromCharCode(65 + row),
@@ -158,6 +158,18 @@ const isColSelected = (colIndex: number): boolean => {
 }
 
 const handleSave = async () => {
+  // Validate: Check if all seats have price greater than 0
+  const seatsWithoutPrice = Object.entries(seats.value).filter(([_key, seat]) => seat.type !== 'DISABLED' && seat.price <= 0)
+
+  if (seatsWithoutPrice.length > 0) {
+    toast.add({
+      title: t('error'),
+      description: 'Vui lòng nhập giá cho tất cả các ghế',
+      color: 'error'
+    })
+    return
+  }
+
   // Only send seats that have been configured (type !== 'DISABLED')
   const formattedSeats = Object.entries(seats.value).map(([_key, seat]) => ({
     rowIdx: seat.row,
