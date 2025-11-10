@@ -24,7 +24,10 @@ export const useAuthStore = defineStore('auth', () => {
   const verifyOtp = async (otp: string, tokenOtp: string) => {
     const { value } = await apiAuth.verifyOtp(otp, tokenOtp)
     setTokens(value)
-    await nextTick()
+
+    // Wait for cookies to be set properly
+    await new Promise(resolve => setTimeout(resolve, 100))
+
     await getUserInfo()
   }
 
