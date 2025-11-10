@@ -2,22 +2,55 @@
 import useFormatDate from '~/composables/useDateFormat'
 import { apiPublic } from '~/services'
 
-const { movieDetail } = useMovieData()
 const route = useRoute()
 
-const {
-  data,
-  pending: _isFetching,
-  refresh: _refresh
-} = await useAsyncData('room-detail', async () => {
+// Fetch movie detail
+const { data: movieDetail } = await useAsyncData(`movie-detail-${route.params.id}`, async () => {
   const res = await apiPublic.getMovieDetail(route.params.id as string)
   return res.value
 })
 
-watchEffect(() => {
-  if (data.value) {
-    movieDetail.value = data.value
+// Fetch showtimes based on movie ID
+const { data: showtimeData } = await useAsyncData(
+  `showtimes-${route.params.id}`,
+  async () => {
+    if (!movieDetail.value?.id) return null
+    const res = await apiPublic.fetchShowtimesByMovie(movieDetail.value.id as string)
+    return res.value
+  },
+  {
+    watch: [movieDetail]
   }
+)
+
+// Active cinema - auto select first cinema when data loads
+const idCinemaActive = ref<string | null>(null)
+
+// Auto-select first cinema when showtimeData changes
+watch(
+  showtimeData,
+  newData => {
+    if (newData && newData.length > 0 && !idCinemaActive.value) {
+      idCinemaActive.value = newData[0]!.cinemaId
+    }
+  },
+  { immediate: true }
+)
+
+// Computed showtime data based on selected cinema
+const showTimeData = computed(() => {
+  if (!showtimeData.value || !idCinemaActive.value) return []
+
+  const selectedCinema = showtimeData.value.find(item => item.cinemaId === idCinemaActive.value)
+  if (!selectedCinema?.showtimeDetails) return []
+
+  const timelineItems = selectedCinema.showtimeDetails.map(item => ({
+    id: item.id,
+    timeline: item.timeline,
+    date: item.date
+  }))
+
+  return processTimelineArray(timelineItems)
 })
 
 const isValidTrailerUrl = computed(() => {
@@ -74,7 +107,7 @@ const embedUrl = computed(() => {
 </script>
 <template>
   <div>
-    <div class="max-w-4xl mx-auto flex justify-start gap-10">
+    <div v-if="movieDetail" class="max-w-4xl mx-auto flex justify-start gap-10">
       <img :src="movieDetail.posterUrl" alt="" class="h-[333px] w-[238px] rounded-lg" loading="lazy" />
       <div class="flex-1 space-y-1">
         <p class="text-2xl font-bold">{{ movieDetail.name }}</p>
@@ -91,6 +124,44 @@ const embedUrl = computed(() => {
         <p class="mt-6">{{ movieDetail.description }}</p>
       </div>
     </div>
+
+    <!-- Cinema Selection -->
+    <div v-if="showtimeData && showtimeData.length > 0" class="max-w-4xl mx-auto my-6">
+      <h3 class="text-xl font-semibold mb-4">Chọn rạp chiếu</h3>
+      <div class="flex flex-wrap gap-3">
+        <BaseButton
+          v-for="item in showtimeData"
+          :key="item.cinemaId"
+          :text="`${item.cinemaName} (${item.province} - ${item.commune} - ${item.detailAddress})`"
+          :variant="idCinemaActive === item.cinemaId ? 'solid' : 'outline'"
+          @click="idCinemaActive = item.cinemaId"
+        />
+      </div>
+    </div>
+
+    <!-- Showtimes Display -->
+    <div v-if="showTimeData.length > 0" class="max-w-4xl mx-auto my-6">
+      <h3 class="text-xl font-semibold mb-4">Lịch chiếu</h3>
+      <div class="space-y-4">
+        <div v-for="(day, dayIndex) in showTimeData" :key="dayIndex">
+          <div class="mb-2">
+            <span class="font-medium">{{ day.weekday }}</span>
+            <span class="text-gray-600 ml-2">{{ day.fullDate }}</span>
+            <span v-if="day.isToday" class="ml-2 text-sm bg-blue-100 text-blue-600 px-2 py-1 rounded">Hôm nay</span>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <BaseButton
+              v-for="timeSlot in day.timeSlots"
+              :key="timeSlot.id"
+              :text="timeSlot.time"
+              variant="outline"
+              class-name="text-sm"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div
       v-if="isValidTrailerUrl"
       class="w-full max-w-4xl mx-auto my-6 overflow-hidden rounded-2xl shadow-lg"

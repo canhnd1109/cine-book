@@ -3,6 +3,7 @@ import BaseService from './base.service'
 import type { IGenre, IGenreFilter } from '~/types/genre.type'
 import type { IMovie, IMovieFilter } from '~/types/movie.type'
 import type { ICinema, ICinemaFilter, IRoom } from '~/types/cinema.type'
+import type { IShowtime } from '~/types/show-time.type'
 
 export class PublicService extends BaseService {
   constructor() {
@@ -42,5 +43,10 @@ export class PublicService extends BaseService {
 
   async fetchRoomsOfCinema(cinemaId: string): Promise<IResponseData<{ roomId: string; name: string }>> {
     return this.get<IResponseData<{ roomId: string; name: string }>>(`/room/cinema/${cinemaId}/simple`)
+  }
+
+  // TODO: SHOWTIME
+  async fetchShowtimesByMovie(movieId: string): Promise<IResponseData<IShowtime[]>> {
+    return this.get<IResponseData<IShowtime[]>>(`/showtime/${movieId}`)
   }
 }
