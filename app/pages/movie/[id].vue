@@ -5,7 +5,7 @@ import type { TypeSeat, TypeSeatStatus } from '~/types/cinema.type'
 import type { IShowtimeRoomResponse } from '~/types/show-time.type'
 
 const route = useRoute()
-const showTimeId = ref<string | null>(null)
+const showTime = ref<TimeSlot>({} as TimeSlot)
 const room = ref<IShowtimeRoomResponse>({} as IShowtimeRoomResponse)
 
 // Fetch movie detail
@@ -83,13 +83,15 @@ const isValidTrailerUrl = computed(() => {
   }
 })
 
-watch(showTimeId, newId => {
+watch(showTime, newShowTime => {
   // Reset selected seats when showtime changes
   selectedSeats.value = new Set()
 
+  if (!newShowTime.id) return
+
   const roomResponse = showtimeData.value
     ?.find(item => item.cinemaId === idCinemaActive.value)
-    ?.showtimeDetails.find(room => room.id === newId)?.roomResponse
+    ?.showtimeDetails.find(room => room.id === newShowTime.id)?.roomResponse
 
   if (roomResponse) {
     room.value = roomResponse
@@ -202,11 +204,15 @@ const embedUrl = computed(() => {
 const handleCinemaSelect = (cinemaId: string) => {
   idCinemaActive.value = cinemaId
   room.value = {} as IShowtimeRoomResponse
-  showTimeId.value = null
+  showTime.value = {} as TimeSlot
 }
 
-const handleChangeShowTimeId = (id: string) => {
-  showTimeId.value = id
+const handleChangeShowTimeId = (_showTime: TimeSlot) => {
+  showTime.value = _showTime
+}
+
+const handleBack = () => {
+  showTime.value = {} as TimeSlot
 }
 </script>
 <template>
@@ -266,31 +272,29 @@ const handleChangeShowTimeId = (id: string) => {
         </div>
       </div>
       <!-- Time Slots for Selected Date -->
-      <div v-if="selectedDate" class="mt-6">
+      <div v-if="selectedDate && !showTime.id" class="mt-6">
         <h3 class="text-xl font-semibold mb-4">Giờ chiếu</h3>
         <div class="flex flex-wrap gap-3">
           <BaseButton
             v-for="timeSlot in selectedDate.timeSlots"
             :key="timeSlot.id"
             :text="timeSlot.time"
-            :variant="showTimeId === timeSlot.id ? 'solid' : 'outline'"
+            :variant="showTime.id === timeSlot.id ? 'solid' : 'outline'"
             class-name="min-w-[100px]"
-            @click="handleChangeShowTimeId(timeSlot.id)"
+            @click="handleChangeShowTimeId(timeSlot)"
           />
         </div>
       </div>
     </div>
 
     <!-- Seat Selection -->
-    <div v-if="showTimeId && room.roomId" class="max-w-4xl mx-auto my-6">
-      <h3 class="text-xl font-semibold mb-4">Chọn ghế</h3>
-
+    <div v-if="showTime.id && room.roomId" class="max-w-4xl mx-auto my-6">
+      <p>
+        Giờ chiếu: <span class="font-bold">{{ showTime.time }}</span>
+      </p>
       <div class="bg-gray-100 dark:bg-gray-900 p-6 rounded-lg">
         <!-- Screen -->
-        <div class="mb-8">
-          <div class="w-full h-2 bg-gradient-to-b from-gray-400 to-gray-600 rounded-t-full mb-2" />
-          <p class="text-center text-sm text-gray-500">Màn hình</p>
-        </div>
+        <div class="w-full mb-8 h-2 bg-gradient-to-b from-gray-400 to-gray-600 rounded-t-full" />
 
         <!-- Seat Grid -->
         <BaseSeatGrid
@@ -327,7 +331,10 @@ const handleChangeShowTimeId = (id: string) => {
                 <span class="text-lg font-semibold">Tổng tiền:</span>
                 <span class="text-2xl font-bold text-red-500">{{ formatPrice(selectedSeatsInfo.totalPrice) }}</span>
               </div>
-              <BaseButton text="Thanh toán" variant="solid" class-name="px-8" />
+              <div class="flex justify-end gap-4">
+                <BaseButton text="Quay lại" class-name="px-4" @click="handleBack" />
+                <BaseButton text="Thanh toán" variant="solid" class-name="px-4" />
+              </div>
             </div>
           </div>
         </div>
