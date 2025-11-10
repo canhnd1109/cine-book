@@ -15,6 +15,7 @@ const formRef = ref()
 const toast = useToast()
 const isProcessing = ref(false)
 const isActionLoading = ref(false)
+const isEditMode = ref(false)
 
 const form = ref<IFormGenre>({
   genreName: ''
@@ -37,20 +38,22 @@ watchEffect(() => {
 
 setRefreshCallback(refresh)
 
-const handleAdd = async (isOpenModal: boolean = false) => {
+const handleAction = async (isOpenModal: boolean = false) => {
   if (isOpenModal) {
     isOpen.value = true
   } else {
     isProcessing.value = true
     try {
-      const { message } = await apiGenre.createGenre(form.value.genreName)
+      const { message } = isEditMode.value
+        ? await apiGenre.updateGenre(form.value.genreName)
+        : await apiGenre.createGenre(form.value.genreName)
       toast.add({
         title: t('success'),
         description: message,
         color: 'success'
       })
-
       isOpen.value = false
+      isEditMode.value = false
       await refresh()
     } catch (error) {
       console.log(error)
@@ -90,7 +93,12 @@ function getDropdownActions(row: IGenre): DropdownMenuItem[][] {
     [
       {
         label: 'Edit',
-        icon: 'i-lucide-edit'
+        icon: 'i-lucide-edit',
+        onSelect: () => {
+          isOpen.value = true
+          isEditMode.value = true
+          form.value.genreName = row.name
+        }
       },
       {
         label: isActionLoading.value ? t('deleting') + '...' : t('delete'),
@@ -121,7 +129,7 @@ function getDropdownActions(row: IGenre): DropdownMenuItem[][] {
   <div class="card-box">
     <MoviesTabs />
     <div class="rounded-lg">
-      <GenreFilter @add="handleAdd" />
+      <GenreFilter @add="handleAction" />
       <UTable ref="table" :data="genres" :columns="columns" :loading="isFetching">
         <template #action-cell="{ row }">
           <UDropdownMenu :items="getDropdownActions(row.original)" :ui="{ itemLabel: 'cursor-pointer' }">
@@ -136,9 +144,9 @@ function getDropdownActions(row: IGenre): DropdownMenuItem[][] {
         </template>
       </UTable>
     </div>
-    <UModal v-model:open="isOpen" :title="t('add-genre')" class="w-[600px]">
+    <UModal v-model:open="isOpen" :title="isEditMode ? t('edit-genre') : t('add-genre')" class="w-[600px]">
       <template #body>
-        <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="handleAdd(false)">
+        <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="handleAction(false)">
           <UFormField :label="t('genre-name')" name="genreName">
             <UInput
               v-model="form.genreName"
@@ -153,7 +161,7 @@ function getDropdownActions(row: IGenre): DropdownMenuItem[][] {
       <template #footer>
         <div class="flex justify-end w-full">
           <BaseButton
-            :text="t('add')"
+            :text="isEditMode ? t('edit') : t('add')"
             :is-loading="isProcessing"
             variant="solid"
             class-name="rounded "

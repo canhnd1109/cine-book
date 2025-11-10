@@ -6,9 +6,12 @@ export class GenreService extends BaseService {
     super('genre')
   }
   async createGenre(genreName: string): Promise<IResponseMessage> {
-    return this.post<IResponseMessage, typeof genreName>(`/${genreName}`)
+    return this.post<IResponseMessage>(`/${genreName}`)
   }
 
+  async updateGenre(genreName: string): Promise<IResponseMessage> {
+    return this.post<IResponseMessage>(`/${genreName}`)
+  }
   async deleteGenre(genreId: string): Promise<IResponseMessage> {
     return this.delete<IResponseMessage>(`/${genreId}`)
   }
