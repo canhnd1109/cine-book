@@ -51,7 +51,7 @@ const handleAdd = async (isOpenModal: boolean = false) => {
       })
 
       isOpen.value = false
-      setRefreshCallback(refresh)
+      await refresh()
     } catch (error) {
       console.log(error)
     } finally {

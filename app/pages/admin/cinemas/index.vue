@@ -22,7 +22,7 @@ const handleAdd = async (isOpenModal: boolean = false, form: IFormState) => {
         color: 'success'
       })
       isOpen.value = false
-      setRefreshCallback(refresh)
+      await refresh()
     } catch (error) {
       console.log(error)
     } finally {
