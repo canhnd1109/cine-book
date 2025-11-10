@@ -1,12 +1,14 @@
 <script setup lang="ts">
+import type { TypeSeat, TypeSeatStatus } from '~/types/cinema.type'
+
 const { t } = useI18n()
 
 interface Seat {
   row: number
   col: number
-  type: 'NORMAL' | 'VIP' | 'COUPLE' | 'DISABLED' | 'EMPTY' | 'UNSET'
+  type: TypeSeat
   price: number
-  status?: 'AVAILABLE' | 'BOOKED' | 'LOCKED'
+  status?: TypeSeatStatus
   rowLabel?: string
   colLabel?: number
 }
@@ -54,26 +56,17 @@ const emit = defineEmits<{
 }>()
 
 const seatTypes = {
-  UNSET: { label: t('unset'), color: 'bg-gray-200 text-gray-200' },
   NORMAL: { label: t('normal'), color: 'bg-blue-500 text-blue-500' },
   VIP: { label: t('vip'), color: 'bg-yellow-500 text-yellow-500' },
   COUPLE: { label: t('couple'), color: 'bg-pink-500 text-pink-500' },
   DISABLED: { label: t('disabled'), color: 'bg-gray-400 text-gray-400' },
-  EMPTY: { label: t('empty'), color: 'bg-transparent border-2 border-dashed border-gray-300' }
+  BOOKED: { label: 'Ghế đã đặt', color: 'bg-red-600 text-red-600' },
+  SELECTED: { label: 'Ghế bạn chọn', color: 'bg-orange-500 text-orange-500' }
 }
 
 // State
 const isSelecting = ref(false)
 const selectionStart = ref<string | null>(null)
-
-// Computed
-const displayedSeatTypes = computed(() => {
-  if (props.mode === 'booking') {
-    const { EMPTY, DISABLED, ...bookingSeatTypes } = seatTypes
-    return bookingSeatTypes
-  }
-  return seatTypes
-})
 
 // Methods
 const getSeat = (row: number, col: number): Seat | undefined => {
@@ -89,25 +82,29 @@ const getSeatClass = (row: number, col: number): string => {
   if (!seat) return ''
 
   const seatType = seatTypes[seat.type]
-  const isEmpty = seat.type === 'EMPTY'
+  console.log('🚀 ~ getSeatClass ~ seatType:', seatType)
   const isDisabled = seat.type === 'DISABLED'
   const isBooked = props.mode === 'booking' && seat.status === 'BOOKED'
 
   const baseClasses = ['relative w-10 h-10 m-0.5 rounded transition-all']
 
-  if (isBooked) {
-    baseClasses.push('bg-gray-600 cursor-not-allowed')
+  // Handle selected seats in booking mode - override with orange background
+  if (isSelected && props.mode === 'booking' && !isBooked) {
+    baseClasses.push('bg-orange-500 text-white scale-110 z-10')
+  } else if (isBooked) {
+    baseClasses.push('bg-red-600 cursor-not-allowed')
   } else {
     baseClasses.push(seatType.color)
   }
 
-  if (isEmpty || isDisabled || isBooked) {
+  if (isDisabled || isBooked) {
     baseClasses.push('cursor-not-allowed opacity-50')
   } else {
     baseClasses.push('cursor-pointer hover:scale-105')
   }
 
-  if (isSelected && !isBooked) {
+  // For admin mode, use ring instead of background change
+  if (isSelected && props.mode === 'admin' && !isBooked) {
     baseClasses.push('ring-4 ring-green-400 scale-110 z-10')
   }
 
@@ -118,7 +115,7 @@ const canSelectSeat = (seatId: string): boolean => {
   const seat = props.seats[seatId]
   if (!seat) return false
 
-  if (seat.type === 'EMPTY' || seat.type === 'DISABLED') return false
+  if (seat.type === 'DISABLED') return false
   if (props.mode === 'booking' && seat.status === 'BOOKED') return false
 
   if (props.maxSeatsSelect && !props.selectedSeats.has(seatId)) {
@@ -259,7 +256,7 @@ const handleMouseUp = () => {
               @mouseenter="handleMouseEnter(row - 1, col - 1)"
             >
               <div
-                v-if="getSeat(row - 1, col - 1)?.type !== 'EMPTY' && mode === 'admin'"
+                v-if="getSeat(row - 1, col - 1)?.type !== 'DISABLED' && mode === 'admin'"
                 class="absolute inset-0 flex items-center justify-center text-white text-xs font-bold"
               >
                 {{ String.fromCharCode(64 + row) }}{{ col }}
@@ -277,24 +274,10 @@ const handleMouseUp = () => {
 
     <!-- Legend -->
     <div class="flex flex-wrap gap-4 justify-center">
-      <div v-for="(type, key) in displayedSeatTypes" :key="key" class="flex items-center gap-2">
+      <div v-for="(type, key) in seatTypes" :key="key" class="flex items-center gap-2">
         <div :class="['w-6 h-6 rounded', type.color]" />
         <span class="text-sm">{{ type.label }}</span>
       </div>
-
-      <!-- Additional legend for booking mode -->
-      <!-- <template v-if="mode === 'booking'">
-        <div class="flex items-center gap-2">
-          <div class="w-6 h-6 rounded bg-gray-600 relative">
-            <div class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full" />
-          </div>
-          <span class="text-sm">Đã đặt</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <div class="w-6 h-6 rounded bg-blue-500 ring-4 ring-green-400" />
-          <span class="text-sm">Đang chọn</span>
-        </div>
-      </template> -->
     </div>
   </div>
 </template>

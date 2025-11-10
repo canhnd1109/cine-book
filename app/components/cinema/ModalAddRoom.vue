@@ -2,6 +2,7 @@
 import { cinemaRoomSchema, type CinemaRoomInput } from '~/schemas/cinema.chema'
 import { SEAT_TYPE } from '~/constants'
 import { apiRoom } from '~/services'
+import type { TypeSeat, TypeSeatStatus } from '~/types/cinema.type'
 
 const { schema } = useSchema(cinemaRoomSchema)
 const { cinameDetail, typeSeat, priceSeat, restSeat } = useCinemaData()
@@ -22,14 +23,12 @@ const room = ref<CinemaRoomInput>({
   totalCol: 12
 })
 
-type SeatType = 'NORMAL' | 'VIP' | 'COUPLE' | 'DISABLED' | 'EMPTY' | 'UNSET'
-
 interface LocalSeat {
   row: number
   col: number
-  type: SeatType
+  type: TypeSeat
   price: number
-  status?: 'AVAILABLE' | 'BOOKED' | 'LOCKED'
+  status?: TypeSeatStatus
   rowLabel?: string
   colLabel?: number
 }
@@ -66,7 +65,7 @@ const syncSeatInputsFromSelection = () => {
 
   selectedSeats.value.forEach(seatId => {
     const seat = seats.value[seatId]
-    if (seat && seat.type !== 'UNSET') {
+    if (seat && seat.type !== 'DISABLED') {
       seatTypes.add(seat.type)
       seatPrices.add(seat.price)
     }
@@ -95,7 +94,7 @@ const initializeSeats = () => {
       newSeats[seatId] = {
         row: row + 1,
         col: col + 1,
-        type: 'UNSET',
+        type: 'DISABLED',
         price: 0,
         status: 'AVAILABLE',
         rowLabel: String.fromCharCode(65 + row),
@@ -159,7 +158,7 @@ const isColSelected = (colIndex: number): boolean => {
 }
 
 const handleSave = async () => {
-  // Only send seats that have been configured (type !== 'UNSET')
+  // Only send seats that have been configured (type !== 'DISABLED')
   const formattedSeats = Object.entries(seats.value).map(([_key, seat]) => ({
     rowIdx: seat.row,
     colIdx: seat.col,
@@ -199,7 +198,7 @@ const handleSeatTypeChange = () => {
       if (existingSeat) {
         newSeats[seatId] = {
           ...existingSeat,
-          type: typeSeat.value as SeatType,
+          type: typeSeat.value as TypeSeat,
           price: Number(priceSeat.value)
         }
       }

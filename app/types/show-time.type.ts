@@ -12,20 +12,22 @@ export interface IShowtimeDetails {
   id: string
   date: string
   timeline: string
-  roomResponse: {
-    roomId: string
-    name: string
-    totalRow: number
-    totalCol: number
-    seats: {
-      seatId: string
-      seatName: string
-      seatType: string
-      price: number
-      rowIdx: number
-      colIdx: number
-      status: string
-      booked: boolean
-    }[]
-  }
+  roomResponse: IShowtimeRoomResponse
+}
+
+export interface IShowtimeRoomResponse {
+  roomId: string
+  name: string
+  totalRow: number
+  totalCol: number
+  seats: {
+    seatId: string
+    seatName: string
+    seatType: string
+    price: number
+    rowIdx: number
+    colIdx: number
+    status: string
+    booked: boolean
+  }[]
 }

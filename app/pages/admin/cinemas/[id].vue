@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { ISeat, IRoom } from '~/types/cinema.type'
+import type { ISeat, IRoom, TypeSeat, TypeSeatStatus } from '~/types/cinema.type'
 
 interface Seat {
   row: number
   col: number
-  type: 'NORMAL' | 'VIP' | 'COUPLE' | 'DISABLED' | 'EMPTY' | 'UNSET'
+  type: TypeSeat
   price: number
-  status?: 'AVAILABLE' | 'BOOKED' | 'LOCKED'
+  status?: TypeSeatStatus
   rowLabel?: string
   colLabel?: number
 }
@@ -32,7 +32,7 @@ const transformSeats = (seats: ISeat[]): Record<string, Seat> => {
     seatsMap[key] = {
       row: seat.rowIdx, // Keep 1-indexed for display
       col: seat.colIdx,
-      type: seat.seatName.toUpperCase() as 'NORMAL' | 'VIP' | 'COUPLE' | 'DISABLED' | 'EMPTY' | 'UNSET',
+      type: seat.seatName.toUpperCase() as TypeSeat,
       price: seat.price || 0,
       status: seat.booked ? 'BOOKED' : (seat.status as 'AVAILABLE' | 'BOOKED' | 'LOCKED') || 'AVAILABLE',
       rowLabel: String.fromCharCode(65 + rowIdx),
@@ -58,7 +58,7 @@ const getSeatTypePrices = (room: IRoom): Record<string, number> => {
   }
   const priceMap: Record<string, number> = {}
   room.seats
-    .filter(s => s.seatName !== 'UNSET')
+    .filter(s => s.seatName !== 'DISABLED')
     .forEach(seat => {
       const seatType = seat.seatName.toUpperCase()
       priceMap[seatType] = seat.price || 0
@@ -72,8 +72,7 @@ const seatTypeLabels: Record<string, string> = {
   VIP: t('vip'),
   COUPLE: t('couple'),
   DISABLED: t('disabled'),
-  EMPTY: t('empty'),
-  UNSET: t('unset')
+  EMPTY: t('empty')
 }
 </script>
 <template>

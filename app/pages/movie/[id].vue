@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import useFormatDate from '~/composables/useDateFormat'
 import { apiPublic } from '~/services'
+import type { TypeSeat, TypeSeatStatus } from '~/types/cinema.type'
+import type { IShowtimeRoomResponse } from '~/types/show-time.type'
 
 const route = useRoute()
+const showTimeId = ref<string | null>(null)
+const room = ref<IShowtimeRoomResponse>({} as IShowtimeRoomResponse)
 
 // Fetch movie detail
 const { data: movieDetail } = await useAsyncData(`movie-detail-${route.params.id}`, async () => {
@@ -77,6 +81,80 @@ const isValidTrailerUrl = computed(() => {
   } catch {
     return false
   }
+})
+
+watch(showTimeId, newId => {
+  const roomResponse = showtimeData.value
+    ?.find(item => item.cinemaId === idCinemaActive.value)
+    ?.showtimeDetails.find(room => room.id === newId)?.roomResponse
+
+  if (roomResponse) {
+    room.value = roomResponse
+  }
+})
+
+// Seat types
+interface Seat {
+  row: number
+  col: number
+  type: TypeSeat
+  price: number
+  status?: TypeSeatStatus
+  rowLabel?: string
+  colLabel?: number
+}
+
+// Seat selection state
+const selectedSeats = ref<Set<string>>(new Set())
+const selectionMode = ref<'click' | 'drag'>('click')
+
+// Convert room seats from array to Record format for BaseSeatGrid
+const seatsRecord = computed(() => {
+  if (!room.value.seats || room.value.seats.length === 0) return {}
+
+  const record: Record<string, Seat> = {}
+  room.value.seats.forEach(seat => {
+    const rowIdx = seat.rowIdx - 1
+    const colIdx = seat.colIdx - 1
+    const key = `${rowIdx}-${colIdx}`
+    record[key] = {
+      row: seat.rowIdx, // Keep 1-indexed for display
+      col: seat.colIdx,
+      type: seat.seatName.toUpperCase() as TypeSeat,
+      price: seat.price || 0,
+      status: seat.booked ? 'BOOKED' : (seat.status as 'AVAILABLE' | 'BOOKED' | 'LOCKED') || 'AVAILABLE',
+      rowLabel: String.fromCharCode(65 + rowIdx),
+      colLabel: seat.colIdx
+    }
+  })
+  return record
+})
+
+// Handle seat click
+const restSeat = (data: { seatId: string; seat: Seat | undefined; selected: boolean }) => {
+  console.log('Seat clicked:', data)
+}
+
+// Calculate selected seats info
+const selectedSeatsInfo = computed(() => {
+  const seats: Array<{ id: string; name: string; type: string; price: number }> = []
+  let totalPrice = 0
+
+  selectedSeats.value.forEach(seatId => {
+    const seat = seatsRecord.value[seatId]
+    if (seat) {
+      const seatName = `${seat.rowLabel}-${seat.colLabel}`
+      seats.push({
+        id: seatId,
+        name: seatName,
+        type: seat.type,
+        price: seat.price
+      })
+      totalPrice += seat.price
+    }
+  })
+
+  return { seats, totalPrice, count: seats.length }
 })
 
 const embedUrl = computed(() => {
@@ -181,9 +259,59 @@ const embedUrl = computed(() => {
             v-for="timeSlot in selectedDate.timeSlots"
             :key="timeSlot.id"
             :text="timeSlot.time"
-            variant="outline"
+            :variant="showTimeId === timeSlot.id ? 'solid' : 'outline'"
             class-name="min-w-[100px]"
+            @click="showTimeId = timeSlot.id"
           />
+        </div>
+      </div>
+    </div>
+    <!-- Seat Selection -->
+    <div v-if="showTimeId && room.totalRow" class="max-w-6xl mx-auto my-6">
+      <h3 class="text-xl font-semibold mb-4">Chọn ghế</h3>
+
+      <div class="bg-gray-100 dark:bg-gray-900 p-6 rounded-lg">
+        <!-- Screen -->
+        <div class="mb-8">
+          <div class="w-full h-2 bg-gradient-to-b from-gray-400 to-gray-600 rounded-t-full mb-2" />
+          <p class="text-center text-sm text-gray-500">Màn hình</p>
+        </div>
+
+        <!-- Seat Grid -->
+        <BaseSeatGrid
+          :rows="room.totalRow"
+          :cols="room.totalCol"
+          :seats="seatsRecord"
+          :selected-seats="selectedSeats"
+          :selection-mode="selectionMode"
+          mode="booking"
+          @update:selected-seats="selectedSeats = $event"
+          @seat-click="restSeat"
+        />
+
+        <!-- Selected Info Summary -->
+        <div v-if="selectedSeatsInfo.count > 0" class="mt-6 p-4 bg-white dark:bg-gray-800 rounded-lg">
+          <div class="flex flex-wrap gap-4 items-center justify-between">
+            <div class="flex items-center gap-4">
+              <span class="text-sm font-medium">Ghế đã chọn:</span>
+              <div class="flex flex-wrap gap-2">
+                <span
+                  v-for="seat in selectedSeatsInfo.seats"
+                  :key="seat.id"
+                  class="px-3 py-1 bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 rounded-full text-sm font-medium"
+                >
+                  {{ seat.name }}
+                </span>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="text-lg font-semibold">Tổng:</span>
+              <span class="text-2xl font-bold text-red-500">{{ formatPrice(selectedSeatsInfo.totalPrice) }}</span>
+            </div>
+          </div>
+          <div class="mt-4">
+            <BaseButton text="Tiếp tục" variant="solid" class-name="w-full sm:w-auto px-8" />
+          </div>
         </div>
       </div>
     </div>

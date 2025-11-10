@@ -157,7 +157,7 @@
   "room-name": "Room name",
   "row-number": "Row",
   "column-number": "Column number",
-  "unset": "Not set",
+  "DISABLED": "Not set",
   "normal": "Regular seat",
   "vip": "VIP seat",
   "couple": "Couple seat",

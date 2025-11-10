@@ -81,7 +81,7 @@ const SEAT_TYPE = [
     value: 'COUPLE'
   },
   {
-    label: 'Không hoạt động',
+    label: 'Chưa thiết lập',
     value: 'DISABLED'
   },
   {

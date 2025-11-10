@@ -53,3 +53,6 @@ export interface ISeat {
   seatType: string
   status: string
 }
+
+export type TypeSeat = 'NORMAL' | 'VIP' | 'COUPLE' | 'DISABLED'
+export type TypeSeatStatus = 'AVAILABLE' | 'BOOKED' | 'LOCKED'

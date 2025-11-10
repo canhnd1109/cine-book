@@ -157,7 +157,7 @@
   "room-name": "Tên phòng chiếu",
   "row-number": "Số hàng",
   "column-number": "Số cột",
-  "unset": "Chưa thiết lập",
+  "DISABLED": "Chưa thiết lập",
   "normal": "Ghế thường",
   "vip": "Ghế VIP",
   "couple": "Ghế đôi",
