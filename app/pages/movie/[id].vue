@@ -83,11 +83,61 @@ const isValidTrailerUrl = computed(() => {
   }
 })
 
+// Countdown timer (5 minutes = 300 seconds)
+const countdownSeconds = ref(0)
+const countdownInterval = ref<NodeJS.Timeout | null>(null)
+
+// Format seconds to MM:SS
+const formattedCountdown = computed(() => {
+  const minutes = Math.floor(countdownSeconds.value / 60)
+  const seconds = countdownSeconds.value % 60
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+})
+
+// Start countdown timer
+const startCountdown = () => {
+  // Clear existing timer
+  if (countdownInterval.value) {
+    clearInterval(countdownInterval.value)
+  }
+
+  // Set 5 minutes (300 seconds)
+  countdownSeconds.value = 300
+
+  // Start interval
+  countdownInterval.value = setInterval(() => {
+    countdownSeconds.value--
+
+    if (countdownSeconds.value <= 0) {
+      // Time's up! Redirect to home
+      clearInterval(countdownInterval.value!)
+      navigateTo('/')
+    }
+  }, 1000)
+}
+
+// Stop countdown timer
+const stopCountdown = () => {
+  if (countdownInterval.value) {
+    clearInterval(countdownInterval.value)
+    countdownInterval.value = null
+  }
+  countdownSeconds.value = 0
+}
+
+// Cleanup on unmount
+onUnmounted(() => {
+  stopCountdown()
+})
+
 watch(showTime, newShowTime => {
   // Reset selected seats when showtime changes
   selectedSeats.value = new Set()
 
-  if (!newShowTime.id) return
+  if (!newShowTime.id) {
+    stopCountdown()
+    return
+  }
 
   const roomResponse = showtimeData.value
     ?.find(item => item.cinemaId === idCinemaActive.value)
@@ -95,6 +145,8 @@ watch(showTime, newShowTime => {
 
   if (roomResponse) {
     room.value = roomResponse
+    // Start countdown when showtime is selected
+    startCountdown()
   }
 })
 
@@ -288,10 +340,21 @@ const handleBack = () => {
     </div>
 
     <!-- Seat Selection -->
-    <div v-if="showTime.id && room.roomId" class="max-w-4xl mx-auto my-6">
-      <p>
-        Giờ chiếu: <span class="font-bold">{{ showTime.time }}</span>
-      </p>
+    <div v-if="showTime.id && room.roomId" class="max-w-4xl mx-auto">
+      <!-- Countdown Timer Header -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-sm">Giờ chiếu:</span>
+          <span class="font-bold text-lg">{{ showTime.time }}</span>
+        </div>
+        <div class="flex items-center gap-2 border border-solid border-primary px-4 py-2 rounded-lg">
+          <span class="text-sm">Thời gian chọn ghế:</span>
+          <span class="font-bold text-lg" :class="countdownSeconds <= 60 ? 'text-red-500 animate-pulse' : ''">
+            {{ formattedCountdown }}
+          </span>
+        </div>
+      </div>
+
       <div class="bg-gray-100 dark:bg-gray-900 p-6 rounded-lg">
         <!-- Screen -->
         <div class="w-full mb-8 h-2 bg-gradient-to-b from-gray-400 to-gray-600 rounded-t-full" />
