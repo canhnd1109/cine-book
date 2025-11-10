@@ -311,12 +311,13 @@ const handleBack = () => {
           v-for="(day, dayIndex) in showTimeData"
           :key="dayIndex"
           :class="[
-            'flex flex-col items-center justify-center min-w-[100px] px-4 py-3 rounded-lg cursor-pointer transition-colors',
+            'flex flex-col items-center justify-center min-w-[100px] px-4 py-3 rounded-lg transition-colors',
+            showTime.id && room.roomId ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
             selectedDateIndex === dayIndex
               ? 'bg-red-500 text-white'
               : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700'
           ]"
-          @click="selectedDateIndex = dayIndex"
+          @click="!(showTime.id && room.roomId) && (selectedDateIndex = dayIndex)"
         >
           <span class="text-sm font-medium">Th. {{ day.fullDate.split(':')[1] }}</span>
           <span class="text-2xl font-bold my-1">{{ day.fullDate.split(':')[2] }}</span>
@@ -372,7 +373,7 @@ const handleBack = () => {
         />
 
         <!-- Selected Info Summary -->
-        <div v-if="selectedSeatsInfo.count > 0" class="mt-6 p-4 bg-white dark:bg-gray-800 rounded-lg">
+        <div class="mt-6 p-4 bg-white dark:bg-gray-800 rounded-lg">
           <div class="space-y-4">
             <!-- Selected Seats -->
             <div>
