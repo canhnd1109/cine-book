@@ -195,6 +195,12 @@ const embedUrl = computed(() => {
     return url
   }
 })
+
+const handleCinemaSelect = (cinemaId: string) => {
+  idCinemaActive.value = cinemaId
+  room.value = {} as IShowtimeRoomResponse
+  showTimeId.value = null
+}
 </script>
 <template>
   <div>
@@ -225,7 +231,7 @@ const embedUrl = computed(() => {
           :key="item.cinemaId"
           :text="`${item.cinemaName} (${item.province} - ${item.commune} - ${item.detailAddress})`"
           :variant="idCinemaActive === item.cinemaId ? 'solid' : 'outline'"
-          @click="idCinemaActive = item.cinemaId"
+          @click="handleCinemaSelect(item.cinemaId)"
         />
       </div>
     </div>
@@ -266,8 +272,9 @@ const embedUrl = computed(() => {
         </div>
       </div>
     </div>
+
     <!-- Seat Selection -->
-    <div v-if="showTimeId && room.totalRow" class="max-w-6xl mx-auto my-6">
+    <div v-if="showTimeId && room.roomId" class="max-w-6xl mx-auto my-6">
       <h3 class="text-xl font-semibold mb-4">Chọn ghế</h3>
 
       <div class="bg-gray-100 dark:bg-gray-900 p-6 rounded-lg">
@@ -291,9 +298,10 @@ const embedUrl = computed(() => {
 
         <!-- Selected Info Summary -->
         <div v-if="selectedSeatsInfo.count > 0" class="mt-6 p-4 bg-white dark:bg-gray-800 rounded-lg">
-          <div class="flex flex-wrap gap-4 items-center justify-between">
-            <div class="flex items-center gap-4">
-              <span class="text-sm font-medium">Ghế đã chọn:</span>
+          <div class="space-y-4">
+            <!-- Selected Seats -->
+            <div>
+              <p class="text-sm font-medium mb-2">Ghế đã chọn:</p>
               <div class="flex flex-wrap gap-2">
                 <span
                   v-for="seat in selectedSeatsInfo.seats"
@@ -304,13 +312,15 @@ const embedUrl = computed(() => {
                 </span>
               </div>
             </div>
-            <div class="flex items-center gap-4">
-              <span class="text-lg font-semibold">Tổng:</span>
-              <span class="text-2xl font-bold text-red-500">{{ formatPrice(selectedSeatsInfo.totalPrice) }}</span>
+
+            <!-- Total and Payment -->
+            <div class="flex flex-wrap gap-4 items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div class="flex items-center gap-2">
+                <span class="text-lg font-semibold">Tổng tiền:</span>
+                <span class="text-2xl font-bold text-red-500">{{ formatPrice(selectedSeatsInfo.totalPrice) }}</span>
+              </div>
+              <BaseButton text="Thanh toán" variant="solid" class-name="px-8" />
             </div>
-          </div>
-          <div class="mt-4">
-            <BaseButton text="Tiếp tục" variant="solid" class-name="w-full sm:w-auto px-8" />
           </div>
         </div>
       </div>
