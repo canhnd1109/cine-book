@@ -2,7 +2,7 @@
 import type { ICinema } from '~/types/cinema.type'
 import type { IActionCard } from '~/types/constant.type'
 
-const { cinemas, cinameDetail, fetchRooms } = useCinemaData()
+const { cinemas, cinameDetail } = useCinemaData()
 
 const { isFetching = false } = defineProps<{
   isFetching?: boolean
@@ -14,7 +14,6 @@ const actionClick = (action: IActionCard, data: ICinema) => {
     console.log(action)
   } else if (action === 'VIEW') {
     cinameDetail.value = data
-    fetchRooms()
     navigateTo({ name: 'admin-cinemas-id', params: { id: cinameDetail.value.id } })
   } else {
     console.log(action)

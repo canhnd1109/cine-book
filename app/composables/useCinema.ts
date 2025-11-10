@@ -52,9 +52,9 @@ export function useCinemaData() {
     priceSeat.value = ''
   }
 
-  const fetchRooms = async () => {
+  const fetchRooms = async (id: string) => {
     const { data } = await useAsyncData('rooms-list', async () => {
-      const res = await apiPublic.fetchRooms(cinameDetail.value.id)
+      const res = await apiPublic.fetchRooms(id)
       return res.value ?? []
     })
     rooms.value = data.value ?? []

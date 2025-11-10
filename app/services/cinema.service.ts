@@ -6,6 +6,6 @@ export class CinemaService extends BaseService {
     super('cinema')
   }
   async addCinema(formData: FormData): Promise<IResponseMessage> {
-    return this.post<IResponseMessage, FormData>('', formData)
+    return this.post<IResponseMessage>('', formData)
   }
 }

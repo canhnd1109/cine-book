@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { apiPublic } from '~/services'
 import type { ISeat, IRoom, TypeSeat, TypeSeatStatus } from '~/types/cinema.type'
 
 interface Seat {
@@ -15,10 +16,16 @@ definePageMeta({
   layout: 'admin',
   middleware: ['admin']
 })
-const { cinameDetail, rooms } = useCinemaData()
+const { rooms, fetchRooms } = useCinemaData()
 const { t } = useI18n()
-
+const route = useRoute()
 const isOpen = ref(false)
+
+const { data: cinameDetail } = await useAsyncData(`cinema-detail-${route.params.id}`, async () => {
+  const res = await apiPublic.getCinemaDetail(route.params.id as string)
+  return res.value
+})
+fetchRooms(route.params.id as string)
 
 // Transform seats array to Record format for BaseSeatGrid
 const transformSeats = (seats: ISeat[]): Record<string, Seat> => {
@@ -78,28 +85,28 @@ const seatTypeLabels: Record<string, string> = {
 <template>
   <div class="card-box">
     <p class="text-lg font-medium text-primary text-center">
-      {{ t('theater-information') }} <span class="uppercase">{{ cinameDetail.name }}</span>
+      {{ t('theater-information') }} <span class="uppercase">{{ cinameDetail?.name }}</span>
     </p>
 
     <div class="border-b border-solid border-border-light dark:border-border-dark pb-4">
       <div class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2 mb-4">
-        <img v-for="(item, index) in cinameDetail.urlImages" :key="index" :src="item" class="w-full h-60 object-cover rounded" />
+        <img v-for="(item, index) in cinameDetail?.urlImages" :key="index" :src="item" class="w-full h-60 object-cover rounded" />
       </div>
       <p>
         <span class="text-secondary text-sm">{{ $t('address') }}: </span>
-        <span>{{ cinameDetail.province }} - {{ cinameDetail.commune }} - {{ cinameDetail.detailAddress }}</span>
+        <span>{{ cinameDetail?.province }} - {{ cinameDetail?.commune }} - {{ cinameDetail?.detailAddress }}</span>
       </p>
       <p>
         <span class="text-secondary text-sm">{{ $t('phone') }}: </span>
-        <span>{{ cinameDetail.phone }}</span>
+        <span>{{ cinameDetail?.phone }}</span>
       </p>
       <p>
         <span class="text-secondary text-sm">{{ $t('status') }}: </span>
-        <span>{{ cinameDetail.status }}</span>
+        <span>{{ cinameDetail?.status }}</span>
       </p>
       <p>
         <span class="text-secondary text-sm">{{ $t('description') }}: </span>
-        <span>{{ cinameDetail.description }}</span>
+        <span>{{ cinameDetail?.description }}</span>
       </p>
     </div>
     <div class="flex justify-between items-center">
