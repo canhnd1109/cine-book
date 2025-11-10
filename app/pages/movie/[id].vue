@@ -84,6 +84,9 @@ const isValidTrailerUrl = computed(() => {
 })
 
 watch(showTimeId, newId => {
+  // Reset selected seats when showtime changes
+  selectedSeats.value = new Set()
+
   const roomResponse = showtimeData.value
     ?.find(item => item.cinemaId === idCinemaActive.value)
     ?.showtimeDetails.find(room => room.id === newId)?.roomResponse
@@ -201,6 +204,10 @@ const handleCinemaSelect = (cinemaId: string) => {
   room.value = {} as IShowtimeRoomResponse
   showTimeId.value = null
 }
+
+const handleChangeShowTimeId = (id: string) => {
+  showTimeId.value = id
+}
 </script>
 <template>
   <div>
@@ -260,6 +267,7 @@ const handleCinemaSelect = (cinemaId: string) => {
       </div>
       <!-- Time Slots for Selected Date -->
       <div v-if="selectedDate" class="mt-6">
+        <h3 class="text-xl font-semibold mb-4">Giờ chiếu</h3>
         <div class="flex flex-wrap gap-3">
           <BaseButton
             v-for="timeSlot in selectedDate.timeSlots"
@@ -267,14 +275,14 @@ const handleCinemaSelect = (cinemaId: string) => {
             :text="timeSlot.time"
             :variant="showTimeId === timeSlot.id ? 'solid' : 'outline'"
             class-name="min-w-[100px]"
-            @click="showTimeId = timeSlot.id"
+            @click="handleChangeShowTimeId(timeSlot.id)"
           />
         </div>
       </div>
     </div>
 
     <!-- Seat Selection -->
-    <div v-if="showTimeId && room.roomId" class="max-w-6xl mx-auto my-6">
+    <div v-if="showTimeId && room.roomId" class="max-w-4xl mx-auto my-6">
       <h3 class="text-xl font-semibold mb-4">Chọn ghế</h3>
 
       <div class="bg-gray-100 dark:bg-gray-900 p-6 rounded-lg">

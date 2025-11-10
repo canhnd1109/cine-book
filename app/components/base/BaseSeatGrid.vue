@@ -82,7 +82,6 @@ const getSeatClass = (row: number, col: number): string => {
   if (!seat) return ''
 
   const seatType = seatTypes[seat.type]
-  console.log('🚀 ~ getSeatClass ~ seatType:', seatType)
   const isDisabled = seat.type === 'DISABLED'
   const isBooked = props.mode === 'booking' && seat.status === 'BOOKED'
 
