@@ -4,7 +4,7 @@ import { apiAuth } from '~/services'
 import type { DropdownMenuItem } from '@nuxt/ui'
 
 const { verifyOtp, logOut } = useAuthStore()
-const { userInfo, isAuthenticated } = storeToRefs(useAuthStore())
+const { userInfo, isAuthenticated, isAdmin } = storeToRefs(useAuthStore())
 
 const toast = useToast()
 const { t } = useI18n()
@@ -125,17 +125,34 @@ const isDisableVerifyOtp = computed(() => {
   return otp.value.length < 6
 })
 
-const items: DropdownMenuItem[][] = [
-  [
+const items = computed<DropdownMenuItem[][]>(() => {
+  const menuItems: DropdownMenuItem[][] = []
+
+  if (isAdmin.value) {
+    menuItems.push([
+      {
+        label: 'Quản trị',
+        icon: 'i-lucide-shield',
+        onSelect() {
+          router.push('/admin')
+        }
+      }
+    ])
+  }
+
+  // Add user profile menu
+  menuItems.push([
     {
       label: 'Thông tin cá nhân',
       icon: 'i-lucide-user',
       onSelect() {
-        console.log('New team clicked')
+        console.log('User profile clicked')
       }
     }
-  ],
-  [
+  ])
+
+  // Add logout menu
+  menuItems.push([
     {
       label: 'Logout',
       icon: 'i-lucide-log-out',
@@ -143,8 +160,10 @@ const items: DropdownMenuItem[][] = [
         logOut()
       }
     }
-  ]
-]
+  ])
+
+  return menuItems
+})
 </script>
 
 <template>
