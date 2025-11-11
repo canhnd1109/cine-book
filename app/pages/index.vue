@@ -68,7 +68,7 @@ watchEffect(() => {
       :pagination="{ clickable: true }"
     >
       <SwiperSlide v-for="(img, idx) in items" :key="idx">
-        <img :src="img" class="w-full h-auto mx-auto" />
+        <img :src="img" class="w-full h-auto mx-auto" >
       </SwiperSlide>
     </Swiper>
 
@@ -111,7 +111,7 @@ watchEffect(() => {
                     loading="lazy"
                     alt="movie"
                     class="img-fluid hover:scale-105 duration-500 cursor-pointer transition"
-                  />
+                  >
                 </div>
               </div>
             </div>
