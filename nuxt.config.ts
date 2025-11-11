@@ -166,14 +166,7 @@ export default defineNuxtConfig({
       xFrameOptions: 'DENY',
       xPermittedCrossDomainPolicies: 'none',
       xXSSProtection: '1; mode=block',
-      permissionsPolicy: {
-        camera: ['()'],
-        microphone: ['()'],
-        geolocation: ['self'],
-        payment: ['self'],
-        usb: ['()'],
-        bluetooth: ['()']
-      }
+      permissionsPolicy: false
     },
     csrf: {
       enabled: true,
