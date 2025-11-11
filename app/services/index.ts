@@ -6,6 +6,7 @@ import { PublicService } from './public.service'
 import { CinemaService } from './cinema.service'
 import { RoomService } from './room.service'
 import { ShowtimeService } from './showtime.service'
+import { BookingService } from './booking.service'
 
 const apiAuth: AuthService = new AuthService()
 const apiGenre: GenreService = new GenreService()
@@ -15,5 +16,6 @@ const apiPublic: PublicService = new PublicService()
 const apiCinema: CinemaService = new CinemaService()
 const apiRoom: RoomService = new RoomService()
 const apiShowtime: ShowtimeService = new ShowtimeService()
+const apiBooking: BookingService = new BookingService()
 
-export { apiAuth, apiGenre, apiShared, apiMovie, apiPublic, apiCinema, apiRoom, apiShowtime }
+export { apiAuth, apiGenre, apiShared, apiMovie, apiPublic, apiCinema, apiRoom, apiShowtime, apiBooking }

@@ -1,20 +1,21 @@
 <script setup lang="ts">
 import useFormatDate from '~/composables/useDateFormat'
-import { apiPublic } from '~/services'
+import { apiBooking, apiPublic } from '~/services'
 import type { TypeSeat, TypeSeatStatus } from '~/types/cinema.type'
 import type { IShowtimeRoomResponse } from '~/types/show-time.type'
 
+const { t } = useI18n()
+const toast = useToast()
 const route = useRoute()
 const showTime = ref<TimeSlot>({} as TimeSlot)
 const room = ref<IShowtimeRoomResponse>({} as IShowtimeRoomResponse)
+const isBooking = ref(false)
 
-// Fetch movie detail
 const { data: movieDetail } = await useAsyncData(`movie-detail-${route.params.id}`, async () => {
   const res = await apiPublic.getMovieDetail(route.params.id as string)
   return res.value
 })
 
-// Fetch showtimes based on movie ID
 const { data: showtimeData } = await useAsyncData(
   `showtimes-${route.params.id}`,
   async () => {
@@ -27,10 +28,8 @@ const { data: showtimeData } = await useAsyncData(
   }
 )
 
-// Active cinema - auto select first cinema when data loads
 const idCinemaActive = ref<string | null>(null)
 
-// Auto-select first cinema when showtimeData changes
 watch(
   showtimeData,
   newData => {
@@ -41,7 +40,6 @@ watch(
   { immediate: true }
 )
 
-// Computed showtime data based on selected cinema
 const showTimeData = computed(() => {
   if (!showtimeData.value || !idCinemaActive.value) return []
 
@@ -57,15 +55,12 @@ const showTimeData = computed(() => {
   return processTimelineArray(timelineItems)
 })
 
-// Selected date index for horizontal date navigation
 const selectedDateIndex = ref(0)
 
-// Auto-reset selected date when showTimeData changes
 watch(showTimeData, () => {
   selectedDateIndex.value = 0
 })
 
-// Get selected date data
 const selectedDate = computed(() => {
   return showTimeData.value[selectedDateIndex.value] || null
 })
@@ -83,40 +78,32 @@ const isValidTrailerUrl = computed(() => {
   }
 })
 
-// Countdown timer (5 minutes = 300 seconds)
 const countdownSeconds = ref(0)
 const countdownInterval = ref<NodeJS.Timeout | null>(null)
 
-// Format seconds to MM:SS
 const formattedCountdown = computed(() => {
   const minutes = Math.floor(countdownSeconds.value / 60)
   const seconds = countdownSeconds.value % 60
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
 })
 
-// Start countdown timer
 const startCountdown = () => {
-  // Clear existing timer
   if (countdownInterval.value) {
     clearInterval(countdownInterval.value)
   }
 
-  // Set 5 minutes (300 seconds)
   countdownSeconds.value = 300
 
-  // Start interval
   countdownInterval.value = setInterval(() => {
     countdownSeconds.value--
 
     if (countdownSeconds.value <= 0) {
-      // Time's up! Redirect to home
       clearInterval(countdownInterval.value!)
       navigateTo('/')
     }
   }, 1000)
 }
 
-// Stop countdown timer
 const stopCountdown = () => {
   if (countdownInterval.value) {
     clearInterval(countdownInterval.value)
@@ -125,13 +112,11 @@ const stopCountdown = () => {
   countdownSeconds.value = 0
 }
 
-// Cleanup on unmount
 onUnmounted(() => {
   stopCountdown()
 })
 
 watch(showTime, newShowTime => {
-  // Reset selected seats when showtime changes
   selectedSeats.value = new Set()
 
   if (!newShowTime.id) {
@@ -145,12 +130,11 @@ watch(showTime, newShowTime => {
 
   if (roomResponse) {
     room.value = roomResponse
-    // Start countdown when showtime is selected
+
     startCountdown()
   }
 })
 
-// Seat types
 interface Seat {
   row: number
   col: number
@@ -159,14 +143,12 @@ interface Seat {
   status?: TypeSeatStatus
   rowLabel?: string
   colLabel?: number
-  seatId?: string // ID của ghế từ backend
+  seatId?: string
 }
 
-// Seat selection state
 const selectedSeats = ref<Set<string>>(new Set())
 const selectionMode = ref<'click' | 'drag'>('click')
 
-// Convert room seats from array to Record format for BaseSeatGrid
 const seatsRecord = computed(() => {
   if (!room.value.seats || room.value.seats.length === 0) return {}
 
@@ -176,20 +158,19 @@ const seatsRecord = computed(() => {
     const colIdx = seat.colIdx - 1
     const key = `${rowIdx}-${colIdx}`
     record[key] = {
-      row: seat.rowIdx, // Keep 1-indexed for display
+      row: seat.rowIdx,
       col: seat.colIdx,
       type: seat.seatName.toUpperCase() as TypeSeat,
       price: seat.price || 0,
       status: seat.booked ? 'BOOKED' : (seat.status as 'AVAILABLE' | 'BOOKED' | 'LOCKED') || 'AVAILABLE',
       rowLabel: String.fromCharCode(65 + rowIdx),
       colLabel: seat.colIdx,
-      seatId: seat.seatId // ID thật từ backend
+      seatId: seat.seatId
     }
   })
   return record
 })
 
-// Calculate selected seats info
 const selectedSeatsInfo = computed(() => {
   const seats: Array<{ id: string; backendSeatId: string; name: string; type: string; price: number }> = []
   let totalPrice = 0
@@ -265,13 +246,26 @@ const handleBack = () => {
   showTime.value = {} as TimeSlot
 }
 
-const handleBooking = () => {
+const handleBooking = async () => {
   const seatIds = selectedSeatsInfo.value.seats.map(seat => seat.backendSeatId)
-  const body = {
+  const body: { showtimeId: string; seatIds: string[] } = {
     showtimeId: showTime.value.id,
     seatIds
   }
-  console.log('🚀 ~ handleBooking ~ body:', body)
+  isBooking.value = true
+  try {
+    const { message, value } = await apiBooking.booking(body)
+    toast.add({
+      title: t('success'),
+      description: message,
+      color: 'success'
+    })
+    window.open(value, '_self', 'noopener,noreferrer')
+  } catch (error) {
+    console.log(error)
+  } finally {
+    isBooking.value = false
+  }
 }
 </script>
 <template>
@@ -403,7 +397,7 @@ const handleBooking = () => {
               </div>
               <div class="flex justify-end gap-4">
                 <BaseButton text="Quay lại" class-name="px-4" @click="handleBack" />
-                <BaseButton text="Thanh toán" variant="solid" class-name="px-4" @click="handleBooking" />
+                <BaseButton text="Thanh toán" variant="solid" :is-loading="isBooking" class-name="px-4" @click="handleBooking" />
               </div>
             </div>
           </div>
