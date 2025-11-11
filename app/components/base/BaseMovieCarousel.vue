@@ -31,8 +31,8 @@ const handleMovieClick = (movieId: string) => {
     </div>
 
     <!-- Movie carousel -->
-    <UCarousel v-else-if="movies.length" v-slot="{ item, index }" :items="movies" :ui="{ item: 'basis-1/6' }" class="mt-6">
-      <div class="cursor-pointer group" :class="index !== 0 ? 'ps-8' : ''" @click="handleMovieClick(item.id)">
+    <UCarousel v-else-if="movies.length" v-slot="{ item, index }" :items="movies" :ui="{ item: 'basis-1/6 ps-8' }" class="mt-6">
+      <div class="cursor-pointer group" @click="handleMovieClick(item.id)">
         <div class="relative overflow-hidden">
           <img
             :src="item.posterUrl"
