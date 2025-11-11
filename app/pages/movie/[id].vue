@@ -7,29 +7,32 @@ import type { IShowtimeRoomResponse } from '~/types/show-time.type'
 const { t } = useI18n()
 const toast = useToast()
 const route = useRoute()
-const showTime = ref<TimeSlot>({} as TimeSlot)
-const room = ref<IShowtimeRoomResponse>({} as IShowtimeRoomResponse)
+const movieId = computed(() => route.params.id as string)
+
+// State
+const showTime = ref<TimeSlot | null>(null)
+const room = ref<IShowtimeRoomResponse | null>(null)
 const isBooking = ref(false)
-
-const { data: movieDetail } = await useAsyncData(`movie-detail-${route.params.id}`, async () => {
-  const res = await apiPublic.getMovieDetail(route.params.id as string)
-  return res.value
-})
-
-const { data: showtimeData } = await useAsyncData(
-  `showtimes-${route.params.id}`,
-  async () => {
-    if (!movieDetail.value?.id) return null
-    const res = await apiPublic.fetchShowtimesByMovie(movieDetail.value.id as string)
-    return res.value
-  },
-  {
-    watch: [movieDetail]
-  }
-)
-
+const selectedSeats = ref<Set<string>>(new Set())
+const selectedDateIndex = ref(0)
 const idCinemaActive = ref<string | null>(null)
 
+// Fetch movie detail
+const { data: movieDetail } = await useAsyncData(`movie-detail-${movieId.value}`, () =>
+  apiPublic.getMovieDetail(movieId.value).then(res => res.value)
+)
+
+// Fetch showtimes
+const { data: showtimeData } = await useAsyncData(
+  `showtimes-${movieId.value}`,
+  async () => {
+    if (!movieDetail.value?.id) return null
+    return apiPublic.fetchShowtimesByMovie(movieDetail.value.id).then(res => res.value)
+  },
+  { watch: [movieDetail] }
+)
+
+// Auto-select first cinema
 watch(
   showtimeData,
   newData => {
@@ -55,15 +58,13 @@ const showTimeData = computed(() => {
   return processTimelineArray(timelineItems)
 })
 
-const selectedDateIndex = ref(0)
-
+// Reset selected date when showtime data changes
 watch(showTimeData, () => {
   selectedDateIndex.value = 0
 })
 
-const selectedDate = computed(() => {
-  return showTimeData.value[selectedDateIndex.value] || null
-})
+// Get selected date
+const selectedDate = computed(() => showTimeData.value[selectedDateIndex.value] || null)
 
 const isValidTrailerUrl = computed(() => {
   const url = movieDetail.value?.trailerUrl
@@ -116,25 +117,27 @@ onUnmounted(() => {
   stopCountdown()
 })
 
+// Watch showtime changes
 watch(showTime, newShowTime => {
   selectedSeats.value = new Set()
 
-  if (!newShowTime.id) {
+  if (!newShowTime?.id) {
     stopCountdown()
+    room.value = null
     return
   }
 
   const roomResponse = showtimeData.value
     ?.find(item => item.cinemaId === idCinemaActive.value)
-    ?.showtimeDetails.find(room => room.id === newShowTime.id)?.roomResponse
+    ?.showtimeDetails.find(detail => detail.id === newShowTime.id)?.roomResponse
 
   if (roomResponse) {
     room.value = roomResponse
-
     startCountdown()
   }
 })
 
+// Seat interface
 interface Seat {
   row: number
   col: number
@@ -146,11 +149,12 @@ interface Seat {
   seatId?: string
 }
 
-const selectedSeats = ref<Set<string>>(new Set())
+// Seat selection mode
 const selectionMode = ref<'click' | 'drag'>('click')
 
+// Convert room seats to record format
 const seatsRecord = computed(() => {
-  if (!room.value.seats || room.value.seats.length === 0) return {}
+  if (!room.value?.seats || room.value.seats.length === 0) return {}
 
   const record: Record<string, Seat> = {}
   room.value.seats.forEach(seat => {
@@ -232,10 +236,11 @@ const embedUrl = computed(() => {
   }
 })
 
+// Handlers
 const handleCinemaSelect = (cinemaId: string) => {
   idCinemaActive.value = cinemaId
-  room.value = {} as IShowtimeRoomResponse
-  showTime.value = {} as TimeSlot
+  room.value = null
+  showTime.value = null
 }
 
 const handleChangeShowTimeId = (_showTime: TimeSlot) => {
@@ -243,26 +248,31 @@ const handleChangeShowTimeId = (_showTime: TimeSlot) => {
 }
 
 const handleBack = () => {
-  showTime.value = {} as TimeSlot
+  showTime.value = null
+  room.value = null
 }
 
 const handleBooking = async () => {
+  if (!showTime.value?.id || selectedSeatsInfo.value.count === 0) return
+
   const seatIds = selectedSeatsInfo.value.seats.map(seat => seat.backendSeatId)
-  const body: { showtimeId: string; seatIds: string[] } = {
-    showtimeId: showTime.value.id,
-    seatIds
-  }
+
   isBooking.value = true
   try {
-    const { message, value } = await apiBooking.booking(body)
+    const { message, value } = await apiBooking.booking({
+      showtimeId: showTime.value.id,
+      seatIds
+    })
+
     toast.add({
       title: t('success'),
       description: message,
       color: 'success'
     })
+
     window.open(value, '_self', 'noopener,noreferrer')
   } catch (error) {
-    console.log(error)
+    console.error('Booking error:', error)
   } finally {
     isBooking.value = false
   }
@@ -307,18 +317,18 @@ const handleBooking = async () => {
       <h3 class="text-xl font-semibold mb-4">Lịch chiếu</h3>
 
       <!-- Horizontal Date Cards -->
-      <div class="flex gap-3 mb-6 overflow-x-auto pb-2">
+      <div class="flex gap-3 mb-6 overflow-x-auto pb-2 scrollbar-hide">
         <div
           v-for="(day, dayIndex) in showTimeData"
           :key="dayIndex"
           :class="[
             'flex flex-col items-center justify-center min-w-[100px] px-4 py-3 rounded-lg transition-colors',
-            showTime.id && room.roomId ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
+            showTime?.id && room?.roomId ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
             selectedDateIndex === dayIndex
               ? 'bg-red-500 text-white'
               : 'bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700'
           ]"
-          @click="!(showTime.id && room.roomId) && (selectedDateIndex = dayIndex)"
+          @click="!(showTime?.id && room?.roomId) && (selectedDateIndex = dayIndex)"
         >
           <span class="text-sm font-medium">Th. {{ day.fullDate.split(':')[1] }}</span>
           <span class="text-2xl font-bold my-1">{{ day.fullDate.split(':')[2] }}</span>
@@ -326,14 +336,14 @@ const handleBooking = async () => {
         </div>
       </div>
       <!-- Time Slots for Selected Date -->
-      <div v-if="selectedDate && !showTime.id" class="mt-6">
+      <div v-if="selectedDate && !showTime?.id" class="mt-6">
         <h3 class="text-xl font-semibold mb-4">Giờ chiếu</h3>
         <div class="flex flex-wrap gap-3">
           <BaseButton
             v-for="timeSlot in selectedDate.timeSlots"
             :key="timeSlot.id"
             :text="timeSlot.time"
-            :variant="showTime.id === timeSlot.id ? 'solid' : 'outline'"
+            :variant="showTime?.id === timeSlot.id ? 'solid' : 'outline'"
             class-name="min-w-[100px]"
             @click="handleChangeShowTimeId(timeSlot)"
           />
@@ -342,12 +352,12 @@ const handleBooking = async () => {
     </div>
 
     <!-- Seat Selection -->
-    <div v-if="showTime.id && room.roomId" class="max-w-4xl mx-auto">
+    <div v-if="showTime?.id && room?.roomId" class="max-w-4xl mx-auto">
       <!-- Countdown Timer Header -->
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
           <span class="text-sm">Giờ chiếu:</span>
-          <span class="font-bold text-lg">{{ showTime.time }}</span>
+          <span class="font-bold text-lg">{{ showTime?.time }}</span>
         </div>
         <div class="flex items-center gap-2 border border-solid border-primary px-4 py-2 rounded-lg">
           <span class="text-sm">Thời gian chọn ghế:</span>
@@ -363,6 +373,7 @@ const handleBooking = async () => {
 
         <!-- Seat Grid -->
         <BaseSeatGrid
+          v-if="room"
           :rows="room.totalRow"
           :cols="room.totalCol"
           :seats="seatsRecord"
