@@ -5,7 +5,8 @@
   },
   "header": {
     "signin": "Đăng nhập",
-    "signup": "Đăng kí"
+    "signup": "Đăng kí",
+    "forgot-password": "Quên mật khẩu"
   },
   "auth": {
     "at-least-8-characters": "Ít nhất 8 ký tự",

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { IFormSignIn, IFormSignUp } from '~/schemas/auth.schema'
+import { emailSchema, type IFormEmail, type IFormSignIn, type IFormSignUp } from '~/schemas/auth.schema'
 import { apiAuth } from '~/services'
 import type { DropdownMenuItem } from '@nuxt/ui'
 
 const { verifyOtp, logOut } = useAuthStore()
 const { userInfo, isAuthenticated, isAdmin } = storeToRefs(useAuthStore())
+const { schema } = useSchema(emailSchema)
 
 const toast = useToast()
 const { t } = useI18n()
@@ -12,6 +13,7 @@ const router = useRouter()
 
 const isOpenModalSignUp = ref(false)
 const isOpenModalSignIn = ref(false)
+const isOpenModalForgotPassword = ref(false)
 const isLoading = ref(false)
 const isOpenModalOtp = ref(false)
 const email = ref('')
@@ -19,6 +21,10 @@ const otp = ref([])
 const tokenOtp = ref('')
 const remainingSeconds = ref(90)
 let intervalId: number | null = null
+const formRef = ref()
+const form = ref<IFormEmail>({
+  email: ''
+})
 
 const openModalSignIn = () => {
   if (isOpenModalSignUp.value) {
@@ -164,6 +170,35 @@ const items = computed<DropdownMenuItem[][]>(() => {
 
   return menuItems
 })
+
+const forgotPassword = () => {
+  isOpenModalSignIn.value = false
+  isOpenModalForgotPassword.value = true
+  email.value = ''
+}
+
+const submitForm = () => {
+  if (formRef.value && !isLoading.value) {
+    formRef.value.submit()
+  }
+}
+const handleForgotPassword = async () => {
+  try {
+    isLoading.value = true
+    const { message } = await apiAuth.forgotPassword(form.value.email)
+    toast.add({
+      title: t('success'),
+      description: message,
+      color: 'success'
+    })
+
+    isOpenModalForgotPassword.value = false
+  } catch (error) {
+    console.error(error)
+  } finally {
+    isLoading.value = false
+  }
+}
 </script>
 
 <template>
@@ -206,13 +241,33 @@ const items = computed<DropdownMenuItem[][]>(() => {
     :is-loading="isLoading"
     @sign-up="openModalSignUp"
     @sign-in="handelSignIn"
+    @forgot-password="forgotPassword"
   />
+
+  <UModal v-model:open="isOpenModalForgotPassword" :title="t('header.forgot-password')" :ui="{ content: 'w-120' }">
+    <template #content>
+      <UForm ref="formRef" :schema :state="form" class="p-6" @submit="handleForgotPassword">
+        <UFormField :label="t('auth.email')" name="email">
+          <UInput
+            v-model="form.email"
+            :loading="isLoading"
+            loading-icon="i-lucide-loader"
+            :placeholder="t('auth.email')"
+            :ui="{ base: 'h-10' }"
+            class="w-full"
+            @keyup.enter="submitForm"
+          />
+        </UFormField>
+      </UForm>
+    </template>
+  </UModal>
+
   <UModal v-model:open="isOpenModalOtp" :ui="{ content: 'w-120' }">
     <template #content>
       <div class="w-full mx-auto items-center p-6">
         <p class="text-center text-lg font-bold mb-6">Check your email</p>
         <p class="text-center text-[#62748e]">Enter the verification code sent to</p>
-        <p class="text-center">ngoduccanh19@gmail.com</p>
+        <p class="text-center">{{ email }}</p>
         <UPinInput
           v-model="otp"
           :length="6"

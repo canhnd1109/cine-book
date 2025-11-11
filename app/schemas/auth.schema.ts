@@ -36,8 +36,14 @@ export function updateProfileSchema(t: (key: string) => string) {
     email: z.string().min(1, t('auth.email-is-required')).email(t('auth.invalid-email'))
   })
 }
+export function emailSchema(t: (key: string) => string) {
+  return z.object({
+    email: z.string().min(1, t('auth.email-is-required')).email(t('auth.invalid-email'))
+  })
+}
 
 // Types
 export type IFormSignUp = z.infer<ReturnType<typeof signUpSchema>>
 export type IFormSignIn = z.infer<ReturnType<typeof signInSchema>>
 export type IFormUpdateProfile = z.infer<ReturnType<typeof updateProfileSchema>>
+export type IFormEmail = z.infer<ReturnType<typeof emailSchema>>

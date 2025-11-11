@@ -33,4 +33,7 @@ export class AuthService extends BaseService {
   async refreshToken(refreshToken: string): Promise<IResponseLogin> {
     return this.post<IResponseLogin>('/refresh-token', { refreshToken })
   }
+  async forgotPassword(email: string): Promise<IResponseMessage> {
+    return this.post<IResponseMessage>(`/forgot-password?email=${email}`)
+  }
 }

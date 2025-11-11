@@ -14,6 +14,7 @@ const { isLoading } = defineProps<{
 const emits = defineEmits<{
   'sign-up': []
   'sign-in': [form: IFormSignIn]
+  'forgot-password': []
 }>()
 
 const form = ref<IFormSignIn>({
@@ -61,7 +62,7 @@ const canSubmit = computed(() => {
             </UInput>
           </UFormField>
         </UForm>
-        <p class="text-end mt-4 underline text-primary hover:cursor-pointer">
+        <p class="text-end mt-4 underline text-primary hover:cursor-pointer" @click="emits('forgot-password')">
           {{ t('auth.forgot-password') }}
         </p>
         <BaseButton

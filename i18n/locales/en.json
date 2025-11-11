@@ -5,7 +5,8 @@
   },
   "header": {
     "signin": "Sign in",
-    "signup": "Sign up"
+    "signup": "Sign up",
+    "forgot-password": "Forgot password"
   },
   "auth": {
     "at-least-8-characters": "At least 8 characters",
