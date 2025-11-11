@@ -11,7 +11,8 @@ export interface IShowtime {
 export interface IShowtimeDetails {
   id: string
   date: string
-  timeline: string
+  startTime: string
+  endTime: string
   roomResponse: IShowtimeRoomResponse
 }
 

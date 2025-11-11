@@ -65,7 +65,7 @@ export default function processTimelineArray(bookingArray: BookingItem[], refere
 
   bookingArray.forEach(item => {
     const dateKey = item.date
-    const timeKey = item.timeline.split('-')[0]
+    const timeKey = item.timeline
 
     if (!timelinesByDate[dateKey]) {
       timelinesByDate[dateKey] = {}

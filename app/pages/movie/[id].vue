@@ -50,7 +50,7 @@ const showTimeData = computed(() => {
 
   const timelineItems = selectedCinema.showtimeDetails.map(item => ({
     id: item.id,
-    timeline: item.timeline,
+    timeline: item.startTime,
     date: item.date
   }))
 
@@ -159,6 +159,7 @@ interface Seat {
   status?: TypeSeatStatus
   rowLabel?: string
   colLabel?: number
+  seatId?: string // ID của ghế từ backend
 }
 
 // Seat selection state
@@ -181,20 +182,16 @@ const seatsRecord = computed(() => {
       price: seat.price || 0,
       status: seat.booked ? 'BOOKED' : (seat.status as 'AVAILABLE' | 'BOOKED' | 'LOCKED') || 'AVAILABLE',
       rowLabel: String.fromCharCode(65 + rowIdx),
-      colLabel: seat.colIdx
+      colLabel: seat.colIdx,
+      seatId: seat.seatId // ID thật từ backend
     }
   })
   return record
 })
 
-// Handle seat click
-const restSeat = (data: { seatId: string; seat: Seat | undefined; selected: boolean }) => {
-  console.log('Seat clicked:', data)
-}
-
 // Calculate selected seats info
 const selectedSeatsInfo = computed(() => {
-  const seats: Array<{ id: string; name: string; type: string; price: number }> = []
+  const seats: Array<{ id: string; backendSeatId: string; name: string; type: string; price: number }> = []
   let totalPrice = 0
 
   selectedSeats.value.forEach(seatId => {
@@ -203,6 +200,7 @@ const selectedSeatsInfo = computed(() => {
       const seatName = `${seat.rowLabel}-${seat.colLabel}`
       seats.push({
         id: seatId,
+        backendSeatId: seat.seatId || '',
         name: seatName,
         type: seat.type,
         price: seat.price
@@ -265,6 +263,15 @@ const handleChangeShowTimeId = (_showTime: TimeSlot) => {
 
 const handleBack = () => {
   showTime.value = {} as TimeSlot
+}
+
+const handleBooking = () => {
+  const seatIds = selectedSeatsInfo.value.seats.map(seat => seat.backendSeatId)
+  const body = {
+    showtimeId: showTime.value.id,
+    seatIds
+  }
+  console.log('🚀 ~ handleBooking ~ body:', body)
 }
 </script>
 <template>
@@ -369,7 +376,6 @@ const handleBack = () => {
           :selection-mode="selectionMode"
           mode="booking"
           @update:selected-seats="selectedSeats = $event"
-          @seat-click="restSeat"
         />
 
         <!-- Selected Info Summary -->
@@ -397,7 +403,7 @@ const handleBack = () => {
               </div>
               <div class="flex justify-end gap-4">
                 <BaseButton text="Quay lại" class-name="px-4" @click="handleBack" />
-                <BaseButton text="Thanh toán" variant="solid" class-name="px-4" />
+                <BaseButton text="Thanh toán" variant="solid" class-name="px-4" @click="handleBooking" />
               </div>
             </div>
           </div>

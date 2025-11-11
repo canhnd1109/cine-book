@@ -11,6 +11,7 @@ interface Seat {
   status?: TypeSeatStatus
   rowLabel?: string
   colLabel?: number
+  seatId?: string // ID của ghế từ backend
 }
 
 const props = defineProps({
@@ -51,7 +52,7 @@ const props = defineProps({
 
 const emit = defineEmits<{
   'update:selectedSeats': [seats: Set<string>]
-  seatClick: [data: { seatId: string; seat: Seat | undefined; selected: boolean }]
+  seatClick: [data: { seatId: string; seat: Seat | undefined; selected: boolean; backendSeatId?: string }]
   updateSeatType: [data: { seatIds: string[]; type: string; price: number }]
 }>()
 
@@ -126,6 +127,8 @@ const canSelectSeat = (seatId: string): boolean => {
 
 const handleSeatClick = (row: number, col: number, event: MouseEvent) => {
   const seatId = `${row}-${col}`
+  const seat = getSeat(row, col)
+  const backendSeatId = seat?.seatId // ID thật từ backend
 
   if (!canSelectSeat(seatId) && !props.selectedSeats.has(seatId)) {
     return
@@ -182,7 +185,12 @@ const handleSeatClick = (row: number, col: number, event: MouseEvent) => {
   }
 
   emit('update:selectedSeats', newSelected)
-  emit('seatClick', { seatId, seat: getSeat(row, col), selected: newSelected.has(seatId) })
+  emit('seatClick', {
+    seatId,
+    seat: getSeat(row, col),
+    selected: newSelected.has(seatId),
+    backendSeatId // ID thật từ backend để đặt vé
+  })
 }
 
 const handleMouseDown = (row: number, col: number) => {
