@@ -212,5 +212,7 @@
   "payment": "Payment",
   "cast": "Cast",
   "start-time": "Start Time",
-  "end-time": "End Time"
+  "end-time": "End Time",
+  "booked-seats": "Booked seats",
+  "your-selected-seats": "Your selected seats"
 }

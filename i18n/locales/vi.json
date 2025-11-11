@@ -212,5 +212,7 @@
   "payment": "Thanh toán",
   "cast": "Diễn viên",
   "start-time": "Thời gian khởi chiếu",
-  "end-time": "Thời gian kết thúc"
+  "end-time": "Thời gian kết thúc",
+  "booked-seats": "Ghế đã đặt",
+  "your-selected-seats": "Ghế bạn chọn"
 }
