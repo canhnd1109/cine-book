@@ -13,6 +13,11 @@ export interface IResponseLogin {
   expRefreshToken: string
 }
 
+export interface VerifyOtpForgotPasswordResponse {
+  tokenContent: string
+  expToken: string
+}
+
 export interface RefreshTokenRequest {
   refreshToken: string
 }

@@ -3,7 +3,7 @@ import { emailSchema, type IFormEmail, type IFormSignIn, type IFormSignUp } from
 import { apiAuth } from '~/services'
 import type { DropdownMenuItem } from '@nuxt/ui'
 
-const { verifyOtp, logOut } = useAuthStore()
+const { verifyOtp, logOut, setTokens } = useAuthStore()
 const { userInfo, isAuthenticated, isAdmin } = storeToRefs(useAuthStore())
 const { schema } = useSchema(emailSchema)
 
@@ -20,11 +20,12 @@ const email = ref('')
 const otp = ref([])
 const tokenOtp = ref('')
 const remainingSeconds = ref(90)
-let intervalId: number | null = null
 const formRef = ref()
 const form = ref<IFormEmail>({
   email: ''
 })
+const isForgotPasswordMode = ref(false)
+let intervalId: number | null = null
 
 const openModalSignIn = () => {
   if (isOpenModalSignUp.value) {
@@ -88,18 +89,27 @@ const handleVedifyOtp = async () => {
   try {
     isLoading.value = true
     const _otp = otp.value.join('')
-    await verifyOtp(_otp, tokenOtp.value)
+    if (isForgotPasswordMode.value) {
+      const { value, message } = await apiAuth.verifyOtpForgotPassword(_otp, tokenOtp.value)
+      setTokens(value)
+      toast.add({
+        title: t('success'),
+        description: message,
+        color: 'success'
+      })
+    } else {
+      await verifyOtp(_otp, tokenOtp.value)
 
-    // Đợi userInfo được cập nhật
-    await nextTick()
+      // Đợi userInfo được cập nhật
+      await nextTick()
 
+      toast.add({
+        title: t('success'),
+        description: 'Đăng nhập thành công!',
+        color: 'success'
+      })
+    }
     isOpenModalOtp.value = false
-
-    toast.add({
-      title: t('success'),
-      description: 'Đăng nhập thành công!',
-      color: 'success'
-    })
   } catch (error) {
     console.log(error)
   } finally {
@@ -172,6 +182,7 @@ const items = computed<DropdownMenuItem[][]>(() => {
 })
 
 const forgotPassword = () => {
+  isForgotPasswordMode.value = true
   isOpenModalSignIn.value = false
   isOpenModalForgotPassword.value = true
   email.value = ''
@@ -185,14 +196,15 @@ const submitForm = () => {
 const handleForgotPassword = async () => {
   try {
     isLoading.value = true
-    const { message } = await apiAuth.forgotPassword(form.value.email)
+    const { message, value } = await apiAuth.forgotPassword(form.value.email)
     toast.add({
       title: t('success'),
       description: message,
       color: 'success'
     })
-
+    tokenOtp.value = value.tokenContent
     isOpenModalForgotPassword.value = false
+    isOpenModalOtp.value = true
   } catch (error) {
     console.error(error)
   } finally {
