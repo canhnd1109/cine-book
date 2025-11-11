@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay, EffectFade, Pagination } from 'swiper/modules'
-import useFormatDate from '~/composables/useDateFormat'
 import 'swiper/css'
 import 'swiper/css/effect-fade'
 import 'swiper/css/pagination'
@@ -60,39 +59,14 @@ watchEffect(() => {
       </SwiperSlide>
     </Swiper>
 
-    <div class="mx-12 mt-6">
-      <p class="text-3xl font-bold">Top 10 bộ phim có lượt xem nhiều nhất</p>
+    <!-- Top 10 Most Viewed Movies -->
+    <BaseMovieCarousel title="Top 10 bộ phim có lượt xem nhiều nhất" :movies="top10MostViewedMovies" />
 
-      <UCarousel
-        v-if="top10MostViewedMovies.length"
-        v-slot="{ item, index }"
-        :items="top10MostViewedMovies"
-        :ui="{ item: 'basis-1/6' }"
-        class="mt-6"
-      >
-        <div
-          class="cursor-pointer"
-          :class="index !== 0 ? 'ps-8' : ''"
-          @click="$router.push({ name: 'movie-id', params: { id: item.id } })"
-        >
-          <img
-            :src="item.posterUrl"
-            class="object-cover image max-sm:object-center h-[445px] hover:scale-102 transition duration-500"
-            :class="index % 2 === 0 ? 'clip-shape-right' : 'clip-shape-left'"
-          />
+    <!-- Coming Soon Movies - Example usage -->
+    <!-- <BaseMovieCarousel title="Phim sắp chiếu" :movies="comingSoonMovies" :loading="isLoadingComingSoon" /> -->
 
-          <p class="flex justify-between items-center text-[#999] mt-2">
-            <span>{{ item.genres.join(',') }}</span>
-            <span>{{ useFormatDate(item.releaseDate, 'DD/MM/YYYY') }}</span>
-          </p>
-          <p class="flex justify-between items-center">
-            <span class="text-xl font-bold">{{ item.name }}</span>
-            <span>{{ minutesToHours(item.duration) }}</span>
-          </p>
-        </div>
-      </UCarousel>
-      <BaseEmpty v-else />
-    </div>
+    <!-- Now Showing Movies - Example usage -->
+    <!-- <BaseMovieCarousel title="Phim đang chiếu" :movies="nowShowingMovies" /> -->
 
     <div class="dark:bg-[#111] bg-bg-light rounded-[50px] py-24 mx-12 my-6">
       <div class="px-10 space-y-10">
@@ -113,20 +87,19 @@ watchEffect(() => {
 
       <div class="marquee-wrapper bookmt-90 w-full">
         <div class="marquee-inner w-full">
-          <div class="common-slider w-full">
-            <div class="marquee-items">
-              <div v-for="n in 2" :key="n" class="flex">
-                <div v-for="(item, index) in imagesList" :key="index" class="item">
-                  <div class="img-wrap">
-                    <img
-                      :src="item"
-                      width="220"
-                      height="220"
-                      loading="lazy"
-                      alt="movie"
-                      class="img-fluid hover:scale-105 duration-500 cursor-pointer transition"
-                    />
-                  </div>
+          <div class="common-slider w-full" />
+          <div class="marquee-items">
+            <div v-for="n in 2" :key="n" class="flex">
+              <div v-for="(item, index) in imagesList" :key="index" class="item">
+                <div class="img-wrap">
+                  <img
+                    :src="item"
+                    width="220"
+                    height="220"
+                    loading="lazy"
+                    alt="movie"
+                    class="img-fluid hover:scale-105 duration-500 cursor-pointer transition"
+                  />
                 </div>
               </div>
             </div>
