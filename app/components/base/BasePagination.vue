@@ -25,6 +25,7 @@ const props = withDefaults(defineProps<Props>(), {
   showEdges: true,
   maxButtons: 5,
   size: 'md',
+  color: '',
   variant: 'solid',
   disabled: false,
   showInfo: true,
@@ -50,8 +51,6 @@ const startItem = computed(() => {
 const endItem = computed(() => {
   return Math.min(props.currentPage * props.itemsPerPage, props.total)
 })
-
-const totalPages = computed(() => Math.ceil(props.total / props.itemsPerPage))
 
 const isHorizontal = computed(() => ['left', 'right'].includes(props.infoPosition))
 </script>

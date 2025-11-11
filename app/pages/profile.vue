@@ -38,16 +38,16 @@ const changeTab = (tabIndex: number) => {
 
 <template>
   <div class="my-10">
-    <p class="text-2xl font-bold mb-10 text-center">Thông tin cá nhân</p>
+    <p class="text-2xl font-bold mb-10 text-center">{{ t('personal-information') }}</p>
 
     <div class="flex items-center justify-center gap-4 flex-wrap mb-8">
-      <BaseButton text="Tài khoản của tôi" :variant="currentTab === 0 ? 'solid' : 'outline'" @click="changeTab(0)" />
-      <BaseButton text="Lịch sử mua vé" :variant="currentTab === 1 ? 'solid' : 'outline'" @click="changeTab(1)" />
+      <BaseButton :text="t('my-account')" :variant="currentTab === 0 ? 'solid' : 'outline'" @click="changeTab(0)" />
+      <BaseButton :text="t('ticket-history')" :variant="currentTab === 1 ? 'solid' : 'outline'" @click="changeTab(1)" />
     </div>
 
     <div class="max-w-4xl mx-auto px-4">
       <div v-if="currentTab === 0" class="animate-fade-in">
-        <p class="text-xl font-semibold mb-4">Tài khoản của tôi</p>
+        <p class="text-xl font-semibold mb-4">{{ t('my-account') }}</p>
         <div class="rounded-lg">
           <UForm ref="formRef" :schema :state="form" class="space-y-4">
             <div class="grid grid-cols-2 gap-4">
@@ -67,13 +67,13 @@ const changeTab = (tabIndex: number) => {
           </UForm>
         </div>
         <div class="flex justify-end mt-6 gap-4">
-          <BaseButton text="Đổi mật khẩu" />
-          <BaseButton text="Cập nhật thông tin" variant="solid" />
+          <BaseButton :text="t('change-password')" />
+          <BaseButton :text="t('update-information')" variant="solid" />
         </div>
       </div>
 
       <div v-if="currentTab === 1" class="animate-fade-in">
-        <p class="text-xl font-semibold mb-4">Lịch sử mua vé</p>
+        <p class="text-xl font-semibold mb-4">{{ t('ticket-history') }}</p>
         <div class="p-6 rounded-lg">
           <p>Nội dung lịch sử mua vé</p>
         </div>

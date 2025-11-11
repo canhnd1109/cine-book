@@ -68,17 +68,17 @@ watchEffect(() => {
       :pagination="{ clickable: true }"
     >
       <SwiperSlide v-for="(img, idx) in items" :key="idx">
-        <img :src="img" class="w-full h-auto mx-auto" >
+        <img :src="img" class="w-full h-auto mx-auto" />
       </SwiperSlide>
     </Swiper>
 
-    <BaseMovieCarousel title="Top 10 bộ phim có lượt xem nhiều nhất" :movies="top10MostViewedMovies" />
+    <BaseMovieCarousel :title="t('top-10-most-watched')" :movies="top10MostViewedMovies" />
 
     <div class="border border-solid border-border-light dark:border-border-dark my-10 mx-12" />
-    <BaseMovieCarousel title="Phim sắp chiếu" :movies="upcomingMovies" />
+    <BaseMovieCarousel :title="t('upcoming-movies')" :movies="upcomingMovies" />
     <div class="border border-solid border-border-light dark:border-border-dark my-10 mx-12" />
 
-    <BaseMovieCarousel title="Phim đang chiếu" :movies="showingMovies" />
+    <BaseMovieCarousel :title="t('now-showing')" :movies="showingMovies" />
 
     <div class="dark:bg-[#111] bg-bg-light rounded-[50px] py-24 mx-12 my-6">
       <div class="px-10 space-y-10">
@@ -111,7 +111,7 @@ watchEffect(() => {
                     loading="lazy"
                     alt="movie"
                     class="img-fluid hover:scale-105 duration-500 cursor-pointer transition"
-                  >
+                  />
                 </div>
               </div>
             </div>

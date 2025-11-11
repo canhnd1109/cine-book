@@ -289,10 +289,10 @@ const handleBooking = async () => {
           <span>{{ minutesToHours(movieDetail.duration) }}</span>
           <span>{{ movieDetail.nation }}</span>
         </p>
-        <p>Đạo diễn: {{ movieDetail.director }}</p>
-        <p>Diễn viên: {{ movieDetail.performer }}</p>
-        <p>Thời gian khởi chiếu: {{ useFormatDate(movieDetail.releaseDate, 'DD/MM/YYYY hh:mm:ss') }}</p>
-        <p>Thời gian kết thúc: {{ useFormatDate(movieDetail.releaseDate, 'DD/MM/YYYY hh:mm:ss') }}</p>
+        <p>{{ t('director') }}: {{ movieDetail.director }}</p>
+        <p>{{ t('cast') }}: {{ movieDetail.performer }}</p>
+        <p>{{ t('start-time') }}: {{ useFormatDate(movieDetail.releaseDate, 'DD/MM/YYYY hh:mm:ss') }}</p>
+        <p>{{ t('end-time') }}: {{ useFormatDate(movieDetail.releaseDate, 'DD/MM/YYYY hh:mm:ss') }}</p>
         <p class="text-red-500">{{ movieDetail.note }}</p>
         <p class="mt-6">{{ movieDetail.description }}</p>
       </div>
@@ -300,7 +300,7 @@ const handleBooking = async () => {
 
     <!-- Cinema Selection -->
     <div v-if="showtimeData && showtimeData.length > 0" class="max-w-4xl mx-auto my-6">
-      <h3 class="text-xl font-semibold mb-4">Chọn rạp chiếu</h3>
+      <h3 class="text-xl font-semibold mb-4">{{ t('select-cinema') }}</h3>
       <div class="flex flex-wrap gap-3">
         <BaseButton
           v-for="item in showtimeData"
@@ -314,7 +314,7 @@ const handleBooking = async () => {
 
     <!-- Showtimes Display -->
     <div v-if="showTimeData.length > 0" class="max-w-4xl mx-auto my-6">
-      <h3 class="text-xl font-semibold mb-4">Lịch chiếu</h3>
+      <h3 class="text-xl font-semibold mb-4">{{ t('showtime') }}</h3>
 
       <!-- Horizontal Date Cards -->
       <div class="flex gap-3 mb-6 overflow-x-auto pb-2 scrollbar-hide">
@@ -337,7 +337,7 @@ const handleBooking = async () => {
       </div>
       <!-- Time Slots for Selected Date -->
       <div v-if="selectedDate && !showTime?.id" class="mt-6">
-        <h3 class="text-xl font-semibold mb-4">Giờ chiếu</h3>
+        <h3 class="text-xl font-semibold mb-4">{{ t('screening-time') }}</h3>
         <div class="flex flex-wrap gap-3">
           <BaseButton
             v-for="timeSlot in selectedDate.timeSlots"
@@ -356,11 +356,11 @@ const handleBooking = async () => {
       <!-- Countdown Timer Header -->
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <span class="text-sm">Giờ chiếu:</span>
+          <span class="text-sm">{{ t('screening-time') }}:</span>
           <span class="font-bold text-lg">{{ showTime?.time }}</span>
         </div>
         <div class="flex items-center gap-2 border border-solid border-primary px-4 py-2 rounded-lg">
-          <span class="text-sm">Thời gian chọn ghế:</span>
+          <span class="text-sm">{{ t('seat-selection-time') }}:</span>
           <span class="font-bold text-lg" :class="countdownSeconds <= 60 ? 'text-red-500 animate-pulse' : ''">
             {{ formattedCountdown }}
           </span>
@@ -388,7 +388,7 @@ const handleBooking = async () => {
           <div class="space-y-4">
             <!-- Selected Seats -->
             <div>
-              <p class="text-sm font-medium mb-2">Ghế đã chọn:</p>
+              <p class="text-sm font-medium mb-2">{{ t('selected-seats') }}:</p>
               <div class="flex flex-wrap gap-2">
                 <span
                   v-for="seat in selectedSeatsInfo.seats"
@@ -407,8 +407,14 @@ const handleBooking = async () => {
                 <span class="text-2xl font-bold text-red-500">{{ formatPrice(selectedSeatsInfo.totalPrice) }}</span>
               </div>
               <div class="flex justify-end gap-4">
-                <BaseButton text="Quay lại" class-name="px-4" @click="handleBack" />
-                <BaseButton text="Thanh toán" variant="solid" :is-loading="isBooking" class-name="px-4" @click="handleBooking" />
+                <BaseButton :text="t('go-back')" class-name="px-4" @click="handleBack" />
+                <BaseButton
+                  :text="t('payment')"
+                  variant="solid"
+                  :is-loading="isBooking"
+                  class-name="px-4"
+                  @click="handleBooking"
+                />
               </div>
             </div>
           </div>
