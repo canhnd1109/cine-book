@@ -8,7 +8,7 @@ import { apiPublic } from '~/services'
 import type { IMovieFilter } from '~/types/movie.type'
 
 const { t } = useI18n()
-const { top10MostViewedMovies } = useMovieData()
+const { top10MostViewedMovies, showingMovies, upcomingMovies } = useMovieData()
 
 const items = [
   '/images/phim-9.png',
@@ -32,13 +32,26 @@ const imagesList = [
   '/images/img-8.png'
 ]
 
-const { data } = await useAsyncData('top-10-most-viewed-movies', async () => {
-  const res = await apiPublic.fetchMovies({ orderBy: '4' } as IMovieFilter)
-  return res.value
-})
+// Fetch all data in parallel
+const [{ data: topViewedData }, { data: showingMoviesData }, { data: upcomingMoviesData }] = await Promise.all([
+  useAsyncData('top-10-most-viewed-movies', async () => {
+    const res = await apiPublic.fetchMovies({ orderBy: '4' } as IMovieFilter)
+    return res.value
+  }),
+  useAsyncData('showing-movies', async () => {
+    const res = await apiPublic.fetchShowingMovies()
+    return res.value
+  }),
+  useAsyncData('upcoming-movies', async () => {
+    const res = await apiPublic.fetchUpcomingMovies()
+    return res.value
+  })
+])
 
 watchEffect(() => {
-  top10MostViewedMovies.value = data.value?.content || []
+  top10MostViewedMovies.value = topViewedData.value?.content || []
+  showingMovies.value = showingMoviesData.value?.content || []
+  upcomingMovies.value = upcomingMoviesData.value?.content || []
 })
 </script>
 
@@ -59,14 +72,11 @@ watchEffect(() => {
       </SwiperSlide>
     </Swiper>
 
-    <!-- Top 10 Most Viewed Movies -->
     <BaseMovieCarousel title="Top 10 bộ phim có lượt xem nhiều nhất" :movies="top10MostViewedMovies" />
 
-    <!-- Coming Soon Movies - Example usage -->
-    <!-- <BaseMovieCarousel title="Phim sắp chiếu" :movies="comingSoonMovies" :loading="isLoadingComingSoon" /> -->
+    <BaseMovieCarousel title="Phim sắp chiếu" :movies="upcomingMovies" />
 
-    <!-- Now Showing Movies - Example usage -->
-    <!-- <BaseMovieCarousel title="Phim đang chiếu" :movies="nowShowingMovies" /> -->
+    <BaseMovieCarousel title="Phim đang chiếu" :movies="showingMovies" />
 
     <div class="dark:bg-[#111] bg-bg-light rounded-[50px] py-24 mx-12 my-6">
       <div class="px-10 space-y-10">

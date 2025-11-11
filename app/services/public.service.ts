@@ -22,6 +22,12 @@ export class PublicService extends BaseService {
   async getMovieDetail(movieId: string): Promise<IResponseData<IMovie>> {
     return this.get<IResponseData<IMovie>>(`/movie/${movieId}`)
   }
+  async fetchShowingMovies(): Promise<IResponseData<IResponsePagination<IMovie[]>>> {
+    return this.get<IResponseData<IResponsePagination<IMovie[]>>>('/movie/showing')
+  }
+  async fetchUpcomingMovies(): Promise<IResponseData<IResponsePagination<IMovie[]>>> {
+    return this.get<IResponseData<IResponsePagination<IMovie[]>>>('/movie/upcoming')
+  }
 
   //TODO: CINEMA
   async fetchCinemas(params: ICinemaFilter): Promise<IResponseData<ICinema[]>> {
