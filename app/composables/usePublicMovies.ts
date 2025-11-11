@@ -26,7 +26,8 @@ export const usePublicMovies = () => {
           headers: baseHeaders
         }
       )
-      return response
+      // Unwrap response.value để tương thích với useAsyncData
+      return response.value
     } catch (error) {
       console.error('[usePublicMovies] Error fetching movies:', error)
       return null
@@ -45,7 +46,8 @@ export const usePublicMovies = () => {
           headers: baseHeaders
         }
       )
-      return response
+      // Unwrap response.value để tương thích với useAsyncData
+      return response.value
     } catch (error) {
       console.error('[usePublicMovies] Error fetching showing movies:', error)
       return null
@@ -64,7 +66,8 @@ export const usePublicMovies = () => {
           headers: baseHeaders
         }
       )
-      return response
+      // Unwrap response.value để tương thích với useAsyncData
+      return response.value
     } catch (error) {
       console.error('[usePublicMovies] Error fetching upcoming movies:', error)
       return null
@@ -80,7 +83,8 @@ export const usePublicMovies = () => {
         method: 'GET',
         headers: baseHeaders
       })
-      return response
+      // Unwrap response.value để tương thích với useAsyncData
+      return response.value
     } catch (error) {
       console.error('[usePublicMovies] Error fetching movie detail:', error)
       return null

@@ -39,9 +39,9 @@ const [{ data: topViewedData }, { data: showingMoviesData }, { data: upcomingMov
 ])
 
 watchEffect(() => {
-  top10MostViewedMovies.value = topViewedData.value?.value?.content || []
-  showingMovies.value = showingMoviesData.value?.value?.content || []
-  upcomingMovies.value = upcomingMoviesData.value?.value?.content || []
+  top10MostViewedMovies.value = topViewedData.value?.content || []
+  showingMovies.value = showingMoviesData.value?.content || []
+  upcomingMovies.value = upcomingMoviesData.value?.content || []
 })
 </script>
 
