@@ -16,12 +16,12 @@ export default defineNuxtPlugin(() => {
   const toast = useToast()
 
   const accessToken = useCookie('access-token', {
-    secure: true,
-    sameSite: 'strict'
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
   })
   const refreshToken = useCookie('refresh-token', {
-    secure: true,
-    sameSite: 'strict'
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
   })
   const language = useCookie('i18n_redirected')
 

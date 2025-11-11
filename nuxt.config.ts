@@ -69,7 +69,7 @@ export default defineNuxtConfig({
       baseApiUrl: process.env.NUXT_PUBLIC_BASE_API_URL || 'http://localhost:8080',
       baseApiUrlLocation: process.env.NUXT_PUBLIC_BASE_API_LOCATION || 'https://provinces.open-api.vn/api/v2',
       apiBase: process.env.NUXT_PUBLIC_API_BASE || '/api',
-      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://cinebookmovie.vercel.app',
       siteName: 'CineBook',
       siteDescription: 'Đặt vé xem phim online dễ dàng tại CineBook'
     }
@@ -136,7 +136,7 @@ export default defineNuxtConfig({
 
   security: {
     headers: {
-      crossOriginEmbedderPolicy: false,
+      crossOriginEmbedderPolicy: process.env.NODE_ENV === 'production' ? 'credentialless' : false,
       contentSecurityPolicy: {
         'default-src': ["'self'"],
         'img-src': ["'self'", 'data:', 'https:', 'http:', '*'],
@@ -150,7 +150,7 @@ export default defineNuxtConfig({
         'base-uri': ["'self'"],
         'form-action': ["'self'"],
         'frame-ancestors': ["'none'"],
-        'upgrade-insecure-requests': true
+        'upgrade-insecure-requests': process.env.NODE_ENV === 'production'
       },
       crossOriginOpenerPolicy: 'same-origin',
       crossOriginResourcePolicy: 'cross-origin',
@@ -167,12 +167,12 @@ export default defineNuxtConfig({
       xPermittedCrossDomainPolicies: 'none',
       xXSSProtection: '1; mode=block',
       permissionsPolicy: {
-        camera: ["'none'"],
-        microphone: ["'none'"],
-        geolocation: ["'self'"],
-        payment: ["'self'"],
-        usb: ["'none'"],
-        bluetooth: ["'none'"]
+        camera: ['()'],
+        microphone: ['()'],
+        geolocation: ['self'],
+        payment: ['self'],
+        usb: ['()'],
+        bluetooth: ['()']
       }
     },
     csrf: {
@@ -181,18 +181,15 @@ export default defineNuxtConfig({
       methodsToProtect: ['POST', 'PUT', 'PATCH', 'DELETE'],
       cookie: {
         httpOnly: true,
-        sameSite: 'strict',
+        sameSite: 'lax',
         secure: process.env.NODE_ENV === 'production'
       }
     },
     corsHandler: {
-      origin:
-        process.env.NODE_ENV === 'production'
-          ? [...(process.env.NUXT_PUBLIC_SITE_URL ? [process.env.NUXT_PUBLIC_SITE_URL] : []), 'https://cinebookmovie.vercel.app']
-          : '*',
+      origin: '*',
       credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-      allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+      allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'App-Code', 'Accept']
     },
     rateLimiter: {
       tokensPerInterval: 100,
