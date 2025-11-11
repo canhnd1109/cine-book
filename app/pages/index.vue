@@ -4,10 +4,11 @@ import { Autoplay, EffectFade, Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/effect-fade'
 import 'swiper/css/pagination'
+import { apiPublic } from '~/services'
+import type { IMovieFilter } from '~/types/movie.type'
 
 const { t } = useI18n()
 const { top10MostViewedMovies, showingMovies, upcomingMovies } = useMovieData()
-const { fetchMovies, fetchShowingMovies, fetchUpcomingMovies } = usePublicMovies()
 
 const items = [
   '/images/phim-9.png',
@@ -31,26 +32,18 @@ const imagesList = [
   '/images/img-8.png'
 ]
 
-// Fetch all data in parallel - Sử dụng $fetch trực tiếp để tương thích SSR trên Vercel
-const [
-  { data: topViewedData, error: topError },
-  { data: showingMoviesData, error: showingError },
-  { data: upcomingMoviesData, error: upcomingError }
-] = await Promise.all([
-  useAsyncData('top-10-most-viewed-movies', () => fetchMovies({ orderBy: '4' })),
-  useAsyncData('showing-movies', () => fetchShowingMovies()),
-  useAsyncData('upcoming-movies', () => fetchUpcomingMovies())
-])
+// Fetch data như các trang khác - VÌ CÁCH NÀY ĐANG HOẠT ĐỘNG!
+const { data: topViewedData } = await useAsyncData('top-10-most-viewed-movies', () =>
+  apiPublic.fetchMovies({ orderBy: '4' } as IMovieFilter).then(res => res.value)
+)
 
-// Debug logging
-if (import.meta.dev || import.meta.server) {
-  console.log('[Home] Top viewed data:', topViewedData.value)
-  console.log('[Home] Showing data:', showingMoviesData.value)
-  console.log('[Home] Upcoming data:', upcomingMoviesData.value)
-  if (topError.value) console.error('[Home] Top error:', topError.value)
-  if (showingError.value) console.error('[Home] Showing error:', showingError.value)
-  if (upcomingError.value) console.error('[Home] Upcoming error:', upcomingError.value)
-}
+const { data: showingMoviesData } = await useAsyncData('showing-movies', () =>
+  apiPublic.fetchShowingMovies().then(res => res.value)
+)
+
+const { data: upcomingMoviesData } = await useAsyncData('upcoming-movies', () =>
+  apiPublic.fetchUpcomingMovies().then(res => res.value)
+)
 
 watchEffect(() => {
   top10MostViewedMovies.value = topViewedData.value?.content || []
