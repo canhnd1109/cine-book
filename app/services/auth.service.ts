@@ -40,7 +40,20 @@ export class AuthService extends BaseService {
   async refreshToken(refreshToken: string): Promise<IResponseLogin> {
     return this.post<IResponseLogin>('/refresh-token', { refreshToken })
   }
+
   async forgotPassword(email: string): Promise<IResponseData<VerifyOtpForgotPasswordResponse>> {
     return this.post<IResponseData<VerifyOtpForgotPasswordResponse>>(`/forgot-password?email=${email}`)
+  }
+
+  async resetPassword(newPassword: string, token: string): Promise<IResponseMessage> {
+    return this.post<IResponseMessage>(
+      `/reset-password`,
+      { newPassword },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
   }
 }

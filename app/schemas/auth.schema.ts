@@ -42,8 +42,23 @@ export function emailSchema(t: (key: string) => string) {
   })
 }
 
+export function resetPasswordSchema(t: (key: string) => string) {
+  return z
+    .object({
+      password: z.string().regex(PASSWORD_REGEX, {
+        message: t('auth.password-must-be-at-least-8-characters-include-uppercase-lowercase-number-and-special-character')
+      }),
+      confirmPassword: z.string().min(1, t('auth.confirm-password-is-required'))
+    })
+    .refine(data => data.password === data.confirmPassword, {
+      path: ['confirmPassword'],
+      message: t('auth.passwords-do-not-match')
+    })
+}
+
 // Types
 export type IFormSignUp = z.infer<ReturnType<typeof signUpSchema>>
 export type IFormSignIn = z.infer<ReturnType<typeof signInSchema>>
 export type IFormUpdateProfile = z.infer<ReturnType<typeof updateProfileSchema>>
 export type IFormEmail = z.infer<ReturnType<typeof emailSchema>>
+export type IFormResetPassword = z.infer<ReturnType<typeof resetPasswordSchema>>
