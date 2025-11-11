@@ -10,7 +10,7 @@ import {
 import { apiAuth } from '~/services'
 import type { DropdownMenuItem } from '@nuxt/ui'
 
-const { verifyOtp, logOut, setTokens } = useAuthStore()
+const { verifyOtp, logOut } = useAuthStore()
 const { userInfo, isAuthenticated, isAdmin } = storeToRefs(useAuthStore())
 const { schema } = useSchema(emailSchema)
 const { schema: resetPassSchema } = useSchema(resetPasswordSchema)
