@@ -20,7 +20,10 @@ const handleMovieClick = (movieId: string) => {
 
 <template>
   <div class="mx-12 mt-6">
-    <p class="text-3xl font-bold">{{ title }}</p>
+    <div class="flex justify-start items-center gap-2">
+      <p class="rounded-full bg-red-500 w-4 h-4" />
+      <p class="text-3xl font-bold">{{ title }}</p>
+    </div>
 
     <!-- Loading skeleton -->
     <div v-if="loading" class="mt-6 flex gap-8 overflow-hidden">

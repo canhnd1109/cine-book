@@ -74,7 +74,9 @@ watchEffect(() => {
 
     <BaseMovieCarousel title="Top 10 bộ phim có lượt xem nhiều nhất" :movies="top10MostViewedMovies" />
 
+    <div class="border border-solid border-border-light dark:border-border-dark my-10 mx-12" />
     <BaseMovieCarousel title="Phim sắp chiếu" :movies="upcomingMovies" />
+    <div class="border border-solid border-border-light dark:border-border-dark my-10 mx-12" />
 
     <BaseMovieCarousel title="Phim đang chiếu" :movies="showingMovies" />
 
