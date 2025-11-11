@@ -4,11 +4,10 @@ import { Autoplay, EffectFade, Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/effect-fade'
 import 'swiper/css/pagination'
-import { apiPublic } from '~/services'
-import type { IMovieFilter } from '~/types/movie.type'
 
 const { t } = useI18n()
 const { top10MostViewedMovies, showingMovies, upcomingMovies } = useMovieData()
+const { fetchMovies, fetchShowingMovies, fetchUpcomingMovies } = usePublicMovies()
 
 const items = [
   '/images/phim-9.png',
@@ -32,26 +31,17 @@ const imagesList = [
   '/images/img-8.png'
 ]
 
-// Fetch all data in parallel
+// Fetch all data in parallel - Sử dụng $fetch trực tiếp để tương thích SSR trên Vercel
 const [{ data: topViewedData }, { data: showingMoviesData }, { data: upcomingMoviesData }] = await Promise.all([
-  useAsyncData('top-10-most-viewed-movies', async () => {
-    const res = await apiPublic.fetchMovies({ orderBy: '4' } as IMovieFilter)
-    return res.value
-  }),
-  useAsyncData('showing-movies', async () => {
-    const res = await apiPublic.fetchShowingMovies()
-    return res.value
-  }),
-  useAsyncData('upcoming-movies', async () => {
-    const res = await apiPublic.fetchUpcomingMovies()
-    return res.value
-  })
+  useAsyncData('top-10-most-viewed-movies', () => fetchMovies({ orderBy: '4' })),
+  useAsyncData('showing-movies', () => fetchShowingMovies()),
+  useAsyncData('upcoming-movies', () => fetchUpcomingMovies())
 ])
 
 watchEffect(() => {
-  top10MostViewedMovies.value = topViewedData.value?.content || []
-  showingMovies.value = showingMoviesData.value?.content || []
-  upcomingMovies.value = upcomingMoviesData.value?.content || []
+  top10MostViewedMovies.value = topViewedData.value?.value?.content || []
+  showingMovies.value = showingMoviesData.value?.value?.content || []
+  upcomingMovies.value = upcomingMoviesData.value?.value?.content || []
 })
 </script>
 
