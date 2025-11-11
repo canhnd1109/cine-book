@@ -8,14 +8,14 @@ export class AuthService extends BaseService {
     super('')
   }
   async register(payload: IFormSignUp): Promise<IResponseMessage> {
-    return this.post<IResponseMessage, typeof payload>('/register', payload)
+    return this.post<IResponseMessage>('/register', payload)
   }
   async login(payload: IFormSignIn): Promise<IResponseData<IResponseOtpLogin>> {
-    return this.post<IResponseData<IResponseOtpLogin>, typeof payload>('/otp-sign-in', payload)
+    return this.post<IResponseData<IResponseOtpLogin>>('/otp-sign-in', payload)
   }
 
   async verifyOtp(payload: string, token: string): Promise<IResponseData<IResponseLogin>> {
-    return this.post<IResponseData<IResponseLogin>, typeof payload>(`/verify-sign-in/${payload}`, undefined, {
+    return this.post<IResponseData<IResponseLogin>>(`/verify-sign-in/${payload}`, undefined, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -31,6 +31,6 @@ export class AuthService extends BaseService {
   }
 
   async refreshToken(refreshToken: string): Promise<IResponseLogin> {
-    return this.post<IResponseLogin, { refreshToken: string }>('/refresh-token', { refreshToken })
+    return this.post<IResponseLogin>('/refresh-token', { refreshToken })
   }
 }

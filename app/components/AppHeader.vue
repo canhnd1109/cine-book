@@ -146,7 +146,7 @@ const items = computed<DropdownMenuItem[][]>(() => {
       label: 'Thông tin cá nhân',
       icon: 'i-lucide-user',
       onSelect() {
-        console.log('User profile clicked')
+        router.push({ path: '/profile', query: { tab: 0 } })
       }
     }
   ])

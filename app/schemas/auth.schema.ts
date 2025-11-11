@@ -28,6 +28,16 @@ export function signInSchema(t: (key: string) => string) {
   })
 }
 
+export function updateProfileSchema(t: (key: string) => string) {
+  return z.object({
+    firstName: z.string().min(1, t('auth.first-name-is-required')),
+    lastName: z.string().min(1, t('auth.last-name-is-required')),
+    phone: z.string().min(1, t('auth.phone-number-is-required')).regex(PHONE_NUMBER_REGEX, t('auth.phone-number-invalid')),
+    email: z.string().min(1, t('auth.email-is-required')).email(t('auth.invalid-email'))
+  })
+}
+
 // Types
 export type IFormSignUp = z.infer<ReturnType<typeof signUpSchema>>
 export type IFormSignIn = z.infer<ReturnType<typeof signInSchema>>
+export type IFormUpdateProfile = z.infer<ReturnType<typeof updateProfileSchema>>
