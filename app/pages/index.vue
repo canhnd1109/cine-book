@@ -32,11 +32,25 @@ const imagesList = [
 ]
 
 // Fetch all data in parallel - Sử dụng $fetch trực tiếp để tương thích SSR trên Vercel
-const [{ data: topViewedData }, { data: showingMoviesData }, { data: upcomingMoviesData }] = await Promise.all([
+const [
+  { data: topViewedData, error: topError },
+  { data: showingMoviesData, error: showingError },
+  { data: upcomingMoviesData, error: upcomingError }
+] = await Promise.all([
   useAsyncData('top-10-most-viewed-movies', () => fetchMovies({ orderBy: '4' })),
   useAsyncData('showing-movies', () => fetchShowingMovies()),
   useAsyncData('upcoming-movies', () => fetchUpcomingMovies())
 ])
+
+// Debug logging
+if (import.meta.dev || import.meta.server) {
+  console.log('[Home] Top viewed data:', topViewedData.value)
+  console.log('[Home] Showing data:', showingMoviesData.value)
+  console.log('[Home] Upcoming data:', upcomingMoviesData.value)
+  if (topError.value) console.error('[Home] Top error:', topError.value)
+  if (showingError.value) console.error('[Home] Showing error:', showingError.value)
+  if (upcomingError.value) console.error('[Home] Upcoming error:', upcomingError.value)
+}
 
 watchEffect(() => {
   top10MostViewedMovies.value = topViewedData.value?.content || []
