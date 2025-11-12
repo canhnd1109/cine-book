@@ -58,6 +58,10 @@ export class PublicService extends BaseService {
     return this.get<IResponseData<{ roomId: string; name: string }>>(`/room/cinema/${cinemaId}/simple`)
   }
 
+  async deleteRoom(roomId: string): Promise<IResponseMessage> {
+    return this.delete<IResponseMessage>(`/room/${roomId}`)
+  }
+
   // TODO: SHOWTIME
   async fetchShowtimesByMovie(movieId: string): Promise<IResponseData<IShowtime[]>> {
     return this.get<IResponseData<IShowtime[]>>(`/showtime/${movieId}`)

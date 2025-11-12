@@ -225,5 +225,7 @@
   "delete-genre-title": "Xóa thể loại",
   "delete-genre-confirm": "Bạn có chắc chắn muốn xóa thể loại \"{name}\" không?",
   "delete-movie-title": "Xóa phim",
-  "delete-movie-confirm": "Bạn có chắc chắn muốn xóa phim \"{name}\" không?"
+  "delete-movie-confirm": "Bạn có chắc chắn muốn xóa phim \"{name}\" không?",
+  "delete-room-title": "Xóa phòng",
+  "delete-room-confirm": "Bạn có chắc chắn muốn xóa phòng \"{name}\" không?"
 }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { apiPublic } from '~/services'
 import type { ISeat, IRoom, TypeSeat, TypeSeatStatus } from '~/types/cinema.type'
+import type { IActionCard } from '~/types/constant.type'
 
 interface Seat {
   row: number
@@ -16,10 +17,12 @@ definePageMeta({
   layout: 'admin',
   middleware: ['admin']
 })
-const { rooms, fetchRooms } = useCinemaData()
+const { rooms, roomDetail, fetchRooms } = useCinemaData()
 const { t } = useI18n()
 const route = useRoute()
 const isOpen = ref(false)
+const isConfirmOpen = ref(false)
+const isProcessing = ref(false)
 
 const { data: cinameDetail } = await useAsyncData(`cinema-detail-${route.params.id}`, async () => {
   const res = await apiPublic.getCinemaDetail(route.params.id as string)
@@ -81,6 +84,38 @@ const seatTypeLabels: Record<string, string> = {
   DISABLED: t('disabled'),
   EMPTY: t('empty')
 }
+
+const actionClick = (action: IActionCard, data: IRoom) => {
+  roomDetail.value = data
+  if (action === 'EDIT') {
+    console.log(action)
+  } else if (action === 'VIEW') {
+    console.log(action)
+  } else if (action === 'DELETE') {
+    isConfirmOpen.value = true
+  }
+}
+const handleDelete = () => {
+  if (!roomDetail.value.roomId) return
+  isProcessing.value = true
+  apiPublic
+    .deleteRoom(roomDetail.value.roomId)
+    .then(({ message }) => {
+      useToast().add({
+        title: t('success'),
+        description: message,
+        color: 'success'
+      })
+      isConfirmOpen.value = false
+      fetchRooms(route.params.id as string)
+    })
+    .catch(error => {
+      console.log(error)
+    })
+    .finally(() => {
+      isProcessing.value = false
+    })
+}
 </script>
 <template>
   <div class="card-box">
@@ -115,7 +150,7 @@ const seatTypeLabels: Record<string, string> = {
     </div>
 
     <div v-for="item in rooms" :key="item.roomId">
-      <BaseCard :item="item" :index="0" class="w-full" :can-scale="false" :show-border="true">
+      <BaseCard :item="item" :index="0" class="w-full" :can-scale="false" :show-border="true" @action-click="actionClick">
         <template #content>
           <p>{{ t('room-name') }}: {{ item.name }}</p>
 
@@ -134,6 +169,16 @@ const seatTypeLabels: Record<string, string> = {
       </BaseCard>
     </div>
     <CinemaModalAddRoom v-model:is-open="isOpen" @saved="isOpen = false" />
+    <BaseConfirmModal
+      v-model:open="isConfirmOpen"
+      variant="danger"
+      :title="t('delete-room-title')"
+      :description="formatConfirmContent(t('delete-room-confirm', { name: roomDetail.name }), roomDetail.name)"
+      :confirm-text="t('delete')"
+      :cancel-text="t('cancel-button')"
+      :is-loading="isProcessing"
+      @confirm="handleDelete"
+    />
   </div>
 </template>
 

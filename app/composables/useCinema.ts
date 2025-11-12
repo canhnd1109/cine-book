@@ -2,9 +2,6 @@ import { useDebounceFn } from '@vueuse/core'
 import { apiPublic } from '~/services'
 import type { ICinema, ICinemaFilter, IRoom } from '~/types/cinema.type'
 
-const cinameDetail = ref<ICinema>({} as ICinema)
-const rooms = ref<IRoom[]>([])
-
 export const useCinemaFilterSync = createFilterSync<ICinemaFilter>({
   defaults: {
     keyWord: ''
@@ -23,6 +20,9 @@ const cinemas = ref<ICinema[]>([])
 const allCinemas = ref<ICinema[]>([])
 const totalRecords = ref(0)
 const roomsOfCinema = ref<{ roomId: string; name: string }[]>([])
+const cinameDetail = ref<ICinema>({} as ICinema)
+const rooms = ref<IRoom[]>([])
+const roomDetail = ref<IRoom>({} as IRoom)
 
 export function useCinemaData() {
   const { apply, filters } = useCinemaFilterSync()
@@ -120,7 +120,7 @@ export function useCinemaData() {
     rooms,
     allCinemas,
     roomsOfCinema,
-
+    roomDetail,
     // Method
     apply: applyWithRefresh,
     setRefreshCallback: (cb: () => Promise<void>) => {
