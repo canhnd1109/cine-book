@@ -220,5 +220,7 @@
   "confirm-button": "Xác nhận",
   "cancel-button": "Hủy",
   "delete-genre-title": "Xóa thể loại",
-  "delete-genre-confirm": "Bạn có chắc chắn muốn xóa thể loại \"{name}\" không?"
+  "delete-genre-confirm": "Bạn có chắc chắn muốn xóa thể loại \"{name}\" không?",
+  "delete-movie-title": "Xóa phim",
+  "delete-movie-confirm": "Bạn có chắc chắn muốn xóa phim \"{name}\" không?"
 }

@@ -220,5 +220,7 @@
   "confirm-button": "Confirm",
   "cancel-button": "Cancel",
   "delete-genre-title": "Delete Genre",
-  "delete-genre-confirm": "Are you sure you want to delete the genre \"{name}\"?"
+  "delete-genre-confirm": "Are you sure you want to delete the genre \"{name}\"?",
+  "delete-movie-title": "Delete Movie",
+  "delete-movie-confirm": "Are you sure you want to delete the movie \"{name}\"?"
 }

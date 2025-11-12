@@ -1,4 +1,9 @@
 export function formatConfirmContent(template: string, highlightText: string): string {
+  // Trên server (SSR), trả về text thuần không format
+  if (!import.meta.client) {
+    return template
+  }
+
   const escapeHtml = (text: string) => {
     const div = document.createElement('p')
     div.textContent = text

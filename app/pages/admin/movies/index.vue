@@ -10,13 +10,15 @@ definePageMeta({ layout: 'admin', middleware: ['admin'] })
 
 const toast = useToast()
 const { t } = useI18n()
+const { filters, movies, totalRecords, movieDetail, setRefreshCallback } = useMovieData()
+const { fetchAllCinemas } = useCinemaData()
 
 const isOpen = ref(false)
 const isOpenModalSetting = ref(false)
 const isProcessing = ref(false)
 const modalRef = ref()
-const { filters, movies, totalRecords, movieDetail, setRefreshCallback } = useMovieData()
-const { fetchAllCinemas } = useCinemaData()
+const isConfirmOpen = ref(false)
+
 const {
   data,
   pending: isFetching,
@@ -52,7 +54,7 @@ const handeAddMovie = async (isOpenModal: boolean = false, formData: ICreateMovi
         color: 'success'
       })
       isOpen.value = false
-      setRefreshCallback(refresh)
+      await refresh()
     } catch (error) {
       console.log(error)
     } finally {
@@ -68,7 +70,7 @@ const handleAction = (action: IActionCard, item: IMovie) => {
   } else if (action === 'EDIT') {
     // Handle edit action
   } else if (action === 'DELETE') {
-    handleDelete(item.id)
+    isConfirmOpen.value = true
   }
 }
 
@@ -95,10 +97,10 @@ const handleSetting = async (form: ICreateShowtime) => {
   }
 }
 
-const handleDelete = async (movieId: string) => {
+const handleDelete = async () => {
   isProcessing.value = true
   try {
-    const { message } = await apiPublic.deleteMovie(movieId)
+    const { message } = await apiPublic.deleteMovie(movieDetail.value.id)
     toast.add({
       title: t('success'),
       description: message,
@@ -109,6 +111,7 @@ const handleDelete = async (movieId: string) => {
     console.log(error)
   } finally {
     isProcessing.value = false
+    isConfirmOpen.value = false
   }
 }
 onMounted(() => {
@@ -123,5 +126,15 @@ onMounted(() => {
     <MovieModalAdd v-model:is-open="isOpen" :is-processing="isProcessing" @add="handeAddMovie" />
     <MovieList :is-fetching="isFetching" @action-click="handleAction" />
     <MovieModalSetting ref="modalRef" v-model="isOpenModalSetting" :is-processing="isProcessing" @setting="handleSetting" />
+    <BaseConfirmModal
+      v-model:open="isConfirmOpen"
+      variant="danger"
+      :title="t('delete-movie-title')"
+      :description="formatConfirmContent(t('delete-movie-confirm', { name: movieDetail.name }), movieDetail.name)"
+      :confirm-text="t('delete')"
+      :cancel-text="t('cancel-button')"
+      :is-loading="isProcessing"
+      @confirm="handleDelete"
+    />
   </div>
 </template>
