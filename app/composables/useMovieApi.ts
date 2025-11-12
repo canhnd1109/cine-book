@@ -83,16 +83,22 @@ export const useFetchMoviesWithFilter = (filter: Ref<Record<string, string | num
  * Hook để fetch movies by day
  */
 export const useFetchMoviesByDay = (day: string | Ref<string>) => {
-  const selectedDay = unref(day)
+  const selectedDay = computed(() => unref(day))
 
-  return useFetch<IMovieByDay[]>(`/public-api/movie/by-date/${selectedDay}`, {
-    ...createBaseFetchOptions<IMovieByDay[]>({
-      key: `movies-by-day-${selectedDay}`,
-      watch: [() => unref(day)],
-      transform: (data: unknown) => {
-        const response = data as { value?: IMovieByDay[] }
-        return response?.value ?? []
-      }
-    })
-  })
+  return useFetch<IMovieByDay[]>(
+    computed(() => {
+      return `/public-api/movie/by-date/${selectedDay.value}`
+    }),
+    {
+      ...createBaseFetchOptions<IMovieByDay[]>({
+        immediate: true,
+        key: computed(() => `movies-by-day-${selectedDay.value}`),
+        watch: [selectedDay],
+        transform: (data: unknown) => {
+          const response = data as { value?: IMovieByDay[] }
+          return response?.value ?? []
+        }
+      })
+    }
+  )
 }
