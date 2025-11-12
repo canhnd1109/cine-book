@@ -57,36 +57,33 @@ watch(
         note: newData.note || '',
         price: newData.price || 0,
         trailerUrl: newData.trailerUrl || '',
-        posterFile: null, // Keep null, sẽ giữ poster cũ nếu không upload
+        posterFile: null,
         name: newData.name || '',
-        genreIds: newData.genres || [] // genres đã là string[] rồi
+        genreIds: newData.genres || []
       }
     }
   },
   { immediate: true }
 )
 
-// Reset form khi đóng modal
-watch(isOpen, newValue => {
-  if (!newValue && !props.isEditMode) {
-    form.value = {
-      director: '',
-      performer: '',
-      description: '',
-      releaseDate: '',
-      closeDate: '',
-      nation: '',
-      duration: '',
-      note: '',
-      price: 0,
-      trailerUrl: '',
-      posterFile: null,
-      name: '',
-      genreIds: []
-    }
-    uploadError.value = ''
+const resetForm = () => {
+  form.value = {
+    director: '',
+    performer: '',
+    description: '',
+    releaseDate: '',
+    closeDate: '',
+    nation: '',
+    duration: '',
+    note: '',
+    price: 0,
+    trailerUrl: '',
+    posterFile: null,
+    name: '',
+    genreIds: []
   }
-})
+  uploadError.value = ''
+}
 
 const submitForm = () => {
   if (formRef.value) {
@@ -165,10 +162,18 @@ const formattedPrice = computed({
     form.value.price = numberValue ? parseInt(numberValue) : 0
   }
 })
+defineExpose({
+  resetForm
+})
 </script>
 
 <template>
-  <UModal v-model:open="isOpen" :title="isEditMode ? t('edit-movie') : t('add-movie')" class="!w-[1000px]">
+  <UModal
+    v-model:open="isOpen"
+    :title="isEditMode ? t('edit-movie') : t('add-movie')"
+    class="!w-[1000px]"
+    @close:prevent="resetForm"
+  >
     <template #body>
       <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="handleSubmit">
         <UFormField class="flex justify-center items-center" name="posterFile">
@@ -176,7 +181,7 @@ const formattedPrice = computed({
             <!-- Preview existing poster khi edit -->
             <div v-if="isEditMode && existingPosterUrl && !form.posterFile" class="mb-4 text-center">
               <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">{{ t('current-poster') }}:</p>
-              <img :src="existingPosterUrl" :alt="form.name" class="w-48 h-auto mx-auto rounded-lg shadow-md" />
+              <img :src="existingPosterUrl" :alt="form.name" class="w-96 min-h-48 h-auto mx-auto rounded-lg shadow-md" />
             </div>
 
             <UFileUpload

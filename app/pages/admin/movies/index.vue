@@ -16,7 +16,8 @@ const { fetchAllCinemas } = useCinemaData()
 const isOpen = ref(false)
 const isOpenModalSetting = ref(false)
 const isProcessing = ref(false)
-const modalRef = ref()
+const modalSettingRef = ref()
+const modalAddRef = ref()
 const isConfirmOpen = ref(false)
 const isEditMode = ref(false)
 
@@ -39,6 +40,7 @@ setRefreshCallback(refresh)
 const handeAddMovie = async (isOpenModal: boolean = false, formData?: ICreateMovie) => {
   if (isOpenModal) {
     isOpen.value = true
+    modalAddRef.value?.resetForm()
     isEditMode.value = false
   } else {
     if (!formData) return
@@ -86,6 +88,7 @@ const handleEditMovie = async (_: boolean, formData?: ICreateMovie) => {
     })
     isOpen.value = false
     isEditMode.value = false
+    modalAddRef.value?.resetForm()
     await refresh()
   } catch (error) {
     console.log(error)
@@ -122,7 +125,7 @@ const handleSetting = async (form: ICreateShowtime) => {
       color: 'success'
     })
     isOpenModalSetting.value = false
-    modalRef.value?.resetForm()
+    modalSettingRef.value?.resetForm()
   } catch (error) {
     console.log(error)
   } finally {
@@ -157,6 +160,7 @@ onMounted(() => {
     <MoviesTabs />
     <MovieFilter @add="handeAddMovie" />
     <MovieModalAdd
+      ref="modalAddRef"
       v-model:is-open="isOpen"
       :is-processing="isProcessing"
       :is-edit-mode="isEditMode"
@@ -164,7 +168,12 @@ onMounted(() => {
       @edit="handleEditMovie"
     />
     <MovieList :is-fetching="isFetching" @action-click="handleAction" />
-    <MovieModalSetting ref="modalRef" v-model="isOpenModalSetting" :is-processing="isProcessing" @setting="handleSetting" />
+    <MovieModalSetting
+      ref="modalSettingRef"
+      v-model="isOpenModalSetting"
+      :is-processing="isProcessing"
+      @setting="handleSetting"
+    />
     <BaseConfirmModal
       v-model:open="isConfirmOpen"
       variant="danger"
