@@ -1,21 +1,13 @@
 import type { IMovie } from '~/types/movie.type'
 import type { UseFetchOptions } from 'nuxt/app'
 
-/**
- * Composable để tạo useFetch config cho public movie APIs
- * Tất cả config được centralize tại đây
- */
-
 export interface MovieApiResponse {
   content: IMovie[]
   totalPages?: number
   totalElements?: number
 }
 
-/**
- * Base config cho tất cả public movie API calls
- */
-const createBaseFetchOptions = (endpoint: string, options?: Partial<UseFetchOptions<MovieApiResponse>>) => {
+const createBaseFetchOptions = (options?: Partial<UseFetchOptions<MovieApiResponse>>) => {
   const runtimeConfig = useRuntimeConfig()
 
   return {
@@ -36,7 +28,7 @@ const createBaseFetchOptions = (endpoint: string, options?: Partial<UseFetchOpti
  */
 export const useFetchTopMovies = () => {
   return useFetch('/public-api/movie/filter', {
-    ...createBaseFetchOptions('/public-api/movie/filter'),
+    ...createBaseFetchOptions(),
     key: 'top-10-most-viewed-movies',
     query: { orderBy: '4' }
   })
@@ -47,7 +39,7 @@ export const useFetchTopMovies = () => {
  */
 export const useFetchShowingMovies = () => {
   return useFetch('/public-api/movie/showing', {
-    ...createBaseFetchOptions('/public-api/movie/showing'),
+    ...createBaseFetchOptions(),
     key: 'showing-movies'
   })
 }
@@ -57,7 +49,7 @@ export const useFetchShowingMovies = () => {
  */
 export const useFetchUpcomingMovies = () => {
   return useFetch('/public-api/movie/upcoming', {
-    ...createBaseFetchOptions('/public-api/movie/upcoming'),
+    ...createBaseFetchOptions(),
     key: 'upcoming-movies'
   })
 }
@@ -68,7 +60,7 @@ export const useFetchUpcomingMovies = () => {
 export const useFetchMovieDetail = (movieId: string | Ref<string>) => {
   const id = unref(movieId)
   return useFetch(`/public-api/movie/${id}`, {
-    ...createBaseFetchOptions(`/public-api/movie/${id}`),
+    ...createBaseFetchOptions(),
     key: `movie-detail-${id}`,
     watch: [() => unref(movieId)] // Re-fetch when movieId changes
   })
@@ -79,7 +71,7 @@ export const useFetchMovieDetail = (movieId: string | Ref<string>) => {
  */
 export const useFetchMoviesWithFilter = (filter: Ref<Record<string, string | number>> | Record<string, string | number>) => {
   return useFetch('/public-api/movie/filter', {
-    ...createBaseFetchOptions('/public-api/movie/filter'),
+    ...createBaseFetchOptions(),
     key: 'movies-filtered',
     query: filter,
     watch: [filter] // Re-fetch when filter changes
