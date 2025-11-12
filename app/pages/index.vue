@@ -31,54 +31,13 @@ const imagesList = [
   '/images/img-8.png'
 ]
 
-// SOLUTION: Dùng useFetch với immediate: false và manual fetch trên client
-// Vì SSR trên Vercel không hoạt động với plugin $http
-const { data: topViewedData, execute: fetchTopViewed } = useFetch('/public-api/movie/filter', {
-  key: 'top-10-most-viewed-movies',
-  baseURL: useRuntimeConfig().public.baseApiUrl,
-  query: { orderBy: '4' },
-  headers: {
-    'App-Code': 'cine-book',
-    Accept: 'application/json'
-  },
-  immediate: false,
-  server: false,
-  transform: (data: unknown) => (data as { value?: { content: unknown[] } })?.value
-})
+// Sử dụng composable đã config sẵn - clean & DRY
+const { data: topViewedData, execute: fetchTopViewed } = useFetchTopMovies()
+const { data: showingMoviesData, execute: fetchShowing } = useFetchShowingMovies()
+const { data: upcomingMoviesData, execute: fetchUpcoming } = useFetchUpcomingMovies()
 
-const { data: showingMoviesData, execute: fetchShowing } = useFetch('/public-api/movie/showing', {
-  key: 'showing-movies',
-  baseURL: useRuntimeConfig().public.baseApiUrl,
-  headers: {
-    'App-Code': 'cine-book',
-    Accept: 'application/json'
-  },
-  immediate: false,
-  server: false,
-  transform: (data: unknown) => (data as { value?: { content: unknown[] } })?.value
-})
-
-const { data: upcomingMoviesData, execute: fetchUpcoming } = useFetch('/public-api/movie/upcoming', {
-  key: 'upcoming-movies',
-  baseURL: useRuntimeConfig().public.baseApiUrl,
-  headers: {
-    'App-Code': 'cine-book',
-    Accept: 'application/json'
-  },
-  immediate: false,
-  server: false,
-  transform: (data: unknown) => (data as { value?: { content: unknown[] } })?.value
-})
-
-// Fetch data khi component mounted (client-side only)
 onMounted(async () => {
-  console.log('[Home] Fetching data on client...')
   await Promise.all([fetchTopViewed(), fetchShowing(), fetchUpcoming()])
-  console.log('[Home] Data fetched:', {
-    topViewed: !!topViewedData.value?.content,
-    showing: !!showingMoviesData.value?.content,
-    upcoming: !!upcomingMoviesData.value?.content
-  })
 })
 
 watchEffect(() => {
