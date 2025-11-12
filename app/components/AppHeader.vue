@@ -298,6 +298,7 @@ const handleResetPassword = async () => {
       </div>
       <nav aria-label="Primary" class="flex justify-end items-center gap-x-8 text-lg">
         <NuxtLink to="/" class="hover:text-primary">Trang chủ</NuxtLink>
+        <NuxtLink to="/movie" class="hover:text-primary">Phim</NuxtLink>
         <!-- /movie-schedules -->
         <NuxtLink to="/" class="hover:text-primary">Lịch chiếu</NuxtLink>
       </nav>
