@@ -4,8 +4,7 @@ import { Autoplay, EffectFade, Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/effect-fade'
 import 'swiper/css/pagination'
-import { apiPublic } from '~/services'
-import type { IMovieFilter } from '~/types/movie.type'
+import type { IMovie } from '~/types/movie.type'
 
 const { t } = useI18n()
 const { top10MostViewedMovies, showingMovies, upcomingMovies } = useMovieData()
@@ -32,51 +31,60 @@ const imagesList = [
   '/images/img-8.png'
 ]
 
-// Fetch data - CRITICAL: Không dùng await top-level vì sẽ crash SSR nếu API fail
-const { data: topViewedData } = await useAsyncData('top-10-most-viewed-movies', async () => {
-  try {
-    const res = await apiPublic.fetchMovies({ orderBy: '4' } as IMovieFilter)
-    console.log('[Home] Top viewed fetched:', !!res.value)
-    return res.value
-  } catch (error) {
-    console.error('[Home] Error fetching top movies:', error)
-    return null
-  }
+// SOLUTION: Dùng useFetch với immediate: false và manual fetch trên client
+// Vì SSR trên Vercel không hoạt động với plugin $http
+const { data: topViewedData, execute: fetchTopViewed } = useFetch('/public-api/movie/filter', {
+  key: 'top-10-most-viewed-movies',
+  baseURL: useRuntimeConfig().public.baseApiUrl,
+  query: { orderBy: '4' },
+  headers: {
+    'App-Code': 'cine-book',
+    Accept: 'application/json'
+  },
+  immediate: false,
+  server: false,
+  transform: (data: unknown) => (data as { value?: { content: unknown[] } })?.value
 })
 
-const { data: showingMoviesData } = await useAsyncData('showing-movies', async () => {
-  try {
-    const res = await apiPublic.fetchShowingMovies()
-    console.log('[Home] Showing movies fetched:', !!res.value)
-    return res.value
-  } catch (error) {
-    console.error('[Home] Error fetching showing movies:', error)
-    return null
-  }
+const { data: showingMoviesData, execute: fetchShowing } = useFetch('/public-api/movie/showing', {
+  key: 'showing-movies',
+  baseURL: useRuntimeConfig().public.baseApiUrl,
+  headers: {
+    'App-Code': 'cine-book',
+    Accept: 'application/json'
+  },
+  immediate: false,
+  server: false,
+  transform: (data: unknown) => (data as { value?: { content: unknown[] } })?.value
 })
 
-const { data: upcomingMoviesData } = await useAsyncData('upcoming-movies', async () => {
-  try {
-    const res = await apiPublic.fetchUpcomingMovies()
-    console.log('[Home] Upcoming movies fetched:', !!res.value)
-    return res.value
-  } catch (error) {
-    console.error('[Home] Error fetching upcoming movies:', error)
-    return null
-  }
+const { data: upcomingMoviesData, execute: fetchUpcoming } = useFetch('/public-api/movie/upcoming', {
+  key: 'upcoming-movies',
+  baseURL: useRuntimeConfig().public.baseApiUrl,
+  headers: {
+    'App-Code': 'cine-book',
+    Accept: 'application/json'
+  },
+  immediate: false,
+  server: false,
+  transform: (data: unknown) => (data as { value?: { content: unknown[] } })?.value
 })
 
-// Log để debug
-console.log('[Home] Data loaded:', {
-  topViewed: !!topViewedData.value?.content,
-  showing: !!showingMoviesData.value?.content,
-  upcoming: !!upcomingMoviesData.value?.content
+// Fetch data khi component mounted (client-side only)
+onMounted(async () => {
+  console.log('[Home] Fetching data on client...')
+  await Promise.all([fetchTopViewed(), fetchShowing(), fetchUpcoming()])
+  console.log('[Home] Data fetched:', {
+    topViewed: !!topViewedData.value?.content,
+    showing: !!showingMoviesData.value?.content,
+    upcoming: !!upcomingMoviesData.value?.content
+  })
 })
 
 watchEffect(() => {
-  top10MostViewedMovies.value = topViewedData.value?.content || []
-  showingMovies.value = showingMoviesData.value?.content || []
-  upcomingMovies.value = upcomingMoviesData.value?.content || []
+  top10MostViewedMovies.value = (topViewedData.value?.content as IMovie[]) || []
+  showingMovies.value = (showingMoviesData.value?.content as IMovie[]) || []
+  upcomingMovies.value = (upcomingMoviesData.value?.content as IMovie[]) || []
 })
 </script>
 
