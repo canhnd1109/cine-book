@@ -14,7 +14,7 @@ const isOpen = ref(false)
 const formRef = ref()
 const toast = useToast()
 const isProcessing = ref(false)
-const isActionLoading = ref(false)
+const deletingGenreId = ref<string | null>(null)
 const isEditMode = ref(false)
 const genreId = ref('')
 
@@ -90,6 +90,8 @@ const columns: TableColumn<IGenre>[] = [
 ]
 
 function getDropdownActions(row: IGenre): DropdownMenuItem[][] {
+  const isDeleting = deletingGenreId.value === row.id
+
   return [
     [
       {
@@ -103,12 +105,12 @@ function getDropdownActions(row: IGenre): DropdownMenuItem[][] {
         }
       },
       {
-        label: isActionLoading.value ? t('deleting') + '...' : t('delete'),
-        icon: isActionLoading.value ? 'i-lucide-loader spin' : 'i-lucide-trash',
+        label: isDeleting ? t('deleting') + '...' : t('delete'),
+        icon: isDeleting ? 'i-lucide-loader spin' : 'i-lucide-trash',
         color: 'error',
-        disabled: isActionLoading.value,
+        disabled: isDeleting,
         onSelect: async () => {
-          isActionLoading.value = true
+          deletingGenreId.value = row.id
           try {
             const { message } = await apiGenre.deleteGenre(row.id)
             toast.add({
@@ -117,8 +119,10 @@ function getDropdownActions(row: IGenre): DropdownMenuItem[][] {
               color: 'success'
             })
             await refresh()
+          } catch (error) {
+            console.log(error)
           } finally {
-            isActionLoading.value = false
+            deletingGenreId.value = null
           }
         }
       }
@@ -136,7 +140,7 @@ function getDropdownActions(row: IGenre): DropdownMenuItem[][] {
         <template #action-cell="{ row }">
           <UDropdownMenu :items="getDropdownActions(row.original)" :ui="{ itemLabel: 'cursor-pointer' }">
             <UButton
-              :icon="isActionLoading ? 'i-lucide-loader animate-spin' : 'i-lucide-ellipsis-vertical'"
+              :icon="deletingGenreId === row.original.id ? 'i-lucide-loader animate-spin' : 'i-lucide-ellipsis-vertical'"
               color="neutral"
               variant="ghost"
               aria-label="Actions"
