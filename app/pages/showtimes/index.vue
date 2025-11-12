@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { IMovieByDay } from '~/types/movie.type'
-
 interface DateItem {
   date: Date
   formatted: string
@@ -31,18 +29,25 @@ const generateDateRange = (daysCount: number = 9) => {
   return dates
 }
 
+const route = useRoute()
+const router = useRouter()
 const dateRange = generateDateRange()
-const activeDate = ref<DateItem>(dateRange[0]!)
-const movies = ref<IMovieByDay[]>([])
+
+const getInitialDate = () => {
+  const dateParam = route.query.date as string
+  return dateParam ? (dateRange.find(d => d.apiFormat === dateParam) ?? dateRange[0]!) : dateRange[0]!
+}
+
+const activeDate = ref<DateItem>(getInitialDate())
 const selectedDateApi = computed(() => activeDate.value.apiFormat)
 
-const { data: moviesData, pending } = useFetchMoviesByDay(selectedDateApi)
+const { data: movies, pending, refresh } = useFetchMoviesByDay(selectedDateApi)
 
-watchEffect(() => {
-  movies.value = moviesData.value || []
-})
+watch(selectedDateApi, () => refresh(), { immediate: true })
+
 const changeDate = (item: DateItem) => {
   activeDate.value = item
+  router.push({ query: { date: item.apiFormat } })
 }
 </script>
 
