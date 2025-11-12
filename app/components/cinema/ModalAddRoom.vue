@@ -60,7 +60,7 @@ watch(
           newSeats[seatId] = {
             row: seat.rowIdx,
             col: seat.colIdx,
-            type: seat.seatName.toUpperCase() as TypeSeat,
+            type: (seat.seatType?.toUpperCase() || 'NORMAL') as TypeSeat,
             price: seat.price || 0,
             status: seat.booked ? 'BOOKED' : 'AVAILABLE',
             rowLabel: String.fromCharCode(65 + rowIdx),

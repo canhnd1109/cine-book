@@ -18,6 +18,7 @@ definePageMeta({
   middleware: ['admin']
 })
 const { rooms, roomDetail, fetchRooms } = useCinemaData()
+
 const { t } = useI18n()
 const route = useRoute()
 const isOpen = ref(false)
@@ -30,19 +31,17 @@ const { data: cinameDetail } = await useAsyncData(`cinema-detail-${route.params.
 })
 fetchRooms(route.params.id as string)
 
-// Transform seats array to Record format for BaseSeatGrid
 const transformSeats = (seats: ISeat[]): Record<string, Seat> => {
   const seatsMap: Record<string, Seat> = {}
 
   seats.forEach(seat => {
-    // Convert from 1-indexed (API) to 0-indexed (BaseSeatGrid expects)
     const rowIdx = seat.rowIdx - 1
     const colIdx = seat.colIdx - 1
     const key = `${rowIdx}-${colIdx}`
     seatsMap[key] = {
-      row: seat.rowIdx, // Keep 1-indexed for display
+      row: seat.rowIdx,
       col: seat.colIdx,
-      type: seat.seatName.toUpperCase() as TypeSeat,
+      type: (seat.seatType?.toUpperCase() || 'NORMAL') as TypeSeat,
       price: seat.price || 0,
       status: seat.booked ? 'BOOKED' : (seat.status as 'AVAILABLE' | 'BOOKED' | 'LOCKED') || 'AVAILABLE',
       rowLabel: String.fromCharCode(65 + rowIdx),
@@ -53,7 +52,6 @@ const transformSeats = (seats: ISeat[]): Record<string, Seat> => {
   return seatsMap
 }
 
-// Get seats map for a specific room
 const getSeatsMap = (room: IRoom): Record<string, Seat> => {
   if (!room?.seats || !Array.isArray(room.seats)) {
     return {}
@@ -61,7 +59,6 @@ const getSeatsMap = (room: IRoom): Record<string, Seat> => {
   return transformSeats(room.seats)
 }
 
-// Get unique prices by seat type for a room
 const getSeatTypePrices = (room: IRoom): Record<string, number> => {
   if (!room?.seats || !Array.isArray(room.seats)) {
     return {}
@@ -76,7 +73,6 @@ const getSeatTypePrices = (room: IRoom): Record<string, number> => {
   return priceMap
 }
 
-// Seat type labels
 const seatTypeLabels: Record<string, string> = {
   NORMAL: t('normal'),
   VIP: t('vip'),
@@ -109,7 +105,7 @@ const handleDelete = async () => {
       color: 'success'
     })
     isConfirmOpen.value = false
-    await Promise.all([fetchRooms(route.params.id as string), refreshNuxtData(`cinema-detail-${route.params.id}`)])
+    await Promise.all([fetchRooms(route.params.id as string, true), refreshNuxtData(`cinema-detail-${route.params.id}`)])
   } catch (error) {
     console.log(error)
   } finally {
@@ -125,7 +121,7 @@ const handleAdd = () => {
 const handleSave = async () => {
   isOpen.value = false
   isEditMode.value = false
-  await Promise.all([fetchRooms(route.params.id as string), refreshNuxtData(`cinema-detail-${route.params.id}`)])
+  await Promise.all([fetchRooms(route.params.id as string, true), refreshNuxtData(`cinema-detail-${route.params.id}`)])
 }
 </script>
 <template>

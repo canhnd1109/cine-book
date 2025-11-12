@@ -52,12 +52,22 @@ export function useCinemaData() {
     priceSeat.value = ''
   }
 
-  const fetchRooms = async (id: string) => {
-    const { data, refresh } = await useAsyncData(`rooms-list-${id}`, async () => {
-      const res = await apiPublic.fetchRooms(id)
-      return res.value ?? []
-    })
-    await refresh()
+  const fetchRooms = async (id: string, forceRefresh: boolean = false) => {
+    const { data, refresh } = await useAsyncData(
+      `rooms-list-${id}`,
+      async () => {
+        const res = await apiPublic.fetchRooms(id)
+        return res.value ?? []
+      },
+      {
+        immediate: !forceRefresh
+      }
+    )
+
+    if (forceRefresh) {
+      await refresh()
+    }
+
     rooms.value = data.value ?? []
   }
 
