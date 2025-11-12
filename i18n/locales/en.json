@@ -68,6 +68,7 @@
   "genre-name-invalid": "Genre name invalid",
   "genre-name-required": "Genre name is required",
   "add-movie": "Add movie",
+  "edit-movie": "Edit movie",
   "director-name": "Director",
   "enter-director-movie-name": "Enter director name",
   "performer-name": "Actor",

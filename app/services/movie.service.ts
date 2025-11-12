@@ -8,4 +8,7 @@ export class MovieService extends BaseService {
   async addMovie(formData: FormData): Promise<IResponseMessage> {
     return this.post<IResponseMessage>('', formData)
   }
+  async updateMovie(movieId: string, formData: FormData): Promise<IResponseMessage> {
+    return this.put<IResponseMessage>(`/${movieId}`, formData)
+  }
 }

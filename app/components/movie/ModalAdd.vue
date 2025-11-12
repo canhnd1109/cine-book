@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { MAX_SIZE_IMAGE_UPLOAD } from '~/constants'
 import { createMovieSchema, type ICreateMovie } from '~/schemas/movie.chema'
+
 const { genres } = storeToRefs(useBaseStore())
+const { movieDetail } = useMovieData()
 
 const isOpen = defineModel('isOpen', { type: Boolean, default: false })
 
 const { t } = useI18n()
 const { schema } = useSchema(createMovieSchema)
 
-const { isProcessing = false } = defineProps<{
+const props = defineProps<{
   isProcessing?: boolean
+  isEditMode?: boolean
 }>()
 
 const formRef = ref()
@@ -34,11 +37,66 @@ const uploadError = ref<string>('')
 
 const emit = defineEmits<{
   add: [value: boolean, form: ICreateMovie]
+  edit: [value: boolean, form: ICreateMovie]
 }>()
+
+watch(
+  () => movieDetail.value,
+  newData => {
+    if (newData && props.isEditMode) {
+      form.value = {
+        director: newData.director || '',
+        performer: newData.performer || '',
+        description: newData.description || '',
+        releaseDate: newData.releaseDate,
+        closeDate: newData.closeDate,
+        nation: newData.nation || '',
+        duration: newData.duration?.toString() || '',
+        note: newData.note || '',
+        price: newData.price || 0,
+        trailerUrl: newData.trailerUrl || '',
+        posterFile: null,
+        name: newData.name || '',
+        genreIds: newData.genres || []
+      }
+    }
+  },
+  { immediate: true }
+)
+
+// Reset form khi đóng modal
+watch(isOpen, newValue => {
+  if (!newValue && !props.isEditMode) {
+    form.value = {
+      director: '',
+      performer: '',
+      description: '',
+      releaseDate: '',
+      closeDate: '',
+      nation: '',
+      duration: '',
+      note: '',
+      price: 0,
+      trailerUrl: '',
+      posterFile: null,
+      name: '',
+      genreIds: []
+    }
+    uploadError.value = ''
+  }
+})
 
 const submitForm = () => {
   if (formRef.value) {
     formRef.value.submit()
+  }
+}
+
+const handleSubmit = () => {
+  if (props.isEditMode) {
+    emit('edit', false, form.value)
+  } else {
+    emit('add', false, form.value)
   }
 }
 const dateReleaseInput = ref<{ $el?: HTMLElement } | null>(null)
@@ -77,8 +135,11 @@ const handleFileSelect = (file: File | null | undefined) => {
 }
 
 const canSubmit = computed(() => {
+  // Khi edit, posterFile không bắt buộc (giữ nguyên poster cũ nếu không upload mới)
+  const posterValid = props.isEditMode ? true : !!form.value.posterFile
+
   return (
-    form.value.posterFile &&
+    posterValid &&
     form.value.name &&
     form.value.performer &&
     form.value.description &&
@@ -105,9 +166,9 @@ const formattedPrice = computed({
 </script>
 
 <template>
-  <UModal v-model:open="isOpen" :title="t('add-movie')" class="!w-[1000px]">
+  <UModal v-model:open="isOpen" :title="isEditMode ? t('edit-movie') : t('add-movie')" class="!w-[1000px]">
     <template #body>
-      <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="emit('add', false, form)">
+      <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="handleSubmit">
         <UFormField class="flex justify-center items-center" name="posterFile">
           <div class="w-full">
             <UFileUpload
@@ -198,7 +259,7 @@ const formattedPrice = computed({
     <template #footer>
       <div class="flex justify-end w-full">
         <BaseButton
-          :text="t('add')"
+          :text="isEditMode ? t('edit') : t('add')"
           class="w-20"
           :is-loading="isProcessing"
           variant="solid"

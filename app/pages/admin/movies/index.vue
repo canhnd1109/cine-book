@@ -18,6 +18,7 @@ const isOpenModalSetting = ref(false)
 const isProcessing = ref(false)
 const modalRef = ref()
 const isConfirmOpen = ref(false)
+const isEditMode = ref(false)
 
 const {
   data,
@@ -35,10 +36,13 @@ watchEffect(() => {
 
 setRefreshCallback(refresh)
 
-const handeAddMovie = async (isOpenModal: boolean = false, formData: ICreateMovie) => {
+const handeAddMovie = async (isOpenModal: boolean = false, formData?: ICreateMovie) => {
   if (isOpenModal) {
     isOpen.value = true
+    isEditMode.value = false
   } else {
+    if (!formData) return
+
     const _fd = normalizedParamss({
       ...formData,
       releaseDate: formatDateTime(formData.releaseDate),
@@ -63,11 +67,40 @@ const handeAddMovie = async (isOpenModal: boolean = false, formData: ICreateMovi
   }
 }
 
+const handleEditMovie = async (_: boolean, formData?: ICreateMovie) => {
+  if (!formData || !movieDetail.value) return
+
+  const _fd = normalizedParamss({
+    ...formData,
+    releaseDate: formatDateTime(formData.releaseDate),
+    closeDate: formatDateTime(formData.closeDate)
+  })
+  const fd = useFormData(_fd)
+  isProcessing.value = true
+  try {
+    const { message } = await apiMovie.updateMovie(movieDetail.value.id, fd)
+    toast.add({
+      title: t('success'),
+      description: message,
+      color: 'success'
+    })
+    isOpen.value = false
+    isEditMode.value = false
+    await refresh()
+  } catch (error) {
+    console.log(error)
+  } finally {
+    isProcessing.value = false
+  }
+}
+
 const handleAction = (action: IActionCard, item: IMovie) => {
   movieDetail.value = item
   if (action === 'SETTING') {
     isOpenModalSetting.value = true
   } else if (action === 'EDIT') {
+    isEditMode.value = true
+    isOpen.value = true
     // Handle edit action
   } else if (action === 'DELETE') {
     isConfirmOpen.value = true
@@ -123,7 +156,14 @@ onMounted(() => {
   <div class="card-box">
     <MoviesTabs />
     <MovieFilter @add="handeAddMovie" />
-    <MovieModalAdd v-model:is-open="isOpen" :is-processing="isProcessing" @add="handeAddMovie" />
+    <MovieModalAdd
+      v-model:is-open="isOpen"
+      :is-processing="isProcessing"
+      :is-edit-mode="isEditMode"
+      :movie-data="movieDetail"
+      @add="handeAddMovie"
+      @edit="handleEditMovie"
+    />
     <MovieList :is-fetching="isFetching" @action-click="handleAction" />
     <MovieModalSetting ref="modalRef" v-model="isOpenModalSetting" :is-processing="isProcessing" @setting="handleSetting" />
     <BaseConfirmModal
