@@ -5,9 +5,13 @@ import { apiRoom } from '~/services'
 import type { TypeSeat, TypeSeatStatus } from '~/types/cinema.type'
 
 const { schema } = useSchema(cinemaRoomSchema)
-const { cinameDetail, typeSeat, priceSeat, restSeat } = useCinemaData()
+const { cinameDetail, typeSeat, priceSeat, restSeat, roomDetail } = useCinemaData()
 const toast = useToast()
 const { t } = useI18n()
+
+const props = defineProps<{
+  isEditMode?: boolean
+}>()
 
 const isProcessing = ref(false)
 const isOpen = defineModel('isOpen', { type: Boolean, default: false })
@@ -38,15 +42,64 @@ const seats = ref<Record<string, LocalSeat>>({})
 const selectedSeats = ref(new Set<string>())
 const selectionMode = ref<'click' | 'drag'>('click')
 
+// Watch roomDetail để populate data khi edit
+watch(
+  () => roomDetail.value,
+  newData => {
+    if (newData && props.isEditMode && isOpen.value) {
+      room.value = {
+        name: newData.name || '',
+        totalRow: newData.totalRow || 8,
+        totalCol: newData.totalCol || 12
+      }
+
+      // Populate seats từ API data
+      if (newData.seats && Array.isArray(newData.seats)) {
+        const newSeats: Record<string, LocalSeat> = {}
+        newData.seats.forEach(seat => {
+          const rowIdx = seat.rowIdx - 1 // Convert to 0-indexed
+          const colIdx = seat.colIdx - 1
+          const seatId = `${rowIdx}-${colIdx}`
+          newSeats[seatId] = {
+            row: seat.rowIdx,
+            col: seat.colIdx,
+            type: seat.seatName.toUpperCase() as TypeSeat,
+            price: seat.price || 0,
+            status: seat.booked ? 'BOOKED' : 'AVAILABLE',
+            rowLabel: String.fromCharCode(65 + rowIdx),
+            colLabel: seat.colIdx
+          }
+        })
+        seats.value = newSeats
+      }
+    }
+  },
+  { immediate: true }
+)
+
 // Watch room dimensions change
 watch(
   () => [room.value.totalRow ?? 0, room.value.totalCol ?? 0],
   ([newRows, newCols]) => {
-    if ((newRows ?? 0) > 0 && (newCols ?? 0) > 0) {
+    if ((newRows ?? 0) > 0 && (newCols ?? 0) > 0 && !props.isEditMode) {
       initializeSeats()
     }
   }
 )
+
+// Reset form khi đóng modal (chỉ ở add mode)
+watch(isOpen, newValue => {
+  if (!newValue && !props.isEditMode) {
+    room.value = {
+      name: '',
+      totalRow: 8,
+      totalCol: 12
+    }
+    seats.value = {}
+    selectedSeats.value = new Set()
+    restSeat()
+  }
+})
 
 const clearSelection = () => {
   selectedSeats.value = new Set()
@@ -170,24 +223,39 @@ const handleSave = async () => {
     return
   }
 
-  // Only send seats that have been configured (type !== 'DISABLED')
+  // Format seats theo API spec
   const formattedSeats = Object.entries(seats.value).map(([_key, seat]) => ({
-    rowIdx: seat.row,
-    colIdx: seat.col,
     seatName: seat.type,
-    price: seat.price
+    seatType: seat.type, // API yêu cầu cả seatName và seatType
+    price: seat.price,
+    rowIdx: seat.row,
+    colIdx: seat.col
   }))
 
   const body = {
-    cinemaId: cinameDetail.value.id,
     name: room.value.name,
     totalRow: room.value.totalRow,
     totalCol: room.value.totalCol,
     seats: formattedSeats
   }
+
   isProcessing.value = true
   try {
-    const { message } = await apiRoom.addRoom(body)
+    let message: string
+    if (props.isEditMode && roomDetail.value?.roomId) {
+      // Edit mode
+      const response = await apiRoom.updateRoom(roomDetail.value.roomId, body)
+      message = response.message
+    } else {
+      // Add mode
+      const bodyWithCinema = {
+        ...body,
+        cinemaId: cinameDetail.value.id
+      }
+      const response = await apiRoom.addRoom(bodyWithCinema)
+      message = response.message
+    }
+
     toast.add({
       title: t('success'),
       description: message,
@@ -257,7 +325,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <UModal v-model:open="isOpen" :title="t('add-room')">
+  <UModal v-model:open="isOpen" :title="isEditMode ? t('edit-room') : t('add-room')">
     <template #body>
       <UForm ref="formRef" :schema :state="room" class="grid grid-cols-3 gap-4" @submit="handleSave">
         <UFormField :label="t('room-name')" name="name">
@@ -363,7 +431,7 @@ onMounted(() => {
     <template #footer>
       <div class="flex justify-end w-full">
         <BaseButton
-          :text="t('add')"
+          :text="isEditMode ? t('edit') : t('add')"
           :is-loading="isProcessing"
           class="w-20"
           variant="solid"

@@ -73,25 +73,35 @@ const getSeatClass = (row: number, col: number): string => {
   const classes = ['relative w-10 h-10 m-0.5 rounded transition-all']
 
   if (props.mode === 'admin') {
+    // Admin mode: Luôn hiển thị màu type
     classes.push(seatType.color)
 
-    if (isSelected && !isBooked) {
-      classes.push('bg-orange-500 text-white scale-110 z-10')
+    if (isSelected) {
+      // Khi select: Thêm ring orange + scale
+      classes.push('bg-orange-500 text-orange-500 scale-110 z-10')
     }
+
+    // Admin mode: Tất cả ghế đều có thể click
+    classes.push('cursor-pointer hover:scale-105')
   } else {
-    if (isSelected && !isBooked) {
+    // Booking mode
+    if (isSelected && !isBooked && !isDisabled) {
       classes.push('bg-orange-500 text-white scale-110 z-10')
     } else if (isBooked) {
-      classes.push('bg-red-600 cursor-not-allowed')
+      classes.push('bg-red-600 opacity-50')
+    } else if (isDisabled) {
+      classes.push(seatType.color)
+      classes.push('opacity-50')
     } else {
       classes.push(seatType.color)
     }
-  }
 
-  if (isDisabled || isBooked) {
-    classes.push('cursor-not-allowed opacity-50')
-  } else {
-    classes.push('cursor-pointer hover:scale-105')
+    // Booking mode: DISABLED và BOOKED không thể click
+    if (isBooked || isDisabled) {
+      classes.push('cursor-not-allowed')
+    } else {
+      classes.push('cursor-pointer hover:scale-105')
+    }
   }
 
   return classes.join(' ')
@@ -101,9 +111,12 @@ const canSelectSeat = (seatId: string): boolean => {
   const seat = props.seats?.[seatId]
   if (!seat) return false
 
-  // Cannot select disabled or booked seats
+  if (props.mode === 'admin') {
+    return true
+  }
+
   if (seat.type === 'DISABLED') return false
-  if (props.mode === 'booking' && seat.status === 'BOOKED') return false
+  if (seat.status === 'BOOKED') return false
 
   // Check max selection limit
   if (props.maxSeatsSelect && !(props.selectedSeats?.has(seatId) ?? false)) {

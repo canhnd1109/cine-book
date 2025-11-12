@@ -85,10 +85,13 @@ const seatTypeLabels: Record<string, string> = {
   EMPTY: t('empty')
 }
 
+const isEditMode = ref(false)
+
 const actionClick = (action: IActionCard, data: IRoom) => {
   roomDetail.value = data
   if (action === 'EDIT') {
-    console.log(action)
+    isEditMode.value = true
+    isOpen.value = true
   } else if (action === 'VIEW') {
     console.log(action)
   } else if (action === 'DELETE') {
@@ -115,6 +118,17 @@ const handleDelete = () => {
     .finally(() => {
       isProcessing.value = false
     })
+}
+
+const handleAdd = () => {
+  isEditMode.value = false
+  isOpen.value = true
+}
+
+const handleSave = () => {
+  isOpen.value = false
+  isEditMode.value = false
+  fetchRooms(route.params.id as string)
 }
 </script>
 <template>
@@ -146,7 +160,7 @@ const handleDelete = () => {
     </div>
     <div class="flex justify-between items-center">
       <p class="text-lg font-medium text-primary">{{ t('room-management') }}</p>
-      <BaseButton :text="t('add')" variant="solid" class-name="rounded" @click="isOpen = true" />
+      <BaseButton :text="t('add')" variant="solid" class-name="rounded" @click="handleAdd" />
     </div>
 
     <div v-for="item in rooms" :key="item.roomId">
@@ -164,11 +178,11 @@ const handleDelete = () => {
             </UButton>
           </div>
 
-          <BaseSeatGrid :rows="item.totalRow" :cols="item.totalCol" :seats="getSeatsMap(item)" mode="booking" />
+          <BaseSeatGrid :rows="item.totalRow" :cols="item.totalCol" :seats="getSeatsMap(item)" mode="admin" />
         </template>
       </BaseCard>
     </div>
-    <CinemaModalAddRoom v-model:is-open="isOpen" @saved="isOpen = false" />
+    <CinemaModalAddRoom v-model:is-open="isOpen" :is-edit-mode="isEditMode" @saved="handleSave" />
     <BaseConfirmModal
       v-model:open="isConfirmOpen"
       variant="danger"
