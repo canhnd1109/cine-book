@@ -31,3 +31,15 @@ export interface IMovie {
   posterUrl: string
   genres: string[]
 }
+
+export interface IMovieByDay extends IMovie {
+  showtimeDetailResponses: IShowtimeDetailByDay[]
+}
+
+export interface IShowtimeDetailByDay {
+  id: string
+  date: string
+  startTime: string
+  endTime: string
+  roomResponse: null
+}

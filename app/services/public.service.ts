@@ -31,6 +31,9 @@ export class PublicService extends BaseService {
   async deleteMovie(movieId: string): Promise<IResponseMessage> {
     return this.delete<IResponseMessage>(`/movie/${movieId}`)
   }
+  async fetchMoviesByDay(day: string): Promise<IResponseData<IMovie[]>> {
+    return this.get<IResponseData<IMovie[]>>(`/movie/by-date/${day}`)
+  }
 
   //TODO: CINEMA
   async fetchCinemas(params: ICinemaFilter): Promise<IResponseData<ICinema[]>> {

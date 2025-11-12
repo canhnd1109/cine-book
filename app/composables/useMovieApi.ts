@@ -1,13 +1,14 @@
-import type { IMovie } from '~/types/movie.type'
+import type { IMovie, IMovieByDay } from '~/types/movie.type'
+
 import type { UseFetchOptions } from 'nuxt/app'
 
-export interface MovieApiResponse {
-  content: IMovie[]
+export interface MovieApiResponse<T = IMovie[]> {
+  content: T
   totalPages?: number
   totalElements?: number
 }
 
-const createBaseFetchOptions = (options?: Partial<UseFetchOptions<MovieApiResponse>>) => {
+const createBaseFetchOptions = <T = IMovie[]>(options?: Partial<UseFetchOptions<T>>) => {
   const runtimeConfig = useRuntimeConfig()
 
   return {
@@ -16,18 +17,18 @@ const createBaseFetchOptions = (options?: Partial<UseFetchOptions<MovieApiRespon
       'App-Code': 'cine-book',
       Accept: 'application/json'
     },
-    immediate: false, // Không fetch ngay, đợi manual call
-    server: false, // Chỉ fetch trên client để tránh SSR issues
-    transform: (data: unknown) => (data as { value?: MovieApiResponse })?.value,
+    immediate: false,
+    server: false,
+    transform: (data: unknown) => (data as { value: T }).value,
     ...options
-  } as UseFetchOptions<MovieApiResponse>
+  }
 }
 
 /**
  * Hook để fetch top 10 most viewed movies
  */
 export const useFetchTopMovies = () => {
-  return useFetch('/public-api/movie/filter', {
+  return useFetch<MovieApiResponse<IMovie[]>>('/public-api/movie/filter', {
     ...createBaseFetchOptions(),
     key: 'top-10-most-viewed-movies',
     query: { orderBy: '4' }
@@ -38,7 +39,7 @@ export const useFetchTopMovies = () => {
  * Hook để fetch showing movies
  */
 export const useFetchShowingMovies = () => {
-  return useFetch('/public-api/movie/showing', {
+  return useFetch<MovieApiResponse<IMovie[]>>('/public-api/movie/showing', {
     ...createBaseFetchOptions(),
     key: 'showing-movies'
   })
@@ -48,7 +49,7 @@ export const useFetchShowingMovies = () => {
  * Hook để fetch upcoming movies
  */
 export const useFetchUpcomingMovies = () => {
-  return useFetch('/public-api/movie/upcoming', {
+  return useFetch<MovieApiResponse<IMovie[]>>('/public-api/movie/upcoming', {
     ...createBaseFetchOptions(),
     key: 'upcoming-movies'
   })
@@ -59,10 +60,10 @@ export const useFetchUpcomingMovies = () => {
  */
 export const useFetchMovieDetail = (movieId: string | Ref<string>) => {
   const id = unref(movieId)
-  return useFetch(`/public-api/movie/${id}`, {
+  return useFetch<MovieApiResponse<IMovie[]>>(`/public-api/movie/${id}`, {
     ...createBaseFetchOptions(),
     key: `movie-detail-${id}`,
-    watch: [() => unref(movieId)] // Re-fetch when movieId changes
+    watch: [() => unref(movieId)]
   })
 }
 
@@ -70,10 +71,28 @@ export const useFetchMovieDetail = (movieId: string | Ref<string>) => {
  * Hook để fetch movies với custom filter
  */
 export const useFetchMoviesWithFilter = (filter: Ref<Record<string, string | number>> | Record<string, string | number>) => {
-  return useFetch('/public-api/movie/filter', {
+  return useFetch<MovieApiResponse<IMovie[]>>('/public-api/movie/filter', {
     ...createBaseFetchOptions(),
     key: 'movies-filtered',
     query: filter,
-    watch: [filter] // Re-fetch when filter changes
+    watch: [filter]
+  })
+}
+
+/**
+ * Hook để fetch movies by day
+ */
+export const useFetchMoviesByDay = (day: string | Ref<string>) => {
+  const selectedDay = unref(day)
+
+  return useFetch<IMovieByDay[]>(`/public-api/movie/by-date/${selectedDay}`, {
+    ...createBaseFetchOptions<IMovieByDay[]>({
+      key: `movies-by-day-${selectedDay}`,
+      watch: [() => unref(day)],
+      transform: (data: unknown) => {
+        const response = data as { value?: IMovieByDay[] }
+        return response?.value ?? []
+      }
+    })
   })
 }
