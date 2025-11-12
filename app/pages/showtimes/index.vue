@@ -71,7 +71,21 @@ const changeDate = (item: DateItem) => {
       />
     </div>
 
-    <BaseSkeletonCard v-if="pending" />
+    <div v-if="pending" class="mx-auto grid gap-6 grid-cols-[repeat(auto-fit,minmax(200px,1fr))] mb-10">
+      <div
+        v-for="(_item, index) in 2"
+        :key="index"
+        class="border flex justify-center border-solid gap-6 border-border-light dark:border-border-dark p-4 rounded-lg"
+      >
+        <USkeleton class="w-1/2 h-60" />
+        <div class="flex flex-col space-y-4 w-1/2">
+          <USkeleton class="w-full h-10" />
+          <USkeleton class="w-full h-10" />
+          <USkeleton class="w-full h-10" />
+          <USkeleton class="w-full h-10" />
+        </div>
+      </div>
+    </div>
 
     <!-- Movies list -->
     <div v-else-if="movies && movies.length > 0" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
