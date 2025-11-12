@@ -32,18 +32,46 @@ const imagesList = [
   '/images/img-8.png'
 ]
 
-// Fetch data như các trang khác - VÌ CÁCH NÀY ĐANG HOẠT ĐỘNG!
-const { data: topViewedData } = await useAsyncData('top-10-most-viewed-movies', () =>
-  apiPublic.fetchMovies({ orderBy: '4' } as IMovieFilter).then(res => res.value)
-)
+// Fetch data - CRITICAL: Không dùng await top-level vì sẽ crash SSR nếu API fail
+const { data: topViewedData } = await useAsyncData('top-10-most-viewed-movies', async () => {
+  try {
+    const res = await apiPublic.fetchMovies({ orderBy: '4' } as IMovieFilter)
+    console.log('[Home] Top viewed fetched:', !!res.value)
+    return res.value
+  } catch (error) {
+    console.error('[Home] Error fetching top movies:', error)
+    return null
+  }
+})
 
-const { data: showingMoviesData } = await useAsyncData('showing-movies', () =>
-  apiPublic.fetchShowingMovies().then(res => res.value)
-)
+const { data: showingMoviesData } = await useAsyncData('showing-movies', async () => {
+  try {
+    const res = await apiPublic.fetchShowingMovies()
+    console.log('[Home] Showing movies fetched:', !!res.value)
+    return res.value
+  } catch (error) {
+    console.error('[Home] Error fetching showing movies:', error)
+    return null
+  }
+})
 
-const { data: upcomingMoviesData } = await useAsyncData('upcoming-movies', () =>
-  apiPublic.fetchUpcomingMovies().then(res => res.value)
-)
+const { data: upcomingMoviesData } = await useAsyncData('upcoming-movies', async () => {
+  try {
+    const res = await apiPublic.fetchUpcomingMovies()
+    console.log('[Home] Upcoming movies fetched:', !!res.value)
+    return res.value
+  } catch (error) {
+    console.error('[Home] Error fetching upcoming movies:', error)
+    return null
+  }
+})
+
+// Log để debug
+console.log('[Home] Data loaded:', {
+  topViewed: !!topViewedData.value?.content,
+  showing: !!showingMoviesData.value?.content,
+  upcoming: !!upcomingMoviesData.value?.content
+})
 
 watchEffect(() => {
   top10MostViewedMovies.value = topViewedData.value?.content || []
