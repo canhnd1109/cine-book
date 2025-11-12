@@ -121,7 +121,7 @@ export default defineNuxtConfig({
       cookieCrossOrigin: false,
       cookieSecure: true
     },
-    baseUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:8080',
+    baseUrl: process.env.NUXT_PUBLIC_SITE_URL || 'http://localhost:3000',
     pages: {
       about: {
         en: '/about',
