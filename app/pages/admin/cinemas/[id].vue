@@ -73,12 +73,12 @@ const getSeatTypePrices = (room: IRoom): Record<string, number> => {
   return priceMap
 }
 
-const seatTypeLabels: Record<string, string> = {
-  NORMAL: t('normal'),
-  VIP: t('vip'),
-  COUPLE: t('couple'),
-  DISABLED: t('disabled'),
-  EMPTY: t('empty')
+const seatType: Record<string, { label: string; color: string }> = {
+  NORMAL: { label: t('normal'), color: 'bg-blue-500 text-blue-500' },
+  VIP: { label: t('vip'), color: 'bg-yellow-500 text-yellow-500' },
+  COUPLE: { label: t('couple'), color: 'bg-pink-500 text-pink-500' },
+  DISABLED: { label: t('disabled'), color: 'bg-gray-400 text-gray-400' },
+  EMPTY: { label: t('empty'), color: 'bg-gray-200 text-gray-200' }
 }
 
 const isEditMode = ref(false)
@@ -165,8 +165,11 @@ const handleSave = async () => {
 
           <div class="space-x-2 mt-2">
             <UButton v-for="(price, type) in getSeatTypePrices(item)" :key="type" size="sm" :variant="'outline'">
-              <span class="font-medium text-sm">{{ seatTypeLabels[type] }}:</span>
-
+              <p class="flex justify-start items-center">
+                <span class="mr-1">{{ seatType[type]?.label }}</span>
+                (<UIcon name="i-lucide-armchair" class="size-5" :class="seatType[type]?.color" />)
+                <span>:</span>
+              </p>
               <span class="text-primary font-bold">{{ formatPrice(price) }} </span>
             </UButton>
           </div>
