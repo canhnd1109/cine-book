@@ -31,7 +31,6 @@ const imagesList = [
   '/images/img-8.png'
 ]
 
-// Sử dụng composable đã config sẵn - clean & DRY
 const { data: topViewedData, execute: fetchTopViewed } = useFetchTopMovies()
 const { data: showingMoviesData, execute: fetchShowing } = useFetchShowingMovies()
 const { data: upcomingMoviesData, execute: fetchUpcoming } = useFetchUpcomingMovies()
