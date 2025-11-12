@@ -49,11 +49,9 @@ const seatTypes = computed(() => ({
   SELECTED: { label: t('your-selected-seats'), color: 'bg-orange-500 text-orange-500' }
 }))
 
-// State
 const isSelecting = ref(false)
 const selectionStart = ref<string | null>(null)
 
-// Methods
 const getSeat = (row: number, col: number): Seat | undefined => {
   const seatId = `${row}-${col}`
   return props.seats[seatId]
@@ -70,33 +68,31 @@ const getSeatClass = (row: number, col: number): string => {
   const isDisabled = seat.type === 'DISABLED'
   const isBooked = props.mode === 'booking' && seat.status === 'BOOKED'
 
+  // Fallback to NORMAL if seatType is not found
+  const seatColor = seatType?.color || seatTypes.value.NORMAL.color
+
   const classes = ['relative w-10 h-10 m-0.5 rounded transition-all']
 
   if (props.mode === 'admin') {
     if (isSelected) {
-      // Khi select: Chỉ dùng màu cam, không thêm màu type để tránh xung đột
       classes.push('bg-orange-500 text-orange-500 scale-110 z-10')
     } else {
-      // Khi không select: Hiển thị màu type
-      classes.push(seatType.color)
+      classes.push(seatColor)
     }
 
-    // Admin mode: Tất cả ghế đều có thể click
     classes.push('cursor-pointer hover:scale-105')
   } else {
-    // Booking mode
     if (isSelected && !isBooked && !isDisabled) {
       classes.push('bg-orange-500 text-white scale-110 z-10')
     } else if (isBooked) {
       classes.push('bg-red-600 opacity-50')
     } else if (isDisabled) {
-      classes.push(seatType.color)
+      classes.push(seatColor)
       classes.push('opacity-50')
     } else {
-      classes.push(seatType.color)
+      classes.push(seatColor)
     }
 
-    // Booking mode: DISABLED và BOOKED không thể click
     if (isBooked || isDisabled) {
       classes.push('cursor-not-allowed')
     } else {
@@ -118,7 +114,6 @@ const canSelectSeat = (seatId: string): boolean => {
   if (seat.type === 'DISABLED') return false
   if (seat.status === 'BOOKED') return false
 
-  // Check max selection limit
   if (props.maxSeatsSelect && !(props.selectedSeats?.has(seatId) ?? false)) {
     return (props.selectedSeats?.size ?? 0) < props.maxSeatsSelect
   }
@@ -131,7 +126,6 @@ const handleSeatClick = (row: number, col: number, event: MouseEvent) => {
   const seat = getSeat(row, col)
   const backendSeatId = seat?.seatId
 
-  // Cannot interact with non-selectable seats unless already selected
   if (!canSelectSeat(seatId) && !(props.selectedSeats?.has(seatId) ?? false)) {
     return
   }

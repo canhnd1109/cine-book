@@ -5,10 +5,10 @@ import { apiRoom } from '~/services'
 import type { TypeSeat, TypeSeatStatus } from '~/types/cinema.type'
 
 const { schema } = useSchema(cinemaRoomSchema)
-const { cinameDetail, typeSeat, priceSeat, restSeat, roomDetail } = useCinemaData()
+const { typeSeat, priceSeat, restSeat, roomDetail } = useCinemaData()
 const toast = useToast()
 const { t } = useI18n()
-
+const route = useRoute()
 const props = defineProps<{
   isEditMode?: boolean
 }>()
@@ -37,12 +37,10 @@ interface LocalSeat {
   colLabel?: number
 }
 
-// State
 const seats = ref<Record<string, LocalSeat>>({})
 const selectedSeats = ref(new Set<string>())
 const selectionMode = ref<'click' | 'drag'>('click')
 
-// Watch roomDetail để populate data khi edit
 watch(
   () => roomDetail.value,
   newData => {
@@ -53,11 +51,10 @@ watch(
         totalCol: newData.totalCol || 12
       }
 
-      // Populate seats từ API data
       if (newData.seats && Array.isArray(newData.seats)) {
         const newSeats: Record<string, LocalSeat> = {}
         newData.seats.forEach(seat => {
-          const rowIdx = seat.rowIdx - 1 // Convert to 0-indexed
+          const rowIdx = seat.rowIdx - 1
           const colIdx = seat.colIdx - 1
           const seatId = `${rowIdx}-${colIdx}`
           newSeats[seatId] = {
@@ -77,7 +74,6 @@ watch(
   { immediate: true }
 )
 
-// Watch room dimensions change
 watch(
   () => [room.value.totalRow ?? 0, room.value.totalCol ?? 0],
   ([newRows, newCols]) => {
@@ -87,7 +83,6 @@ watch(
   }
 )
 
-// Reset form khi đóng modal (chỉ ở add mode)
 watch(isOpen, newValue => {
   if (!newValue && !props.isEditMode) {
     room.value = {
@@ -105,14 +100,12 @@ const clearSelection = () => {
   selectedSeats.value = new Set()
 }
 
-// Sync typeSeat and priceSeat from selected seats
 const syncSeatInputsFromSelection = () => {
   if (selectedSeats.value.size === 0) {
     restSeat()
     return
   }
 
-  // Get unique types and prices from selected seats (bao gồm cả DISABLED)
   const seatTypes = new Set<string>()
   const seatPrices = new Set<number>()
 
@@ -124,7 +117,6 @@ const syncSeatInputsFromSelection = () => {
     }
   })
 
-  // Nếu tất cả ghế có cùng type và price, hiển thị lên select
   if (seatTypes.size === 1 && seatPrices.size === 1) {
     const typeArray = Array.from(seatTypes)
     const priceArray = Array.from(seatPrices)
@@ -133,13 +125,11 @@ const syncSeatInputsFromSelection = () => {
       priceSeat.value = String(priceArray[0])
     }
   } else {
-    // Nếu ghế có type hoặc price khác nhau, để select = '' (không chọn gì)
     typeSeat.value = ''
     priceSeat.value = ''
   }
 }
 
-// Methods
 const initializeSeats = () => {
   const newSeats: Record<string, LocalSeat> = {}
   for (let row = 0; row < room.value.totalRow; row++) {
@@ -189,7 +179,6 @@ const selectAll = () => {
   syncSeatInputsFromSelection()
 }
 
-// Check if a row is fully selected
 const isRowSelected = (rowIndex: number): boolean => {
   if (selectedSeats.value.size === 0) return false
   for (let col = 0; col < room.value.totalCol; col++) {
@@ -200,7 +189,6 @@ const isRowSelected = (rowIndex: number): boolean => {
   return true
 }
 
-// Check if a column is fully selected
 const isColSelected = (colIndex: number): boolean => {
   if (selectedSeats.value.size === 0) return false
   for (let row = 0; row < room.value.totalRow; row++) {
@@ -212,7 +200,6 @@ const isColSelected = (colIndex: number): boolean => {
 }
 
 const handleSave = async () => {
-  // Validate: Check if all seats have price greater than 0
   const seatsWithoutPrice = Object.entries(seats.value).filter(([_key, seat]) => seat.type !== 'DISABLED' && seat.price <= 0)
 
   if (seatsWithoutPrice.length > 0) {
@@ -224,10 +211,9 @@ const handleSave = async () => {
     return
   }
 
-  // Format seats theo API spec
   const formattedSeats = Object.entries(seats.value).map(([_key, seat]) => ({
-    seatName: seat.type,
-    seatType: seat.type, // API yêu cầu cả seatName và seatType
+    seatName: `${seat.rowLabel}-${seat.colLabel}`,
+    seatType: seat.type,
     price: seat.price,
     rowIdx: seat.row,
     colIdx: seat.col
@@ -244,14 +230,12 @@ const handleSave = async () => {
   try {
     let message: string
     if (props.isEditMode && roomDetail.value?.roomId) {
-      // Edit mode
       const response = await apiRoom.updateRoom(roomDetail.value.roomId, body)
       message = response.message
     } else {
-      // Add mode
       const bodyWithCinema = {
         ...body,
-        cinemaId: cinameDetail.value.id
+        cinemaId: route.params.id as string
       }
       const response = await apiRoom.addRoom(bodyWithCinema)
       message = response.message
@@ -272,7 +256,6 @@ const handleSave = async () => {
 
 const handleSeatTypeChange = () => {
   if (selectedSeats.value.size > 0 && typeSeat.value) {
-    // Cập nhật seats với loại ghế mới được chọn
     const newSeats = { ...seats.value }
     selectedSeats.value.forEach(seatId => {
       const existingSeat = newSeats[seatId]
@@ -288,12 +271,10 @@ const handleSeatTypeChange = () => {
   }
 }
 
-// Thêm watch để tự động cập nhật khi chọn type
 watch([typeSeat, priceSeat], () => {
   handleSeatTypeChange()
 })
 
-// Watch selectedSeats to sync inputs when selection changes (from grid clicks)
 watch(
   selectedSeats,
   () => {

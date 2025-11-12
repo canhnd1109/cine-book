@@ -68,9 +68,9 @@ const getSeatTypePrices = (room: IRoom): Record<string, number> => {
   }
   const priceMap: Record<string, number> = {}
   room.seats
-    .filter(s => s.seatName !== 'DISABLED')
+    .filter(s => s.seatType !== 'DISABLED')
     .forEach(seat => {
-      const seatType = seat.seatName.toUpperCase()
+      const seatType = seat.seatType
       priceMap[seatType] = seat.price || 0
     })
   return priceMap
@@ -98,26 +98,23 @@ const actionClick = (action: IActionCard, data: IRoom) => {
     isConfirmOpen.value = true
   }
 }
-const handleDelete = () => {
+const handleDelete = async () => {
   if (!roomDetail.value.roomId) return
   isProcessing.value = true
-  apiPublic
-    .deleteRoom(roomDetail.value.roomId)
-    .then(({ message }) => {
-      useToast().add({
-        title: t('success'),
-        description: message,
-        color: 'success'
-      })
-      isConfirmOpen.value = false
-      fetchRooms(route.params.id as string)
+  try {
+    const { message } = await apiPublic.deleteRoom(roomDetail.value.roomId)
+    useToast().add({
+      title: t('success'),
+      description: message,
+      color: 'success'
     })
-    .catch(error => {
-      console.log(error)
-    })
-    .finally(() => {
-      isProcessing.value = false
-    })
+    isConfirmOpen.value = false
+    await Promise.all([fetchRooms(route.params.id as string), refreshNuxtData(`cinema-detail-${route.params.id}`)])
+  } catch (error) {
+    console.log(error)
+  } finally {
+    isProcessing.value = false
+  }
 }
 
 const handleAdd = () => {
@@ -125,10 +122,10 @@ const handleAdd = () => {
   isOpen.value = true
 }
 
-const handleSave = () => {
+const handleSave = async () => {
   isOpen.value = false
   isEditMode.value = false
-  fetchRooms(route.params.id as string)
+  await Promise.all([fetchRooms(route.params.id as string), refreshNuxtData(`cinema-detail-${route.params.id}`)])
 }
 </script>
 <template>

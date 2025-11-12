@@ -10,10 +10,10 @@ const { isFetching = false } = defineProps<{
 const hoveredItem = ref<string | null>(null)
 
 const actionClick = (action: IActionCard, data: ICinema) => {
+  cinameDetail.value = data
   if (action === 'EDIT') {
     console.log(action)
   } else if (action === 'VIEW') {
-    cinameDetail.value = data
     navigateTo({ name: 'admin-cinemas-id', params: { id: cinameDetail.value.id } })
   } else {
     console.log(action)
