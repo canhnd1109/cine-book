@@ -112,19 +112,19 @@ const syncSeatInputsFromSelection = () => {
     return
   }
 
-  // Get unique types and prices from selected seats
+  // Get unique types and prices from selected seats (bao gồm cả DISABLED)
   const seatTypes = new Set<string>()
   const seatPrices = new Set<number>()
 
   selectedSeats.value.forEach(seatId => {
     const seat = seats.value[seatId]
-    if (seat && seat.type !== 'DISABLED') {
+    if (seat) {
       seatTypes.add(seat.type)
       seatPrices.add(seat.price)
     }
   })
 
-  // If all selected seats have the same type and price, fill the inputs
+  // Nếu tất cả ghế có cùng type và price, hiển thị lên select
   if (seatTypes.size === 1 && seatPrices.size === 1) {
     const typeArray = Array.from(seatTypes)
     const priceArray = Array.from(seatPrices)
@@ -133,8 +133,9 @@ const syncSeatInputsFromSelection = () => {
       priceSeat.value = String(priceArray[0])
     }
   } else {
-    // If seats have different types or prices, clear inputs
-    restSeat()
+    // Nếu ghế có type hoặc price khác nhau, để select = '' (không chọn gì)
+    typeSeat.value = ''
+    priceSeat.value = ''
   }
 }
 

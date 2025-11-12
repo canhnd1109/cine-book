@@ -73,12 +73,12 @@ const getSeatClass = (row: number, col: number): string => {
   const classes = ['relative w-10 h-10 m-0.5 rounded transition-all']
 
   if (props.mode === 'admin') {
-    // Admin mode: Luôn hiển thị màu type
-    classes.push(seatType.color)
-
     if (isSelected) {
-      // Khi select: Thêm ring orange + scale
+      // Khi select: Chỉ dùng màu cam, không thêm màu type để tránh xung đột
       classes.push('bg-orange-500 text-orange-500 scale-110 z-10')
+    } else {
+      // Khi không select: Hiển thị màu type
+      classes.push(seatType.color)
     }
 
     // Admin mode: Tất cả ghế đều có thể click
