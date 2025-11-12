@@ -132,6 +132,8 @@ const syncSeatInputsFromSelection = () => {
 
 const initializeSeats = () => {
   const newSeats: Record<string, LocalSeat> = {}
+  const newSelected = new Set<string>()
+
   for (let row = 0; row < room.value.totalRow; row++) {
     for (let col = 0; col < room.value.totalCol; col++) {
       const seatId = `${row}-${col}`
@@ -144,10 +146,20 @@ const initializeSeats = () => {
         rowLabel: String.fromCharCode(65 + row),
         colLabel: col + 1
       }
+      // Auto-select all seats when initializing in add mode
+      if (!props.isEditMode) {
+        newSelected.add(seatId)
+      }
     }
   }
-  clearSelection()
+
   seats.value = newSeats
+  selectedSeats.value = newSelected
+
+  // Sync the inputs with all selected seats
+  if (newSelected.size > 0) {
+    syncSeatInputsFromSelection()
+  }
 }
 
 const selectRow = (rowIndex: number) => {
