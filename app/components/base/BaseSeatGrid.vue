@@ -72,25 +72,26 @@ const getSeatClass = (row: number, col: number): string => {
 
   const classes = ['relative w-10 h-10 m-0.5 rounded transition-all']
 
-  // Handle selected seats in booking mode - override with orange background
-  if (isSelected && props.mode === 'booking' && !isBooked) {
-    classes.push('bg-orange-500 text-white scale-110 z-10')
-  } else if (isBooked) {
-    classes.push('bg-red-600 cursor-not-allowed')
-  } else {
+  if (props.mode === 'admin') {
     classes.push(seatType.color)
+
+    if (isSelected && !isBooked) {
+      classes.push('bg-orange-500 text-white scale-110 z-10')
+    }
+  } else {
+    if (isSelected && !isBooked) {
+      classes.push('bg-orange-500 text-white scale-110 z-10')
+    } else if (isBooked) {
+      classes.push('bg-red-600 cursor-not-allowed')
+    } else {
+      classes.push(seatType.color)
+    }
   }
 
-  // Cursor and interaction states
   if (isDisabled || isBooked) {
     classes.push('cursor-not-allowed opacity-50')
   } else {
     classes.push('cursor-pointer hover:scale-105')
-  }
-
-  // For admin mode, use ring instead of background change
-  if (isSelected && props.mode === 'admin' && !isBooked) {
-    classes.push('ring-4 ring-green-400 scale-110 z-10')
   }
 
   return classes.join(' ')
