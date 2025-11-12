@@ -70,6 +70,8 @@
   "genre-name-required": "Tên thể loại là bắt buộc",
   "add-movie": "Thêm phim",
   "edit-movie": "Chỉnh sửa phim",
+  "current-poster": "Ảnh poster hiện tại",
+  "drop-new-image-or-keep-current": "Kéo thả ảnh mới vào đây hoặc giữ nguyên ảnh hiện tại",
   "director-name": "Tác giả",
   "enter-director-movie-name": "Tên tác giả",
   "performer-name": "Diễn viên",

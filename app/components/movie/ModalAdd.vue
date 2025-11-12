@@ -3,12 +3,12 @@ import { MAX_SIZE_IMAGE_UPLOAD } from '~/constants'
 import { createMovieSchema, type ICreateMovie } from '~/schemas/movie.chema'
 
 const { genres } = storeToRefs(useBaseStore())
-const { movieDetail } = useMovieData()
 
 const isOpen = defineModel('isOpen', { type: Boolean, default: false })
 
 const { t } = useI18n()
 const { schema } = useSchema(createMovieSchema)
+const { movieDetail } = useMovieData()
 
 const props = defineProps<{
   isProcessing?: boolean
@@ -34,6 +34,7 @@ const form = ref<ICreateMovie>({
 })
 
 const uploadError = ref<string>('')
+const existingPosterUrl = ref<string>('')
 
 const emit = defineEmits<{
   add: [value: boolean, form: ICreateMovie]
@@ -44,6 +45,7 @@ watch(
   () => movieDetail.value,
   newData => {
     if (newData && props.isEditMode) {
+      existingPosterUrl.value = newData.posterUrl || ''
       form.value = {
         director: newData.director || '',
         performer: newData.performer || '',
@@ -55,9 +57,9 @@ watch(
         note: newData.note || '',
         price: newData.price || 0,
         trailerUrl: newData.trailerUrl || '',
-        posterFile: null,
+        posterFile: null, // Keep null, sẽ giữ poster cũ nếu không upload
         name: newData.name || '',
-        genreIds: newData.genres || []
+        genreIds: newData.genres || [] // genres đã là string[] rồi
       }
     }
   },
@@ -171,10 +173,16 @@ const formattedPrice = computed({
       <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="handleSubmit">
         <UFormField class="flex justify-center items-center" name="posterFile">
           <div class="w-full">
+            <!-- Preview existing poster khi edit -->
+            <div v-if="isEditMode && existingPosterUrl && !form.posterFile" class="mb-4 text-center">
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">{{ t('current-poster') }}:</p>
+              <img :src="existingPosterUrl" :alt="form.name" class="w-48 h-auto mx-auto rounded-lg shadow-md" />
+            </div>
+
             <UFileUpload
               v-model="form.posterFile"
               accept="image/*"
-              :label="t('drop-your-image-here')"
+              :label="isEditMode ? t('drop-new-image-or-keep-current') : t('drop-your-image-here')"
               :description="t('description-upload-image')"
               class="w-96 min-h-48 mx-auto"
               @update:model-value="handleFileSelect"

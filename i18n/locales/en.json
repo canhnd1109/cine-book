@@ -69,6 +69,8 @@
   "genre-name-required": "Genre name is required",
   "add-movie": "Add movie",
   "edit-movie": "Edit movie",
+  "current-poster": "Current poster",
+  "drop-new-image-or-keep-current": "Drop new image here or keep current",
   "director-name": "Director",
   "enter-director-movie-name": "Enter director name",
   "performer-name": "Actor",

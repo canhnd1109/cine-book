@@ -160,7 +160,6 @@ onMounted(() => {
       v-model:is-open="isOpen"
       :is-processing="isProcessing"
       :is-edit-mode="isEditMode"
-      :movie-data="movieDetail"
       @add="handeAddMovie"
       @edit="handleEditMovie"
     />
