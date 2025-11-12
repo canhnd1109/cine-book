@@ -36,10 +36,13 @@ export default class BaseService {
     return this.handleRequest<T>(url, { method: 'post', body, ...config })
   }
 
-  async put<T, B extends Record<string, unknown> | FormData | undefined = undefined>(url: string, body?: B): Promise<T> {
-    return this.handleRequest<T>(url, { method: 'put', body })
-  }
+  // async put<T, B extends Record<string, unknown> | FormData | undefined = undefined>(url: string, body?: B): Promise<T> {
+  //   return this.handleRequest<T>(url, { method: 'put', body })
+  // }
 
+  async put<T>(url: string, body?: RequestBody, config?: { headers?: Record<string, string> }): Promise<T> {
+    return this.handleRequest<T>(url, { method: 'put', body, ...config })
+  }
   async patch<T, B extends Record<string, unknown> | FormData | undefined = undefined>(url: string, body?: B): Promise<T> {
     return this.handleRequest<T>(url, { method: 'patch', body })
   }

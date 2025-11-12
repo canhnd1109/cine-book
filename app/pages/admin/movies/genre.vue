@@ -16,6 +16,7 @@ const toast = useToast()
 const isProcessing = ref(false)
 const isActionLoading = ref(false)
 const isEditMode = ref(false)
+const genreId = ref('')
 
 const form = ref<IFormGenre>({
   genreName: ''
@@ -45,7 +46,7 @@ const handleAction = async (isOpenModal: boolean = false) => {
     isProcessing.value = true
     try {
       const { message } = isEditMode.value
-        ? await apiGenre.updateGenre(form.value.genreName)
+        ? await apiGenre.updateGenre(genreId.value, form.value.genreName)
         : await apiGenre.createGenre(form.value.genreName)
       toast.add({
         title: t('success'),
@@ -98,6 +99,7 @@ function getDropdownActions(row: IGenre): DropdownMenuItem[][] {
           isOpen.value = true
           isEditMode.value = true
           form.value.genreName = row.name
+          genreId.value = row.id
         }
       },
       {
