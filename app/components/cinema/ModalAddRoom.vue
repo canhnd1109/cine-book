@@ -41,10 +41,11 @@ const seats = ref<Record<string, LocalSeat>>({})
 const selectedSeats = ref(new Set<string>())
 const selectionMode = ref<'click' | 'drag'>('click')
 
+// Load edit data when opening in edit mode
 watch(
-  () => roomDetail.value,
-  newData => {
-    if (newData && props.isEditMode && isOpen.value) {
+  () => [roomDetail.value, props.isEditMode, isOpen.value] as const,
+  ([newData, editMode, modalOpen]) => {
+    if (newData && editMode && modalOpen) {
       room.value = {
         name: newData.name || '',
         totalRow: newData.totalRow || 8,
@@ -68,6 +69,9 @@ watch(
           }
         })
         seats.value = newSeats
+        // Clear selection when loading edit data
+        selectedSeats.value = new Set()
+        restSeat()
       }
     }
   },
@@ -83,18 +87,34 @@ watch(
   }
 )
 
-watch(isOpen, newValue => {
-  if (!newValue && !props.isEditMode) {
-    room.value = {
-      name: '',
-      totalRow: 8,
-      totalCol: 12
+// Watch for modal open/close and mode changes
+watch(
+  () => [isOpen.value, props.isEditMode] as const,
+  ([isOpenValue, editMode]) => {
+    if (isOpenValue && !editMode) {
+      // Opening in Add mode - reset everything
+      room.value = {
+        name: '',
+        totalRow: 8,
+        totalCol: 12
+      }
+      seats.value = {}
+      selectedSeats.value = new Set()
+      restSeat()
+    } else if (!isOpenValue) {
+      // Closing modal - reset everything for next time
+      room.value = {
+        name: '',
+        totalRow: 8,
+        totalCol: 12
+      }
+      seats.value = {}
+      selectedSeats.value = new Set()
+      restSeat()
     }
-    seats.value = {}
-    selectedSeats.value = new Set()
-    restSeat()
-  }
-})
+  },
+  { immediate: false }
+)
 
 const clearSelection = () => {
   selectedSeats.value = new Set()
