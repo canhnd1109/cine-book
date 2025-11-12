@@ -14,9 +14,11 @@ const isOpen = ref(false)
 const formRef = ref()
 const toast = useToast()
 const isProcessing = ref(false)
-const deletingGenreId = ref<string | null>(null)
 const isEditMode = ref(false)
 const genreId = ref('')
+const genreName = ref('')
+const isConfirmOpen = ref(false)
+const isDeleting = ref(false)
 
 const form = ref<IFormGenre>({
   genreName: ''
@@ -90,7 +92,7 @@ const columns: TableColumn<IGenre>[] = [
 ]
 
 function getDropdownActions(row: IGenre): DropdownMenuItem[][] {
-  const isDeleting = deletingGenreId.value === row.id
+  // const isDeleting = deletingGenreId.value === row.id
 
   return [
     [
@@ -105,29 +107,38 @@ function getDropdownActions(row: IGenre): DropdownMenuItem[][] {
         }
       },
       {
-        label: isDeleting ? t('deleting') + '...' : t('delete'),
-        icon: isDeleting ? 'i-lucide-loader spin' : 'i-lucide-trash',
+        label: isDeleting.value ? t('deleting') + '...' : t('delete'),
+        icon: isDeleting.value ? 'i-lucide-loader spin' : 'i-lucide-trash',
         color: 'error',
-        disabled: isDeleting,
+        disabled: isDeleting.value,
         onSelect: async () => {
-          deletingGenreId.value = row.id
-          try {
-            const { message } = await apiGenre.deleteGenre(row.id)
-            toast.add({
-              title: t('success'),
-              description: message,
-              color: 'success'
-            })
-            await refresh()
-          } catch (error) {
-            console.log(error)
-          } finally {
-            deletingGenreId.value = null
-          }
+          isConfirmOpen.value = true
+          genreId.value = row.id
+          genreName.value = row.name
         }
       }
     ]
   ]
+}
+
+const handleDelete = async () => {
+  if (!genreId.value) return
+  isDeleting.value = true
+  try {
+    const { message } = await apiGenre.deleteGenre(genreId.value)
+    toast.add({
+      title: t('success'),
+      description: message,
+      color: 'success'
+    })
+    isConfirmOpen.value = false
+    await refresh()
+  } catch (error) {
+    console.log(error)
+  } finally {
+    isDeleting.value = false
+    genreId.value = ''
+  }
 }
 </script>
 
@@ -139,8 +150,9 @@ function getDropdownActions(row: IGenre): DropdownMenuItem[][] {
       <UTable ref="table" :data="genres" :columns="columns" :loading="isFetching">
         <template #action-cell="{ row }">
           <UDropdownMenu :items="getDropdownActions(row.original)" :ui="{ itemLabel: 'cursor-pointer' }">
+            <!-- deletingGenreId === row.original.id ? 'i-lucide-loader animate-spin' : -->
             <UButton
-              :icon="deletingGenreId === row.original.id ? 'i-lucide-loader animate-spin' : 'i-lucide-ellipsis-vertical'"
+              icon="i-lucide-ellipsis-vertical"
               color="neutral"
               variant="ghost"
               aria-label="Actions"
@@ -177,5 +189,15 @@ function getDropdownActions(row: IGenre): DropdownMenuItem[][] {
         </div>
       </template>
     </UModal>
+    <BaseConfirmModal
+      v-model:open="isConfirmOpen"
+      variant="danger"
+      :title="t('delete-genre-title')"
+      :description="formatConfirmContent(t('delete-genre-confirm', { name: genreName }), genreName)"
+      :confirm-text="t('delete')"
+      :cancel-text="t('cancel-button')"
+      :is-loading="isDeleting"
+      @confirm="handleDelete"
+    />
   </div>
 </template>

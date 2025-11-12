@@ -65,6 +65,10 @@ const handleAction = (action: IActionCard, item: IMovie) => {
   movieDetail.value = item
   if (action === 'SETTING') {
     isOpenModalSetting.value = true
+  } else if (action === 'EDIT') {
+    // Handle edit action
+  } else if (action === 'DELETE') {
+    handleDelete(item.id)
   }
 }
 
@@ -91,6 +95,22 @@ const handleSetting = async (form: ICreateShowtime) => {
   }
 }
 
+const handleDelete = async (movieId: string) => {
+  isProcessing.value = true
+  try {
+    const { message } = await apiPublic.deleteMovie(movieId)
+    toast.add({
+      title: t('success'),
+      description: message,
+      color: 'success'
+    })
+    await refresh()
+  } catch (error) {
+    console.log(error)
+  } finally {
+    isProcessing.value = false
+  }
+}
 onMounted(() => {
   fetchAllCinemas()
 })

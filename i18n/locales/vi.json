@@ -214,5 +214,11 @@
   "start-time": "Thời gian khởi chiếu",
   "end-time": "Thời gian kết thúc",
   "booked-seats": "Ghế đã đặt",
-  "your-selected-seats": "Ghế bạn chọn"
+  "your-selected-seats": "Ghế bạn chọn",
+  "confirm-title": "Xác nhận",
+  "confirm-description": "Bạn có chắc chắn muốn tiếp tục không?",
+  "confirm-button": "Xác nhận",
+  "cancel-button": "Hủy",
+  "delete-genre-title": "Xóa thể loại",
+  "delete-genre-confirm": "Bạn có chắc chắn muốn xóa thể loại \"{name}\" không?"
 }

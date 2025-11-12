@@ -214,5 +214,11 @@
   "start-time": "Start Time",
   "end-time": "End Time",
   "booked-seats": "Booked seats",
-  "your-selected-seats": "Your selected seats"
+  "your-selected-seats": "Your selected seats",
+  "confirm-title": "Confirm",
+  "confirm-description": "Are you sure you want to proceed?",
+  "confirm-button": "Confirm",
+  "cancel-button": "Cancel",
+  "delete-genre-title": "Delete Genre",
+  "delete-genre-confirm": "Are you sure you want to delete the genre \"{name}\"?"
 }
