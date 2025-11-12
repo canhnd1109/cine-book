@@ -41,79 +41,76 @@ const seats = ref<Record<string, LocalSeat>>({})
 const selectedSeats = ref(new Set<string>())
 const selectionMode = ref<'click' | 'drag'>('click')
 
-// Load edit data when opening in edit mode
-watch(
-  () => [roomDetail.value, props.isEditMode, isOpen.value] as const,
-  ([newData, editMode, modalOpen]) => {
-    if (newData && editMode && modalOpen) {
-      room.value = {
-        name: newData.name || '',
-        totalRow: newData.totalRow || 8,
-        totalCol: newData.totalCol || 12
-      }
+// Helper function to reset form data
+const resetFormData = () => {
+  room.value = {
+    name: '',
+    totalRow: 8,
+    totalCol: 12
+  }
+  seats.value = {}
+  selectedSeats.value = new Set()
+  restSeat()
+}
 
-      if (newData.seats && Array.isArray(newData.seats)) {
-        const newSeats: Record<string, LocalSeat> = {}
-        newData.seats.forEach(seat => {
-          const rowIdx = seat.rowIdx - 1
-          const colIdx = seat.colIdx - 1
-          const seatId = `${rowIdx}-${colIdx}`
-          newSeats[seatId] = {
-            row: seat.rowIdx,
-            col: seat.colIdx,
-            type: (seat.seatType?.toUpperCase() || 'NORMAL') as TypeSeat,
-            price: seat.price || 0,
-            status: seat.booked ? 'BOOKED' : 'AVAILABLE',
-            rowLabel: String.fromCharCode(65 + rowIdx),
-            colLabel: seat.colIdx
-          }
-        })
-        seats.value = newSeats
-        // Clear selection when loading edit data
-        selectedSeats.value = new Set()
-        restSeat()
+// Helper function to load seats from room detail
+const loadSeatsFromRoomDetail = (roomData: typeof roomDetail.value) => {
+  if (!roomData?.seats || !Array.isArray(roomData.seats)) return
+
+  const newSeats: Record<string, LocalSeat> = {}
+  roomData.seats.forEach(seat => {
+    const rowIdx = seat.rowIdx - 1
+    const colIdx = seat.colIdx - 1
+    const seatId = `${rowIdx}-${colIdx}`
+    newSeats[seatId] = {
+      row: seat.rowIdx,
+      col: seat.colIdx,
+      type: (seat.seatType?.toUpperCase() || 'NORMAL') as TypeSeat,
+      price: seat.price || 0,
+      status: seat.booked ? 'BOOKED' : 'AVAILABLE',
+      rowLabel: String.fromCharCode(65 + rowIdx),
+      colLabel: seat.colIdx
+    }
+  })
+  seats.value = newSeats
+  selectedSeats.value = new Set()
+  restSeat()
+}
+
+// Watch for modal open/close and mode changes
+watch(
+  () => [isOpen.value, props.isEditMode, roomDetail.value] as const,
+  ([modalOpen, editMode, roomData]) => {
+    if (!modalOpen) {
+      // Modal closed - reset for next time
+      resetFormData()
+      return
+    }
+
+    if (editMode && roomData) {
+      // Edit mode - load room data
+      room.value = {
+        name: roomData.name || '',
+        totalRow: roomData.totalRow || 8,
+        totalCol: roomData.totalCol || 12
       }
+      loadSeatsFromRoomDetail(roomData)
+    } else if (!editMode) {
+      // Add mode - reset and initialize
+      resetFormData()
     }
   },
   { immediate: true }
 )
 
+// Auto-initialize seats when row/col changes in Add mode
 watch(
-  () => [room.value.totalRow ?? 0, room.value.totalCol ?? 0],
-  ([newRows, newCols]) => {
-    if ((newRows ?? 0) > 0 && (newCols ?? 0) > 0 && !props.isEditMode) {
+  () => [room.value.totalRow ?? 0, room.value.totalCol ?? 0] as const,
+  ([rows, cols]) => {
+    if (rows > 0 && cols > 0 && !props.isEditMode && isOpen.value) {
       initializeSeats()
     }
   }
-)
-
-// Watch for modal open/close and mode changes
-watch(
-  () => [isOpen.value, props.isEditMode] as const,
-  ([isOpenValue, editMode]) => {
-    if (isOpenValue && !editMode) {
-      // Opening in Add mode - reset everything
-      room.value = {
-        name: '',
-        totalRow: 8,
-        totalCol: 12
-      }
-      seats.value = {}
-      selectedSeats.value = new Set()
-      restSeat()
-    } else if (!isOpenValue) {
-      // Closing modal - reset everything for next time
-      room.value = {
-        name: '',
-        totalRow: 8,
-        totalCol: 12
-      }
-      seats.value = {}
-      selectedSeats.value = new Set()
-      restSeat()
-    }
-  },
-  { immediate: false }
 )
 
 const clearSelection = () => {
@@ -137,16 +134,17 @@ const syncSeatInputsFromSelection = () => {
     }
   })
 
+  // Only sync if all selected seats have the same type and price
   if (seatTypes.size === 1 && seatPrices.size === 1) {
-    const typeArray = Array.from(seatTypes)
-    const priceArray = Array.from(seatPrices)
-    if (typeArray[0] && priceArray[0] !== undefined) {
-      typeSeat.value = typeArray[0]
-      priceSeat.value = String(priceArray[0])
+    const [seatType] = seatTypes
+    const [seatPrice] = seatPrices
+    if (seatType && seatPrice !== undefined) {
+      typeSeat.value = seatType
+      priceSeat.value = String(seatPrice)
     }
   } else {
-    typeSeat.value = ''
-    priceSeat.value = ''
+    // Mixed selection - clear inputs
+    restSeat()
   }
 }
 
@@ -188,7 +186,6 @@ const selectRow = (rowIndex: number) => {
     newSelected.add(`${rowIndex}-${col}`)
   }
   selectedSeats.value = newSelected
-  syncSeatInputsFromSelection()
 }
 
 const selectCol = (colIndex: number) => {
@@ -197,7 +194,6 @@ const selectCol = (colIndex: number) => {
     newSelected.add(`${row}-${colIndex}`)
   }
   selectedSeats.value = newSelected
-  syncSeatInputsFromSelection()
 }
 
 const selectAll = () => {
@@ -208,7 +204,6 @@ const selectAll = () => {
     }
   }
   selectedSeats.value = newSelected
-  syncSeatInputsFromSelection()
 }
 
 const isRowSelected = (rowIndex: number): boolean => {
@@ -232,18 +227,20 @@ const isColSelected = (colIndex: number): boolean => {
 }
 
 const handleSave = async () => {
-  const seatsWithoutPrice = Object.entries(seats.value).filter(([_key, seat]) => seat.type !== 'DISABLED' && seat.price <= 0)
+  // Validate all seats have price (except DISABLED)
+  const seatsWithoutPrice = Object.values(seats.value).filter(seat => seat.type !== 'DISABLED' && seat.price <= 0)
 
   if (seatsWithoutPrice.length > 0) {
     toast.add({
       title: t('error'),
-      description: 'Vui lòng nhập giá cho tất cả các ghế',
+      description: t('please-enter-price-for-all-seats') || 'Vui lòng nhập giá cho tất cả các ghế',
       color: 'error'
     })
     return
   }
 
-  const formattedSeats = Object.entries(seats.value).map(([_key, seat]) => ({
+  // Format seats data for API
+  const formattedSeats = Object.values(seats.value).map(seat => ({
     seatName: `${seat.rowLabel}-${seat.colLabel}`,
     seatType: seat.type,
     price: seat.price,
@@ -260,60 +257,53 @@ const handleSave = async () => {
 
   isProcessing.value = true
   try {
-    let message: string
-    if (props.isEditMode && roomDetail.value?.roomId) {
-      const response = await apiRoom.updateRoom(roomDetail.value.roomId, body)
-      message = response.message
-    } else {
-      const bodyWithCinema = {
-        ...body,
-        cinemaId: route.params.id as string
-      }
-      const response = await apiRoom.addRoom(bodyWithCinema)
-      message = response.message
-    }
+    const response =
+      props.isEditMode && roomDetail.value?.roomId
+        ? await apiRoom.updateRoom(roomDetail.value.roomId, body)
+        : await apiRoom.addRoom({ ...body, cinemaId: route.params.id as string })
 
     toast.add({
       title: t('success'),
-      description: message,
+      description: response.message,
       color: 'success'
     })
+
+    isOpen.value = false
     emit('saved')
   } catch (error) {
-    console.log(error)
+    console.error('Error saving room:', error)
+    toast.add({
+      title: t('error'),
+      description: t('something-went-wrong') || 'Đã có lỗi xảy ra',
+      color: 'error'
+    })
   } finally {
     isProcessing.value = false
   }
 }
 
-const handleSeatTypeChange = () => {
-  if (selectedSeats.value.size > 0 && typeSeat.value) {
-    const newSeats = { ...seats.value }
-    selectedSeats.value.forEach(seatId => {
-      const existingSeat = newSeats[seatId]
-      if (existingSeat) {
-        newSeats[seatId] = {
-          ...existingSeat,
-          type: typeSeat.value as TypeSeat,
-          price: Number(priceSeat.value)
-        }
+const updateSelectedSeats = () => {
+  if (selectedSeats.value.size === 0 || !typeSeat.value) return
+
+  const newSeats = { ...seats.value }
+  selectedSeats.value.forEach(seatId => {
+    const existingSeat = newSeats[seatId]
+    if (existingSeat) {
+      newSeats[seatId] = {
+        ...existingSeat,
+        type: typeSeat.value as TypeSeat,
+        price: Number(priceSeat.value) || 0
       }
-    })
-    seats.value = newSeats
-  }
+    }
+  })
+  seats.value = newSeats
 }
 
-watch([typeSeat, priceSeat], () => {
-  handleSeatTypeChange()
-})
+// Update seats when type or price changes
+watch([typeSeat, priceSeat], updateSelectedSeats)
 
-watch(
-  selectedSeats,
-  () => {
-    syncSeatInputsFromSelection()
-  },
-  { deep: true }
-)
+// Sync inputs when selection changes
+watch(selectedSeats, syncSeatInputsFromSelection, { deep: true })
 
 const formattedPrice = computed({
   get: () => {
@@ -327,15 +317,8 @@ const formattedPrice = computed({
 })
 
 const submitForm = () => {
-  if (formRef.value) {
-    formRef.value.submit()
-  }
+  formRef.value?.submit()
 }
-onMounted(() => {
-  if (room.value.totalRow > 0 && room.value.totalCol > 0) {
-    initializeSeats()
-  }
-})
 </script>
 
 <template>

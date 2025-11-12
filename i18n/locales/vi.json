@@ -228,5 +228,7 @@
   "delete-movie-title": "Xóa phim",
   "delete-movie-confirm": "Bạn có chắc chắn muốn xóa phim \"{name}\" không?",
   "delete-room-title": "Xóa phòng",
-  "delete-room-confirm": "Bạn có chắc chắn muốn xóa phòng \"{name}\" không?"
+  "delete-room-confirm": "Bạn có chắc chắn muốn xóa phòng \"{name}\" không?",
+  "please-enter-price-for-all-seats": "Vui lòng nhập giá cho tất cả các ghế đã chọn",
+  "something-went-wrong": "Đã xảy ra lỗi, vui lòng thử lại sau"
 }

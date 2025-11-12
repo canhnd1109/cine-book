@@ -228,5 +228,7 @@
   "delete-movie-title": "Delete Movie",
   "delete-movie-confirm": "Are you sure you want to delete the movie \"{name}\"?",
   "delete-room-title": "Delete Room",
-  "delete-room-confirm": "Are you sure you want to delete the room \"{name}\"?"
+  "delete-room-confirm": "Are you sure you want to delete the room \"{name}\"?",
+  "please-enter-price-for-all-seats": " Please enter price for all selected seats",
+  "something-went-wrong": "Something went wrong, please try again later"
 }
