@@ -56,3 +56,9 @@ export interface ISeat {
 
 export type TypeSeat = 'NORMAL' | 'VIP' | 'COUPLE' | 'DISABLED'
 export type TypeSeatStatus = 'AVAILABLE' | 'BOOKED' | 'LOCKED'
+
+export interface ICinemaById {
+  cinemaId: string
+  cinemaName: string
+  address: string
+}

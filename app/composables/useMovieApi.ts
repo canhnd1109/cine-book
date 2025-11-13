@@ -102,3 +102,29 @@ export const useFetchMoviesByDay = (day: string | Ref<string>) => {
     }
   )
 }
+
+/**
+ * Hook để fetch movies by cinema and day
+ * @param cinemaId - ID của rạp chiếu
+ * @param startDate - Ngày bắt đầu đã được format (yyyy-MM-dd)
+ */
+export const useFetchMoviesByCinemaByDay = (cinemaId: string | Ref<string>, startDate: string | Ref<string>) => {
+  const id = computed(() => unref(cinemaId))
+  const date = computed(() => unref(startDate))
+
+  return useFetch<IMovieByDay[]>(
+    computed(() => `/public-api/cinema/${id.value}/movies`),
+    {
+      ...createBaseFetchOptions<IMovieByDay[]>({
+        immediate: true,
+        key: computed(() => `movies-cinema-${id.value}-${date.value}`),
+        query: computed(() => ({ startDate: date.value })),
+        watch: [id, date],
+        transform: (data: unknown) => {
+          const response = data as { value?: IMovieByDay[] }
+          return response?.value ?? []
+        }
+      })
+    }
+  )
+}

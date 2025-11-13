@@ -2,6 +2,28 @@
 import { apiPublic } from '~/services'
 
 const route = useRoute()
+const router = useRouter()
+const dateRange = generateDateRange()
+
+const selectedDateApi = computed(() => activeDate.value.apiFormat)
+
+const getInitialDate = () => {
+  const dateParam = route.query.date as string
+  return dateParam ? (dateRange.find(d => d.apiFormat === dateParam) ?? dateRange[0]!) : dateRange[0]!
+}
+const activeDate = ref<DateItem>(getInitialDate())
+const { data: movies, pending, refresh } = useFetchMoviesByCinemaByDay(route.params.id as string, selectedDateApi)
+
+watch(selectedDateApi, () => refresh(), { immediate: true })
+
+const changeDate = (item: DateItem) => {
+  activeDate.value = item
+  router.push({ query: { date: item.apiFormat } })
+}
+
+const handleMovieClick = (movieId: string) => {
+  router.push({ name: 'cinema-id', params: { id: movieId } })
+}
 
 const { data } = await useAsyncData(`cinema-detail-${route.params.id}`, async () => {
   const res = await apiPublic.getCinemaDetail(route.params.id as string)
@@ -40,6 +62,17 @@ const mapUrl = computed(() => {
       <p><span class="text-secondary">Địa chỉ:</span> {{ data?.province }} - {{ data?.commune }} - {{ data?.detailAddress }}</p>
       <p><span class="text-secondary">Hotline:</span> {{ formatPhoneNumber(data!.phone) }}</p>
     </div>
+    <div class="flex justify-center flex-wrap gap-4">
+      <BaseButton
+        v-for="(item, index) in dateRange"
+        :key="index"
+        :text="item.isToday ? 'Hôm nay' : item.formatted"
+        :variant="item.formatted === activeDate.formatted ? 'solid' : 'outline'"
+        class-name="rounded-lg"
+        @click="changeDate(item)"
+      />
+    </div>
+    {{ movies }}
     <div class="w-5xl container mx-auto">
       <iframe
         :src="mapUrl"
