@@ -1,5 +1,8 @@
 @import 'tailwindcss';
 @import '@nuxt/ui';
+@import 'swiper/css';
+@import 'swiper/css/effect-fade';
+@import 'swiper/css/pagination';
 
 @theme static {
   --ui-secondary: #90a1b9;

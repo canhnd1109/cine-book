@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay, EffectFade, Pagination } from 'swiper/modules'
-import 'swiper/css'
-import 'swiper/css/effect-fade'
-import 'swiper/css/pagination'
+// import 'swiper/css'
+// import 'swiper/css/effect-fade'
+// import 'swiper/css/pagination'
 import type { IMovie } from '~/types/movie.type'
 
 const { t } = useI18n()
