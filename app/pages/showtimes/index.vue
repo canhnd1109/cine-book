@@ -49,6 +49,9 @@ const changeDate = (item: DateItem) => {
   activeDate.value = item
   router.push({ query: { date: item.apiFormat } })
 }
+const handleMovieClick = (movieId: string) => {
+  router.push({ name: 'movie-id', params: { id: movieId } })
+}
 </script>
 
 <template>
@@ -144,6 +147,7 @@ const changeDate = (item: DateItem) => {
                 :key="showtime.id"
                 :text="showtime.startTime"
                 class-name="rounded-lg"
+                @click="handleMovieClick(movie.id)"
               />
             </div>
           </div>
