@@ -4,14 +4,15 @@ interface SeatSelection {
   selected: boolean
 }
 
-interface SocketMessage {
-  type: 'SELECT_SEAT' | 'SEAT_SELECTED'
-  data: SeatSelection
+interface SocketManager {
+  createConnection: (showtimeId: string) => WebSocket
+  closeConnection: (showtimeId: string) => void
+  getConnection: (showtimeId: string) => WebSocket | undefined
 }
 
 export const useSocket = () => {
   const { $socket } = useNuxtApp()
-  const socketManager = $socket as any
+  const socketManager = $socket as unknown as SocketManager
 
   const currentShowtime = ref<string>('')
   const messageHandlers = ref<Set<(data: SeatSelection) => void>>(new Set())
@@ -35,34 +36,17 @@ export const useSocket = () => {
       }
 
       try {
-        const parsed = JSON.parse(event.data)
+        const data: SeatSelection = JSON.parse(event.data)
+        console.log('📨 Received seat update:', data)
 
-        // Check if message has type field (new format)
-        if (parsed.type) {
-          const message: SocketMessage = parsed
-          console.log('🚀 ~ connect ~ message:', message)
-
-          if (message.type === 'SEAT_SELECTED') {
-            // Notify all registered handlers
-            messageHandlers.value.forEach(handler => {
-              handler(message.data)
-            })
-          } else {
-            console.warn('⚠️ Unknown message type:', message.type)
-          }
-        } else if (parsed.showtimeId && parsed.seatId && typeof parsed.selected === 'boolean') {
-          messageHandlers.value.forEach(handler => {
-            handler(parsed as SeatSelection)
-          })
-        } else {
-          console.warn('⚠️ Unknown message format:', parsed)
-        }
+        // Notify all registered handlers
+        messageHandlers.value.forEach(handler => {
+          handler(data)
+        })
       } catch (error) {
         console.error('❌ Error parsing WebSocket message:', error)
         console.error('Failed data:', event.data)
-        console.error('Is it JSON?', event.data.toString().substring(0, 100))
       }
-      console.groupEnd()
     }
   }
 
@@ -100,23 +84,18 @@ export const useSocket = () => {
     const ws = socketManager.getConnection(showtimeId)
 
     if (ws && ws.readyState === WebSocket.OPEN) {
-      const message: SocketMessage = {
-        type: 'SELECT_SEAT',
-        data: {
-          showtimeId,
-          seatId,
-          selected
-        }
+      const data: SeatSelection = {
+        showtimeId,
+        seatId,
+        selected
       }
-      const jsonMessage = JSON.stringify(message.data)
+      const jsonMessage = JSON.stringify(data)
+      console.log('📤 Sending:', jsonMessage)
 
       ws.send(jsonMessage)
     } else {
-      console.error('❌ Cannot send - WebSocket not ready')
-      console.error('ReadyState:', ws?.readyState, '(0=CONNECTING, 1=OPEN, 2=CLOSING, 3=CLOSED)')
-      console.error('WebSocket URL:', ws?.url)
+      console.error('❌ WebSocket not ready, state:', ws?.readyState)
     }
-    console.groupEnd()
   }
 
   /**
