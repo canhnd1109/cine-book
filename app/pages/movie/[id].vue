@@ -10,7 +10,7 @@ const route = useRoute()
 const movieId = computed(() => route.params.id as string)
 
 // Socket setup
-const { joinShowtimeRoom, leaveShowtimeRoom, selectSeat, onSeatSelected, offSeatSelected, isConnected } = useSocket()
+const { joinShowtimeRoom, leaveShowtimeRoom, selectSeat, onSeatSelected, offSeatSelected } = useSocket()
 
 // State
 const showTime = ref<TimeSlot | null>(null)
@@ -117,19 +117,12 @@ const stopCountdown = () => {
   countdownSeconds.value = 0
 }
 
-// Socket - Lắng nghe người khác chọn ghế
 onMounted(() => {
-  console.log('🎬 Movie page mounted, setting up socket listener')
   onSeatSelected(data => {
-    console.log('👥 Other user seat action:', data)
     if (data.selected) {
-      // Người khác chọn ghế -> thêm vào lockedSeats
       lockedSeats.value.add(data.seatId)
-      console.log('🔒 Locked seat:', data.seatId)
     } else {
-      // Người khác bỏ chọn -> remove khỏi lockedSeats
       lockedSeats.value.delete(data.seatId)
-      console.log('🔓 Unlocked seat:', data.seatId)
     }
   })
 })
@@ -160,7 +153,6 @@ watch(showTime, (newShowTime, oldShowTime) => {
   }
 
   // Join new room
-  console.log('🎯 Joining showtime room:', newShowTime.id)
   joinShowtimeRoom(newShowTime.id)
 
   const roomResponse = showtimeData.value
@@ -252,7 +244,6 @@ watch(
     addedSeats.forEach(seatKey => {
       const seat = seatsRecord.value[seatKey]
       if (seat?.seatId) {
-        console.log('🪑 Selecting seat:', seat.seatId)
         selectSeat(showTime.value!.id, seat.seatId, true)
       }
     })
