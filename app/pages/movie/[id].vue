@@ -9,6 +9,9 @@ const toast = useToast()
 const route = useRoute()
 const movieId = computed(() => route.params.id as string)
 
+// Socket setup
+const { joinShowtimeRoom, leaveShowtimeRoom, selectSeat, onSeatSelected, offSeatSelected, isConnected } = useSocket()
+
 // State
 const showTime = ref<TimeSlot | null>(null)
 const room = ref<IShowtimeRoomResponse | null>(null)
@@ -16,6 +19,7 @@ const isBooking = ref(false)
 const selectedSeats = ref<Set<string>>(new Set())
 const selectedDateIndex = ref(0)
 const idCinemaActive = ref<string | null>(null)
+const lockedSeats = ref<Set<string>>(new Set()) // Ghế đang được người khác chọn
 
 // Fetch movie detail
 const { data: movieDetail } = await useAsyncData(`movie-detail-${movieId.value}`, () =>
@@ -113,19 +117,51 @@ const stopCountdown = () => {
   countdownSeconds.value = 0
 }
 
+// Socket - Lắng nghe người khác chọn ghế
+onMounted(() => {
+  console.log('🎬 Movie page mounted, setting up socket listener')
+  onSeatSelected(data => {
+    console.log('👥 Other user seat action:', data)
+    if (data.selected) {
+      // Người khác chọn ghế -> thêm vào lockedSeats
+      lockedSeats.value.add(data.seatId)
+      console.log('🔒 Locked seat:', data.seatId)
+    } else {
+      // Người khác bỏ chọn -> remove khỏi lockedSeats
+      lockedSeats.value.delete(data.seatId)
+      console.log('🔓 Unlocked seat:', data.seatId)
+    }
+  })
+})
+
 onUnmounted(() => {
   stopCountdown()
+  // Cleanup socket listeners
+  if (showTime.value?.id) {
+    leaveShowtimeRoom(showTime.value.id)
+  }
+  offSeatSelected()
 })
 
 // Watch showtime changes
-watch(showTime, newShowTime => {
+watch(showTime, (newShowTime, oldShowTime) => {
   selectedSeats.value = new Set()
+
+  // Leave old room
+  if (oldShowTime?.id) {
+    leaveShowtimeRoom(oldShowTime.id)
+  }
 
   if (!newShowTime?.id) {
     stopCountdown()
     room.value = null
+    lockedSeats.value.clear()
     return
   }
+
+  // Join new room
+  console.log('🎯 Joining showtime room:', newShowTime.id)
+  joinShowtimeRoom(newShowTime.id)
 
   const roomResponse = showtimeData.value
     ?.find(item => item.cinemaId === idCinemaActive.value)
@@ -161,12 +197,20 @@ const seatsRecord = computed(() => {
     const rowIdx = seat.rowIdx - 1
     const colIdx = seat.colIdx - 1
     const key = `${rowIdx}-${colIdx}`
+
+    // Kiểm tra xem ghế có đang bị người khác lock không
+    const isLockedByOthers = lockedSeats.value.has(seat.seatId || '')
+
     record[key] = {
       row: seat.rowIdx,
       col: seat.colIdx,
       type: seat.seatName.toUpperCase() as TypeSeat,
       price: seat.price || 0,
-      status: seat.booked ? 'BOOKED' : (seat.status as 'AVAILABLE' | 'BOOKED' | 'LOCKED') || 'AVAILABLE',
+      status: seat.booked
+        ? 'BOOKED'
+        : isLockedByOthers
+          ? 'LOCKED'
+          : (seat.status as 'AVAILABLE' | 'BOOKED' | 'LOCKED') || 'AVAILABLE',
       rowLabel: String.fromCharCode(65 + rowIdx),
       colLabel: seat.colIdx,
       seatId: seat.seatId
@@ -196,6 +240,34 @@ const selectedSeatsInfo = computed(() => {
 
   return { seats, totalPrice, count: seats.length }
 })
+
+// Watch selectedSeats để emit socket khi có thay đổi
+watch(
+  selectedSeats,
+  (newSeats, oldSeats) => {
+    if (!showTime.value?.id) return
+
+    // Tìm ghế vừa được thêm
+    const addedSeats = [...newSeats].filter(seat => !oldSeats.has(seat))
+    addedSeats.forEach(seatKey => {
+      const seat = seatsRecord.value[seatKey]
+      if (seat?.seatId) {
+        console.log('🪑 Selecting seat:', seat.seatId)
+        selectSeat(showTime.value!.id, seat.seatId, true)
+      }
+    })
+
+    // Tìm ghế vừa bị bỏ chọn
+    const removedSeats = [...oldSeats].filter(seat => !newSeats.has(seat))
+    removedSeats.forEach(seatKey => {
+      const seat = seatsRecord.value[seatKey]
+      if (seat?.seatId) {
+        selectSeat(showTime.value!.id, seat.seatId, false)
+      }
+    })
+  },
+  { deep: true }
+)
 
 const embedUrl = computed(() => {
   const url = movieDetail.value?.trailerUrl

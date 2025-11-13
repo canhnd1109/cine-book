@@ -67,6 +67,7 @@ export default defineNuxtConfig({
     apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:8080',
     public: {
       baseApiUrl: process.env.NUXT_PUBLIC_BASE_API_URL || 'http://localhost:8080',
+      baseSocketUrl: process.env.NUXT_PUBLIC_BASE_SOCKET_URL || 'ws://localhost:8080',
       baseApiUrlLocation: process.env.NUXT_PUBLIC_BASE_API_LOCATION || 'https://provinces.open-api.vn/api/v2',
       apiBase: process.env.NUXT_PUBLIC_API_BASE || '/api',
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://cinebookmovie.vercel.app',
