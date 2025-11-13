@@ -113,17 +113,7 @@ watch(
       form.value.description = cinema.description
       form.value.files = []
     } else if (open && !editMode) {
-      form.value = {
-        name: '',
-        province: '',
-        commune: '',
-        detailAddress: '',
-        phone: '',
-        description: '',
-        files: []
-      }
-      wards.value = []
-      existingImages.value = []
+      resetForm()
     }
   },
   { immediate: true }
@@ -225,10 +215,31 @@ const getFormDataWithLabels = () => {
     commune: selectedWardName.value
   }
 }
+const resetForm = () => {
+  form.value = {
+    name: '',
+    province: '',
+    commune: '',
+    detailAddress: '',
+    phone: '',
+    description: '',
+    files: []
+  }
+  wards.value = []
+  existingImages.value = []
+}
+defineExpose({
+  resetForm
+})
 </script>
 
 <template>
-  <UModal v-model:open="isOpen" :title="isEditMode ? t('edit-cinema') : t('add-cinema')" class="!w-[1000px]">
+  <UModal
+    v-model:open="isOpen"
+    :title="isEditMode ? t('edit-cinema') : t('add-cinema')"
+    class="!w-[1000px]"
+    @close:prevent="resetForm"
+  >
     <template #body>
       <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="onSubmit">
         <!-- Existing Images (Edit mode) -->

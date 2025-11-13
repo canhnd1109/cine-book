@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ICinema } from '~/types/cinema.type'
+import type { ICinema, IFormState } from '~/types/cinema.type'
 import type { IActionCard } from '~/types/constant.type'
 
 const { cinemas, cinameDetail } = useCinemaData()
@@ -9,13 +9,13 @@ const { isFetching = false } = defineProps<{
 }>()
 const hoveredItem = ref<string | null>(null)
 const emits = defineEmits<{
-  edit: []
+  edit: [value: boolean, form: IFormState]
 }>()
 
 const actionClick = (action: IActionCard, data: ICinema) => {
   cinameDetail.value = data
   if (action === 'EDIT') {
-    emits('edit')
+    emits('edit', true, {} as IFormState)
   } else if (action === 'VIEW') {
     navigateTo({ name: 'admin-cinemas-id', params: { id: cinameDetail.value.id } })
   } else {
