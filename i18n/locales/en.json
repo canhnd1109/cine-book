@@ -123,6 +123,11 @@
   "no-data": "No data",
   "showing": "Showing",
   "add-cinema": "Add cinema",
+  "edit-cinema": "Edit cinema",
+  "current-images": "Current images",
+  "upload-new-images": "Upload new images",
+  "upload-to-replace-images": "Upload to replace old images",
+  "update": "Update",
   "name-required": "Please enter your name",
   "text-max-length": "Name must not exceed 255 characters",
   "province-required": "Please select a province/city",
@@ -230,5 +235,7 @@
   "delete-room-title": "Delete Room",
   "delete-room-confirm": "Are you sure you want to delete the room \"{name}\"?",
   "please-enter-price-for-all-seats": " Please enter price for all selected seats",
-  "something-went-wrong": "Something went wrong, please try again later"
+  "something-went-wrong": "Something went wrong, please try again later",
+  "delete-cinema-title": "Delete Cinema",
+  "delete-cinema-confirm": "Are you sure you want to delete the cinema \"{name}\"?"
 }

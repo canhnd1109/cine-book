@@ -10,6 +10,7 @@ const { isFetching = false } = defineProps<{
 const hoveredItem = ref<string | null>(null)
 const emits = defineEmits<{
   edit: [value: boolean, form: IFormState]
+  delete: []
 }>()
 
 const actionClick = (action: IActionCard, data: ICinema) => {
@@ -18,6 +19,8 @@ const actionClick = (action: IActionCard, data: ICinema) => {
     emits('edit', true, {} as IFormState)
   } else if (action === 'VIEW') {
     navigateTo({ name: 'admin-cinemas-id', params: { id: cinameDetail.value.id } })
+  } else if (action === 'DELETE') {
+    emits('delete')
   } else {
     console.log(action)
   }

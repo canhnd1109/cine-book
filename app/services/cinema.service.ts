@@ -12,4 +12,7 @@ export class CinemaService extends BaseService {
   async editCinema(id: string, formData: FormData): Promise<IResponseMessage> {
     return this.put<IResponseMessage>(`/${id}`, formData)
   }
+  async deleteCinema(id: string): Promise<IResponseMessage> {
+    return this.delete<IResponseMessage>(`/${id}`)
+  }
 }

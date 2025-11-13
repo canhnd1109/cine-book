@@ -123,6 +123,11 @@
   "no-data": "Không có dữ liệu",
   "showing": "Hiển thị",
   "add-cinema": "Thêm rạp chiếu phim",
+  "edit-cinema": "Chỉnh sửa rạp chiếu phim",
+  "current-images": "Ảnh hiện tại",
+  "upload-new-images": "Tải ảnh mới lên",
+  "upload-to-replace-images": "Tải lên để thay thế ảnh cũ",
+  "update": "Cập nhật",
 
   "name-required": "Vui lòng nhập tên",
   "text-max-length": "Tên tối đa 255 ký tự",
@@ -230,5 +235,7 @@
   "delete-room-title": "Xóa phòng",
   "delete-room-confirm": "Bạn có chắc chắn muốn xóa phòng \"{name}\" không?",
   "please-enter-price-for-all-seats": "Vui lòng nhập giá cho tất cả các ghế đã chọn",
-  "something-went-wrong": "Đã xảy ra lỗi, vui lòng thử lại sau"
+  "something-went-wrong": "Đã xảy ra lỗi, vui lòng thử lại sau",
+  "delete-cinema-title": "Xóa rạp chiếu",
+  "delete-cinema-confirm": "Bạn có chắc chắn muốn xóa rạp chiếu \"{name}\" không?"
 }
