@@ -37,7 +37,6 @@ export const useSocket = () => {
 
       try {
         const data: SeatSelection = JSON.parse(event.data)
-        console.log('📨 Received seat update:', data)
 
         // Notify all registered handlers
         messageHandlers.value.forEach(handler => {
@@ -90,7 +89,6 @@ export const useSocket = () => {
         selected
       }
       const jsonMessage = JSON.stringify(data)
-      console.log('📤 Sending:', jsonMessage)
 
       ws.send(jsonMessage)
     } else {
