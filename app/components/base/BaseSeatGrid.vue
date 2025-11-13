@@ -46,7 +46,10 @@ const seatTypes = computed(() => ({
   COUPLE: { label: t('couple'), color: 'bg-pink-500 text-pink-500' },
   DISABLED: { label: t('disabled'), color: 'bg-gray-400 text-gray-400' },
   BOOKED: { label: t('booked-seats'), color: 'bg-red-600 text-red-600' },
-  SELECTED: { label: t('your-selected-seats'), color: 'bg-orange-500 text-orange-500' }
+  SELECTED: { label: t('your-selected-seats'), color: 'bg-orange-500 text-orange-500' },
+  ...(props.mode === 'booking'
+    ? { LOCKED: { label: t('locked-by-others') || 'Người khác đang chọn', color: '', customColor: '#00e080' } }
+    : {})
 }))
 
 const isSelecting = ref(false)
@@ -67,6 +70,7 @@ const getSeatClass = (row: number, col: number): string => {
   const seatType = seatTypes.value[seat.type as keyof typeof seatTypes.value]
   const isDisabled = seat.type === 'DISABLED'
   const isBooked = props.mode === 'booking' && seat.status === 'BOOKED'
+  const isLockedByOthers = props.mode === 'booking' && seat.status === 'LOCKED'
 
   // Fallback to NORMAL if seatType is not found
   const seatColor = seatType?.color || seatTypes.value.NORMAL.color
@@ -82,18 +86,31 @@ const getSeatClass = (row: number, col: number): string => {
 
     classes.push('cursor-pointer hover:scale-105')
   } else {
-    if (isSelected && !isBooked && !isDisabled) {
+    // Người dùng đang chọn (ưu tiên cao nhất)
+    if (isSelected && !isBooked && !isDisabled && !isLockedByOthers) {
       classes.push('bg-orange-500 text-white scale-110 z-10')
-    } else if (isBooked) {
+    }
+    // Người khác đang chọn (màu #00e080)
+    else if (isLockedByOthers && !isBooked) {
+      classes.push('scale-105 z-5')
+      classes.push('cursor-not-allowed')
+      // Sử dụng inline style cho màu custom
+    }
+    // Ghế đã được đặt
+    else if (isBooked) {
       classes.push('bg-red-600 opacity-50')
-    } else if (isDisabled) {
+    }
+    // Ghế disabled
+    else if (isDisabled) {
       classes.push(seatColor)
       classes.push('opacity-50')
-    } else {
+    }
+    // Ghế bình thường
+    else {
       classes.push(seatColor)
     }
 
-    if (isBooked || isDisabled) {
+    if (isBooked || isDisabled || isLockedByOthers) {
       classes.push('cursor-not-allowed')
     } else {
       classes.push('cursor-pointer hover:scale-105')
@@ -113,6 +130,7 @@ const canSelectSeat = (seatId: string): boolean => {
 
   if (seat.type === 'DISABLED') return false
   if (seat.status === 'BOOKED') return false
+  if (seat.status === 'LOCKED') return false // Không cho chọn ghế người khác đang chọn
 
   if (props.maxSeatsSelect && !(props.selectedSeats?.has(seatId) ?? false)) {
     return (props.selectedSeats?.size ?? 0) < props.maxSeatsSelect
@@ -254,6 +272,11 @@ const handleMouseUp = () => {
               name="i-lucide-armchair"
               class="size-5"
               :class="getSeatClass(row - 1, col - 1)"
+              :style="
+                mode === 'booking' && getSeat(row - 1, col - 1)?.status === 'LOCKED'
+                  ? { color: '#00e080', backgroundColor: '#00e080' }
+                  : {}
+              "
               @click="handleSeatClick(row - 1, col - 1, $event)"
               @mousedown="handleMouseDown(row - 1, col - 1)"
               @mouseenter="handleMouseEnter(row - 1, col - 1)"
@@ -276,7 +299,11 @@ const handleMouseUp = () => {
 
     <div class="flex flex-wrap gap-4 justify-center">
       <div v-for="(type, key) in seatTypes" :key="key" class="flex items-center gap-2">
-        <UIcon name="i-lucide-armchair" :class="['w-6 h-6 rounded', type.color]" />
+        <UIcon
+          name="i-lucide-armchair"
+          :class="['w-6 h-6 rounded', type.color]"
+          :style="type.customColor ? { color: type.customColor, backgroundColor: type.customColor } : {}"
+        />
         <span class="text-sm">{{ type.label }}</span>
       </div>
     </div>
