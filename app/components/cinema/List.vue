@@ -8,11 +8,14 @@ const { isFetching = false } = defineProps<{
   isFetching?: boolean
 }>()
 const hoveredItem = ref<string | null>(null)
+const emits = defineEmits<{
+  edit: []
+}>()
 
 const actionClick = (action: IActionCard, data: ICinema) => {
   cinameDetail.value = data
   if (action === 'EDIT') {
-    console.log(action)
+    emits('edit')
   } else if (action === 'VIEW') {
     navigateTo({ name: 'admin-cinemas-id', params: { id: cinameDetail.value.id } })
   } else {

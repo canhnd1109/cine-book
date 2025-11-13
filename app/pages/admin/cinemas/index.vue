@@ -7,6 +7,7 @@ const isOpen = ref(false)
 const toast = useToast()
 const { t } = useI18n()
 const isProcessing = ref(false)
+const isEditMode = ref(false)
 
 const handleAdd = async (isOpenModal: boolean = false, form: IFormState) => {
   if (isOpenModal) {
@@ -47,12 +48,23 @@ watchEffect(() => {
 })
 
 setRefreshCallback(refresh)
+
+const handleEdit = () => {
+  isEditMode.value = true
+  isOpen.value = true
+}
 </script>
 <template>
   <div class="card-box">
     <CinemaFilter @add="handleAdd" />
-    <CinemaModalAdd v-model:is-open="isOpen" :is-processing="isProcessing" @add="handleAdd" />
-    <CinemaList :is-fetching="isFetching" />
+    <CinemaModalAdd
+      v-model:is-open="isOpen"
+      :is-processing="isProcessing"
+      :is-edit-mode="isEditMode"
+      @add="handleAdd"
+      @edit="handleEdit"
+    />
+    <CinemaList :is-fetching="isFetching" @edit="handleEdit" />
   </div>
 </template>
 
