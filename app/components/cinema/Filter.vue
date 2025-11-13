@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { IFormState } from '~/types/cinema.type'
 
-const { apply, filters } = useCinemaData()
+const { filters, cinemas, cinameDetail, apply } = useCinemaData()
 
 const emits = defineEmits<{
   search: []

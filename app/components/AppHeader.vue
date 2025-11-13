@@ -301,6 +301,7 @@ const handleResetPassword = async () => {
         <NuxtLink to="/movies" class="hover:text-primary">Phim</NuxtLink>
         <!-- /movie-schedules -->
         <NuxtLink to="/showtimes" class="hover:text-primary">Lịch chiếu</NuxtLink>
+        <NuxtLink to="/cinemas" class="hover:text-primary">Rạp chiếu</NuxtLink>
       </nav>
       <div class="flex justify-end items-center !gap-x-4">
         <div v-if="!isAuthenticated" class="flex justify-end items-center !gap-x-4">
