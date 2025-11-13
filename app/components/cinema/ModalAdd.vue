@@ -31,6 +31,14 @@ const form = ref<IFormState>({
   files: []
 })
 
+const selectedProvinceName = computed(() => {
+  return provinceOptions.value.find((p: { label: string; value: number }) => p.value === Number(form.value.province))?.label || ''
+})
+
+const selectedWardName = computed(() => {
+  return wardOptions.value.find((w: { label: string; value: number }) => w.value === Number(form.value.commune))?.label || ''
+})
+
 const emit = defineEmits<{
   add: [value: boolean, form: IFormState]
 }>()
@@ -104,6 +112,10 @@ const submitForm = () => {
   }
 }
 
+const onSubmit = () => {
+  emit('add', false, getFormDataWithLabels())
+}
+
 const canSubmit = computed(() => {
   return (
     form.value.commune &&
@@ -115,12 +127,20 @@ const canSubmit = computed(() => {
     form.value.province
   )
 })
+
+const getFormDataWithLabels = () => {
+  return {
+    ...form.value,
+    province: selectedProvinceName.value,
+    commune: selectedWardName.value
+  }
+}
 </script>
 
 <template>
   <UModal v-model:open="isOpen" :title="t('add-cinema')" class="!w-[1000px]">
     <template #body>
-      <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="emit('add', false, form)">
+      <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="onSubmit">
         <!-- File Upload -->
         <UFormField name="files">
           <UFileUpload

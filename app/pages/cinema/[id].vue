@@ -7,6 +7,15 @@ const { data } = await useAsyncData(`cinema-detail-${route.params.id}`, async ()
   const res = await apiPublic.getCinemaDetail(route.params.id as string)
   return res.value
 })
+
+const fullAddress = computed(() => {
+  return `${data.value!.detailAddress}, ${data.value!.commune}, ${data.value!.province}, Vietnam`
+})
+
+const mapUrl = computed(() => {
+  const encodedAddress = encodeURIComponent(fullAddress.value)
+  return `https://maps.google.com/maps?q=${encodedAddress}&output=embed`
+})
 </script>
 <template>
   <div class="space-y-6 mb-10">
@@ -30,6 +39,19 @@ const { data } = await useAsyncData(`cinema-detail-${route.params.id}`, async ()
       <p class="text-2xl font-bold">{{ data?.name }}</p>
       <p><span class="text-secondary">Địa chỉ:</span> {{ data?.province }} - {{ data?.commune }} - {{ data?.detailAddress }}</p>
       <p><span class="text-secondary">Hotline:</span> {{ formatPhoneNumber(data!.phone) }}</p>
+    </div>
+    <div class="w-5xl container mx-auto">
+      <iframe
+        :src="mapUrl"
+        width="100%"
+        height="400"
+        style="border: 0"
+        allowfullscreen="false"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        class="rounded-lg"
+      />
+      <p class="mt-4">{{ data?.description }}</p>
     </div>
   </div>
 </template>
