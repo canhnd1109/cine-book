@@ -3,7 +3,7 @@ import { DEFAULT_QUERY_PAGINATION } from '~/constants'
 
 definePageMeta({ layout: 'admin', middleware: ['admin'] })
 const { apply } = useMovieData()
-
+const { apply: applyCinema } = useCinemaData()
 const resetFilter = () => {
   apply(
     {
@@ -18,6 +18,7 @@ const resetFilter = () => {
     },
     { resetPage: true }
   )
+  applyCinema({ keyWord: '' }, { resetPage: true })
 }
 resetFilter()
 </script>
