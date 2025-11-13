@@ -25,7 +25,6 @@ const handleMovieClick = (movieId: string) => {
       <p class="text-3xl font-bold">{{ title }}</p>
     </div>
 
-    <!-- Loading skeleton -->
     <div v-if="loading" class="mt-6 flex gap-8 overflow-hidden">
       <BaseSkeletonCard v-for="n in 6" :key="n" />
     </div>

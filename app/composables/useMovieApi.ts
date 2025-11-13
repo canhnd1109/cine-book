@@ -28,33 +28,51 @@ const createBaseFetchOptions = <T = IMovie[]>(options?: Partial<UseFetchOptions<
  * Hook để fetch top 10 most viewed movies
  */
 export const useFetchTopMovies = () => {
-  return useFetch<MovieApiResponse<IMovie[]>>('/public-api/movie/filter', {
+  const { data, pending, error, refresh } = useFetch<MovieApiResponse<IMovie[]>>('/public-api/movie/filter', {
     ...createBaseFetchOptions(),
     key: 'top-10-most-viewed-movies',
     query: { orderBy: '4' }
   })
+
+  return {
+    data,
+    pending,
+    error,
+    refresh
+  }
 }
 
 /**
  * Hook để fetch showing movies
  */
 export const useFetchShowingMovies = () => {
-  return useFetch<MovieApiResponse<IMovie[]>>('/public-api/movie/showing', {
+  const { data, pending, error, refresh } = useFetch<MovieApiResponse<IMovie[]>>('/public-api/movie/showing', {
     ...createBaseFetchOptions(),
     key: 'showing-movies'
   })
+  return {
+    data,
+    pending,
+    error,
+    refresh
+  }
 }
 
 /**
  * Hook để fetch upcoming movies
  */
 export const useFetchUpcomingMovies = () => {
-  return useFetch<MovieApiResponse<IMovie[]>>('/public-api/movie/upcoming', {
+  const { data, pending, error, refresh } = useFetch<MovieApiResponse<IMovie[]>>('/public-api/movie/upcoming', {
     ...createBaseFetchOptions(),
     key: 'upcoming-movies'
   })
+  return {
+    data,
+    pending,
+    error,
+    refresh
+  }
 }
-
 /**
  * Hook để fetch movie detail by ID
  */

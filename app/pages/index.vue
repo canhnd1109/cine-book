@@ -31,9 +31,9 @@ const imagesList = [
   '/images/img-8.png'
 ]
 
-const { data: topViewedData, execute: fetchTopViewed } = useFetchTopMovies()
-const { data: showingMoviesData, execute: fetchShowing } = useFetchShowingMovies()
-const { data: upcomingMoviesData, execute: fetchUpcoming } = useFetchUpcomingMovies()
+const { data: topViewedData, pending: topViewedPending, refresh: fetchTopViewed } = useFetchTopMovies()
+const { data: showingMoviesData, pending: showingPending, refresh: fetchShowing } = useFetchShowingMovies()
+const { data: upcomingMoviesData, pending: upcomingPending, refresh: fetchUpcoming } = useFetchUpcomingMovies()
 
 onMounted(async () => {
   await Promise.all([fetchTopViewed(), fetchShowing(), fetchUpcoming()])
@@ -63,13 +63,13 @@ watchEffect(() => {
       </SwiperSlide>
     </Swiper>
 
-    <BaseMovieCarousel :title="t('top-10-most-watched')" :movies="top10MostViewedMovies" />
+    <BaseMovieCarousel :title="t('top-10-most-watched')" :loading="topViewedPending" :movies="top10MostViewedMovies" />
 
     <div class="border border-solid border-border-light dark:border-border-dark my-10 mx-12" />
-    <BaseMovieCarousel :title="t('upcoming-movies')" :movies="upcomingMovies" />
+    <BaseMovieCarousel :title="t('upcoming-movies')" :loading="upcomingPending" :movies="upcomingMovies" />
     <div class="border border-solid border-border-light dark:border-border-dark my-10 mx-12" />
 
-    <BaseMovieCarousel :title="t('now-showing')" :movies="showingMovies" />
+    <BaseMovieCarousel :title="t('now-showing')" :loading="showingPending" :movies="showingMovies" />
 
     <div class="dark:bg-[#111] bg-bg-light rounded-[50px] py-24 mx-12 my-6">
       <div class="px-10 space-y-10">
