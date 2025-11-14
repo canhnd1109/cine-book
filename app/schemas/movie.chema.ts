@@ -16,7 +16,12 @@ export function createMovieSchema(t: (key: string) => string) {
       }),
 
       nation: z.string().min(1, t('nation-required')),
-      duration: z.string().min(1, t('duration-required')),
+      duration: z
+        .any()
+        .refine(val => val !== undefined && val !== null && val !== '', { message: t('duration-required') })
+        .transform(val => Number(val))
+        .refine(val => !isNaN(val), { message: t('duration-invalid') })
+        .refine(val => val > 0, { message: t('duration-must-be-positive') }),
       note: z.string().optional(),
 
       price: z

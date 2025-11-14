@@ -24,7 +24,7 @@ const form = ref<ICreateMovie>({
   releaseDate: '',
   closeDate: '',
   nation: '',
-  duration: '',
+  duration: 0,
   note: '',
   price: 0,
   trailerUrl: '',
@@ -60,7 +60,7 @@ watch(
         releaseDate: newData.releaseDate,
         closeDate: newData.closeDate,
         nation: newData.nation || '',
-        duration: newData.duration?.toString() || '',
+        duration: newData.duration || 0,
         note: newData.note || '',
         price: newData.price || 0,
         trailerUrl: newData.trailerUrl || '',
@@ -81,7 +81,7 @@ const resetForm = () => {
     releaseDate: '',
     closeDate: '',
     nation: '',
-    duration: '',
+    duration: 0,
     note: '',
     price: 0,
     trailerUrl: '',
@@ -169,6 +169,17 @@ const formattedPrice = computed({
     form.value.price = numberValue ? parseInt(numberValue) : 0
   }
 })
+
+const formattedDuration = computed({
+  get: () => {
+    return form.value.duration || 0
+  },
+  set: (value: string | number) => {
+    const numberValue = typeof value === 'string' ? value.replace(/[^\d]/g, '') : value
+    form.value.duration = numberValue ? parseInt(numberValue.toString()) : 0
+  }
+})
+
 defineExpose({
   resetForm
 })
@@ -212,7 +223,7 @@ defineExpose({
             <UInput v-model="form.name" :placeholder="t('movie-name')" :ui="{ base: 'h-10' }" class="w-full" />
           </UFormField>
           <UFormField :label="t('movie-duration')" name="duration">
-            <UInput v-model="form.duration" :placeholder="t('movie-duration')" :ui="{ base: 'h-10' }" class="w-full" />
+            <UInput v-model="formattedDuration" :placeholder="t('movie-duration')" :ui="{ base: 'h-10' }" class="w-full" />
           </UFormField>
           <UFormField :label="t('director-name')" name="director">
             <UInput v-model="form.director" :placeholder="t('enter-director-movie-name')" :ui="{ base: 'h-10' }" class="w-full" />

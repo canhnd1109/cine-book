@@ -106,7 +106,7 @@
   "please-select-poster-image": "Please select poster image",
   "iamge-size-must-not-exceed-5mb": "Image size must not exceed 5MB",
   "only-accept-image-formats-jpeg-png-gif-webp": "Only accept image formats: JPEG, PNG, GIF, WEBP",
-  "movie-duration": "Movie duration",
+  "movie-duration": "Movie duration (minutes)",
   "genre": "Genre movie",
   "delete": "Delete",
   "deleting": "Deleting",
@@ -239,5 +239,7 @@
   "delete-cinema-title": "Delete Cinema",
   "delete-cinema-confirm": "Are you sure you want to delete the cinema \"{name}\"?",
   "note-movie": "Note",
-  "movie-detail": "Movie Detail"
+  "movie-detail": "Movie Detail",
+  "duration-invalid": "Duration must be a valid number.",
+  "duration-must-be-positive": "Duration must be a positive number."
 }
