@@ -41,14 +41,14 @@ const action = (action: IActionCard, item: IMovie) => {
           <p class="mt-2 line-clamp-2 text-center font-medium">
             {{ item.name }}
           </p>
-          <p>
+          <!-- <p>
             <span class="text-[#90a1b9] text-sm">{{ $t('director') }}: </span>
             <span>{{ item.director }}</span>
           </p>
           <p>
             <span class="text-[#90a1b9] text-sm">{{ $t('performer') }}: </span>
             <span>{{ item.performer }}</span>
-          </p>
+          </p> -->
           <p>
             <span class="text-[#90a1b9] text-sm">{{ $t('releaseDate') }}: </span>
             <span>{{ useFormatDate(item.releaseDate, 'DD/MM/YYYY hh:mm:ss') }}</span>
@@ -65,10 +65,10 @@ const action = (action: IActionCard, item: IMovie) => {
             <span class="text-[#90a1b9] text-sm">{{ $t('duration') }}: </span>
             <span>{{ item.duration }}</span>
           </p>
-          <p>
+          <!-- <p>
             <span class="text-[#90a1b9] text-sm">{{ $t('note') }}: </span>
             <span>{{ item.note }}</span>
-          </p>
+          </p> -->
           <p>
             <span class="text-[#90a1b9] text-sm">{{ $t('price-ticket') }}: </span>
             <span>{{ formatPrice(item.price) }}</span>
@@ -79,7 +79,7 @@ const action = (action: IActionCard, item: IMovie) => {
           </p>
 
           <!-- eslint-disable-next-line vue/no-v-html -->
-          <p class="line-clamp-3" v-html="item.description" />
+          <!-- <p class="line-clamp-3" v-html="item.description" /> -->
         </template>
       </BaseCard>
     </div>

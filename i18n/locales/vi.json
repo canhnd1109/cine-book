@@ -238,5 +238,6 @@
   "something-went-wrong": "Đã xảy ra lỗi, vui lòng thử lại sau",
   "delete-cinema-title": "Xóa rạp chiếu",
   "delete-cinema-confirm": "Bạn có chắc chắn muốn xóa rạp chiếu \"{name}\" không?",
-  "note-movie": "Ghi chú"
+  "note-movie": "Ghi chú",
+  "movie-detail": "Chi tiết phim"
 }

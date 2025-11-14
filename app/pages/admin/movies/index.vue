@@ -20,6 +20,7 @@ const modalSettingRef = ref()
 const modalAddRef = ref()
 const isConfirmOpen = ref(false)
 const isEditMode = ref(false)
+const isOpenModalDetail = ref(false)
 
 const {
   data,
@@ -107,6 +108,8 @@ const handleAction = (action: IActionCard, item: IMovie) => {
     // Handle edit action
   } else if (action === 'DELETE') {
     isConfirmOpen.value = true
+  } else if (action === 'VIEW') {
+    isOpenModalDetail.value = true
   }
 }
 
@@ -174,6 +177,7 @@ onMounted(() => {
       :is-processing="isProcessing"
       @setting="handleSetting"
     />
+    <MovieModalDetail v-model:is-open="isOpenModalDetail" />
     <BaseConfirmModal
       v-model:open="isConfirmOpen"
       variant="danger"

@@ -238,5 +238,6 @@
   "something-went-wrong": "Something went wrong, please try again later",
   "delete-cinema-title": "Delete Cinema",
   "delete-cinema-confirm": "Are you sure you want to delete the cinema \"{name}\"?",
-  "note-movie": "Note"
+  "note-movie": "Note",
+  "movie-detail": "Movie Detail"
 }
