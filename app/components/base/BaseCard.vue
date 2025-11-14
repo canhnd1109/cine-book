@@ -10,6 +10,7 @@ interface Props {
   animationDelay?: number
   canScale?: boolean
   showBorder?: boolean
+  visibleActions?: IActionCard[]
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -17,7 +18,8 @@ const props = withDefaults(defineProps<Props>(), {
   showActions: true,
   animationDelay: 200,
   canScale: true,
-  showBorder: false
+  showBorder: false,
+  visibleActions: () => ['EDIT', 'SETTING', 'VIEW', 'DELETE']
 })
 
 const emit = defineEmits<{
@@ -43,13 +45,16 @@ const handleActionClick = (action: IActionCard) => {
       <slot name="content" />
     </div>
 
-    <div v-if="showActions" class="action-buttons-wrapper dark:bg-[#0f172a] bg-white flex items-center justify-center space-x-2">
+    <div
+      v-if="showActions"
+      class="action-buttons-wrapper dark:bg-bg-seconary-dark bg-white flex items-center justify-center space-x-2"
+    >
       <!-- <template #actions="{ item, onAction }"> -->
       <slot name="actions" :item="item" :on-action="handleActionClick">
-        <UTooltip :text="t('edit')" :delay-duration="0">
+        <UTooltip v-if="visibleActions.includes('EDIT')" :text="t('edit')" :delay-duration="0">
           <UButton class="hover:cursor-pointer" icon="i-lucide-edit" size="sm" variant="ghost" @click="handleActionClick('EDIT')"
         /></UTooltip>
-        <UTooltip :text="t('settings')" :delay-duration="0">
+        <UTooltip v-if="visibleActions.includes('SETTING')" :text="t('settings')" :delay-duration="0">
           <UButton
             class="hover:cursor-pointer"
             icon="i-lucide-settings"
@@ -57,7 +62,7 @@ const handleActionClick = (action: IActionCard) => {
             variant="ghost"
             @click="handleActionClick('SETTING')"
         /></UTooltip>
-        <UTooltip :text="t('view')" :delay-duration="0">
+        <UTooltip v-if="visibleActions.includes('VIEW')" :text="t('view')" :delay-duration="0">
           <UButton
             class="hover:cursor-pointer"
             icon="i-lucide-eye"
@@ -66,7 +71,7 @@ const handleActionClick = (action: IActionCard) => {
             @click="handleActionClick('VIEW')"
           />
         </UTooltip>
-        <UTooltip :text="t('delete')" :delay-duration="0">
+        <UTooltip v-if="visibleActions.includes('DELETE')" :text="t('delete')" :delay-duration="0">
           <UButton
             class="hover:cursor-pointer"
             icon="i-lucide-trash"

@@ -157,7 +157,15 @@ const handleSave = async () => {
     </div>
 
     <div v-for="item in rooms" :key="item.roomId">
-      <BaseCard :item="item" :index="0" class="w-full" :can-scale="false" :show-border="true" @action-click="actionClick">
+      <BaseCard
+        :item="item"
+        :index="0"
+        class="w-full"
+        :can-scale="false"
+        :show-border="true"
+        :visible-actions="['EDIT', 'DELETE']"
+        @action-click="actionClick"
+      >
         <template #content>
           <p>{{ t('room-name') }}: {{ item.name }}</p>
 
