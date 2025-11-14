@@ -167,7 +167,7 @@ const items = computed<DropdownMenuItem[][]>(() => {
   if (isAdmin.value) {
     menuItems.push([
       {
-        label: 'Quản trị',
+        label: t('admin'),
         icon: 'i-lucide-shield',
         onSelect() {
           router.push('/admin')
@@ -179,7 +179,7 @@ const items = computed<DropdownMenuItem[][]>(() => {
   // Add user profile menu
   menuItems.push([
     {
-      label: 'Thông tin cá nhân',
+      label: t('profile'),
       icon: 'i-lucide-user',
       onSelect() {
         router.push({ path: '/profile', query: { tab: 0 } })
@@ -190,7 +190,7 @@ const items = computed<DropdownMenuItem[][]>(() => {
   // Add logout menu
   menuItems.push([
     {
-      label: 'Logout',
+      label: t('logout'),
       icon: 'i-lucide-log-out',
       onSelect() {
         logOut()
@@ -297,14 +297,13 @@ const handleResetPassword = async () => {
         <img src="/images/logo.png" alt="logo" />
       </div>
       <nav aria-label="Primary" class="flex justify-end items-center gap-x-8 text-lg">
-        <NuxtLink to="/" class="hover:text-primary">Trang chủ</NuxtLink>
-        <NuxtLink to="/movies" class="hover:text-primary">Phim</NuxtLink>
-        <!-- /movie-schedules -->
-        <NuxtLink to="/showtimes" class="hover:text-primary">Lịch chiếu</NuxtLink>
-        <NuxtLink to="/cinemas" class="hover:text-primary">Rạp chiếu</NuxtLink>
+        <NuxtLink to="/" class="hover:text-primary">{{ t('navigation.home') }}</NuxtLink>
+        <NuxtLink to="/movies" class="hover:text-primary">{{ t('navigation.movies') }}</NuxtLink>
+        <NuxtLink to="/showtimes" class="hover:text-primary">{{ t('navigation.showtimes') }}</NuxtLink>
+        <NuxtLink to="/cinemas" class="hover:text-primary">{{ t('navigation.cinemas') }}</NuxtLink>
       </nav>
-      <div class="flex justify-end items-center !gap-x-4">
-        <div v-if="!isAuthenticated" class="flex justify-end items-center !gap-x-4">
+      <div class="flex justify-end items-center gap-x-4!">
+        <div v-if="!isAuthenticated" class="flex justify-end items-center gap-x-4!">
           <BaseButton :text="t('header.signup')" title="Sign up" @click="isOpenModalSignUp = true" />
           <BaseButton :text="t('header.signin')" variant="solid" title="Sign in" @click="isOpenModalSignIn = true" />
         </div>

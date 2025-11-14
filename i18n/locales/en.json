@@ -241,5 +241,14 @@
   "note-movie": "Note",
   "movie-detail": "Movie Detail",
   "duration-invalid": "Duration must be a valid number.",
-  "duration-must-be-positive": "Duration must be a positive number."
+  "duration-must-be-positive": "Duration must be a positive number.",
+  "navigation": {
+    "home": "Home",
+    "movies": "Movies",
+    "showtimes": "Showtimes",
+    "cinemas": "Cinemas"
+  },
+  "admin": "Admin",
+  "profile": "Profile",
+  "logout": "Logout"
 }

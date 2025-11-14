@@ -241,5 +241,14 @@
   "note-movie": "Ghi chú",
   "movie-detail": "Chi tiết phim",
   "duration-invalid": "Thời lượng phải là một số hợp lệ.",
-  "duration-must-be-positive": "Thời lượng phải là một số dương."
+  "duration-must-be-positive": "Thời lượng phải là một số dương.",
+  "navigation": {
+    "home": "Trang chủ",
+    "movies": "Phim",
+    "showtimes": "Lịch chiếu",
+    "cinemas": "Rạp chiếu"
+  },
+  "admin": "Quản trị",
+  "profile": "Thông tin cá nhân",
+  "logout": "Đăng xuất"
 }
