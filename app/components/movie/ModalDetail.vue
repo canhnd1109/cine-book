@@ -36,9 +36,10 @@ const { movieDetail } = useMovieData()
         <span class="text-[#90a1b9] text-sm">{{ $t('duration') }}: </span>
         <span>{{ movieDetail.duration }}</span>
       </p>
-      <p>
+      <p class="flex justify-start items-center gap-2">
         <span class="text-[#90a1b9] text-sm">{{ $t('note') }}: </span>
-        <span class="text-text-error">{{ movieDetail.note }}</span>
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <span class="text-text-error line-clamp-3" v-html="movieDetail.note" />
       </p>
       <p>
         <span class="text-[#90a1b9] text-sm">{{ $t('price-ticket') }}: </span>

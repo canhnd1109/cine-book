@@ -283,10 +283,10 @@ defineExpose({
           <UInput v-model="form.trailerUrl" :placeholder="t('enter-trailer')" :ui="{ base: 'h-10' }" class="w-full" />
         </UFormField>
         <UFormField :label="t('note-movie')" name="note">
-          <UTextarea v-model="form.note" :placeholder="t('note-movie')" class="w-full" />
+          <BaseTextEditor v-model="form.note" :placeholder="t('note-movie')" />
         </UFormField>
         <UFormField :label="t('description-movie')" name="description">
-          <UTextarea v-model="form.description" :placeholder="t('description-movie')" class="w-full" />
+          <BaseTextEditor v-model="form.description" :placeholder="t('description-movie')" />
         </UFormField>
       </UForm>
     </template>
