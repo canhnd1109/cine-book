@@ -1,18 +1,8 @@
 <script setup lang="ts" generic="T extends SelectItem">
 import type { SelectItem } from '@nuxt/ui'
 
-const {
-  items,
-  labelKey = 'label',
-  valueKey = 'value',
-  baseStyle = '',
-  valueStyle = '',
-  contentStyle = '',
-  placeholder = '',
-  multiple = false,
-  required = false
-} = defineProps<{
-  items: T
+const props = defineProps<{
+  items: T[]
   labelKey?: string
   valueKey?: string
   baseStyle?: string
@@ -23,19 +13,18 @@ const {
   required?: boolean
 }>()
 
-const model = defineModel<any>({
-  required: false,
-  default: ''
-})
+const { labelKey = 'label', valueKey = 'value', baseStyle = '', valueStyle = '', contentStyle = '', placeholder = '' } = props
+
+const model = defineModel<any>()
 
 const emit = defineEmits<{
-  'update:modelValue': [value: any]
+  'update:modelValue': [value: string | string[] | undefined]
   blur: [e: FocusEvent]
   focus: []
-  change: [value: any]
+  change: [value: string | string[] | undefined]
 }>()
 
-function handleChange(value: any) {
+function handleChange(value: string | string[] | undefined) {
   emit('update:modelValue', value)
   emit('change', value)
 }
@@ -44,13 +33,13 @@ function handleChange(value: any) {
 <template>
   <USelect
     v-model="model"
-    :items="[items]"
+    :items="props.items"
     :value-key="valueKey as string"
     :label-key="labelKey as string"
     class="w-40"
     :placeholder
-    :multiple
-    :required
+    :multiple="props.multiple"
+    :required="props.required"
     :ui="{
       base: `h-10 hover:cursor-pointer ${baseStyle}`,
       value: `ml-2 hover:cursor-pointer ${valueStyle}`,

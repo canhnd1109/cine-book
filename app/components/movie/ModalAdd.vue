@@ -46,6 +46,13 @@ watch(
   newData => {
     if (newData && props.isEditMode) {
       existingPosterUrl.value = newData.posterUrl || ''
+
+      // Map genre names to IDs
+      const genreNames = newData.genres || []
+      const genreIds = genreNames
+        .map((name: string) => genres.value.find(g => g.name === name)?.id)
+        .filter((id): id is string => id !== undefined)
+
       form.value = {
         director: newData.director || '',
         performer: newData.performer || '',
@@ -59,7 +66,7 @@ watch(
         trailerUrl: newData.trailerUrl || '',
         posterFile: null,
         name: newData.name || '',
-        genreIds: newData.genres || []
+        genreIds
       }
     }
   },
@@ -171,7 +178,7 @@ defineExpose({
   <UModal
     v-model:open="isOpen"
     :title="isEditMode ? t('edit-movie') : t('add-movie')"
-    class="!w-[1000px]"
+    class="w-[1000px]"
     @close:prevent="resetForm"
   >
     <template #body>
@@ -263,6 +270,9 @@ defineExpose({
 
         <UFormField :label="t('trailer')" name="trailerUrl">
           <UInput v-model="form.trailerUrl" :placeholder="t('enter-trailer')" :ui="{ base: 'h-10' }" class="w-full" />
+        </UFormField>
+        <UFormField :label="t('note-movie')" name="note">
+          <UTextarea v-model="form.note" :placeholder="t('note-movie')" class="w-full" />
         </UFormField>
         <UFormField :label="t('description-movie')" name="description">
           <UTextarea v-model="form.description" :placeholder="t('description-movie')" class="w-full" />

@@ -237,5 +237,6 @@
   "please-enter-price-for-all-seats": "Vui lòng nhập giá cho tất cả các ghế đã chọn",
   "something-went-wrong": "Đã xảy ra lỗi, vui lòng thử lại sau",
   "delete-cinema-title": "Xóa rạp chiếu",
-  "delete-cinema-confirm": "Bạn có chắc chắn muốn xóa rạp chiếu \"{name}\" không?"
+  "delete-cinema-confirm": "Bạn có chắc chắn muốn xóa rạp chiếu \"{name}\" không?",
+  "note-movie": "Ghi chú"
 }
