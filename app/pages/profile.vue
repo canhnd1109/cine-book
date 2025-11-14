@@ -34,6 +34,20 @@ const currentTab = computed(() => {
 const changeTab = (tabIndex: number) => {
   router.push({ query: { tab: tabIndex } })
 }
+
+const onSubmit = async () => {
+  try {
+    const isValid = await formRef.value?.validate()
+    if (!isValid) {
+      return
+    }
+
+    console.log('Form is valid, submitting...', form.value)
+    // Call API here
+  } catch (error) {
+    console.error('Validation error:', error)
+  }
+}
 </script>
 
 <template>
@@ -49,7 +63,7 @@ const changeTab = (tabIndex: number) => {
       <div v-if="currentTab === 0" class="animate-fade-in">
         <p class="text-xl font-semibold mb-4">{{ t('my-account') }}</p>
         <div class="rounded-lg">
-          <UForm ref="formRef" :schema :state="form" class="space-y-4">
+          <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="onSubmit">
             <div class="grid grid-cols-2 gap-4">
               <UFormField :label="t('auth.last-name')" name="lastName">
                 <UInput v-model="form.lastName" :placeholder="t('auth.last-name')" :ui="{ base: 'h-10' }" class="w-full" />
@@ -58,7 +72,7 @@ const changeTab = (tabIndex: number) => {
                 <UInput v-model="form.firstName" :placeholder="t('auth.first-name')" :ui="{ base: 'h-10' }" class="w-full" />
               </UFormField>
               <UFormField :label="t('auth.email')" name="email">
-                <UInput v-model="form.email" :placeholder="t('auth.email')" :ui="{ base: 'h-10' }" class="w-full" />
+                <UInput v-model="form.email" :placeholder="t('auth.email')" disabled :ui="{ base: 'h-10' }" class="w-full" />
               </UFormField>
               <UFormField :label="t('auth.phone-number')" name="phoneNumber">
                 <UInput v-model="form.phone" :placeholder="t('auth.phone-number')" :ui="{ base: 'h-10' }" class="w-full" />
@@ -68,7 +82,7 @@ const changeTab = (tabIndex: number) => {
         </div>
         <div class="flex justify-end mt-6 gap-4">
           <BaseButton :text="t('change-password')" />
-          <BaseButton :text="t('update-information')" variant="solid" />
+          <BaseButton :text="t('update-information')" variant="solid" @click="onSubmit" />
         </div>
       </div>
 

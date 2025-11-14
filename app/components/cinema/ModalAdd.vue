@@ -237,7 +237,7 @@ defineExpose({
   <UModal
     v-model:open="isOpen"
     :title="isEditMode ? t('edit-cinema') : t('add-cinema')"
-    class="!w-[1000px]"
+    class="w-[1000px]"
     @close:prevent="resetForm"
   >
     <template #body>
