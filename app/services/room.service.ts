@@ -12,4 +12,7 @@ export class RoomService extends BaseService {
   async updateRoom(roomId: string, body: Omit<IBodyRoom, 'cinemaId'>): Promise<IResponseMessage> {
     return this.put<IResponseMessage>(`/${roomId}`, body)
   }
+  async deleteRoom(roomId: string): Promise<IResponseMessage> {
+    return this.delete<IResponseMessage>(`/room/${roomId}`)
+  }
 }

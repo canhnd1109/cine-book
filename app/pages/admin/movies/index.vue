@@ -136,7 +136,7 @@ const handleSetting = async (form: ICreateShowtime) => {
 const handleDelete = async () => {
   isProcessing.value = true
   try {
-    const { message } = await apiPublic.deleteMovie(movieDetail.value.id)
+    const { message } = await apiMovie.deleteMovie(movieDetail.value.id)
     toast.add({
       title: t('success'),
       description: message,

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { apiPublic } from '~/services'
+import { apiPublic, apiRoom } from '~/services'
 import type { ISeat, IRoom, TypeSeat, TypeSeatStatus } from '~/types/cinema.type'
 import type { IActionCard } from '~/types/constant.type'
 
@@ -98,7 +98,7 @@ const handleDelete = async () => {
   if (!roomDetail.value.roomId) return
   isProcessing.value = true
   try {
-    const { message } = await apiPublic.deleteRoom(roomDetail.value.roomId)
+    const { message } = await apiRoom.deleteRoom(roomDetail.value.roomId)
     useToast().add({
       title: t('success'),
       description: message,

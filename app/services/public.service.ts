@@ -1,4 +1,4 @@
-import type { IResponseData, IResponseMessage, IResponsePagination } from '~/types/response.type'
+import type { IResponseData, IResponsePagination } from '~/types/response.type'
 import BaseService from './base.service'
 import type { IGenre, IGenreFilter } from '~/types/genre.type'
 import type { IMovie, IMovieFilter } from '~/types/movie.type'
@@ -28,9 +28,7 @@ export class PublicService extends BaseService {
   async fetchUpcomingMovies(): Promise<IResponseData<IResponsePagination<IMovie[]>>> {
     return this.get<IResponseData<IResponsePagination<IMovie[]>>>('/movie/upcoming')
   }
-  async deleteMovie(movieId: string): Promise<IResponseMessage> {
-    return this.delete<IResponseMessage>(`/movie/${movieId}`)
-  }
+
   async fetchMoviesByDay(day: string): Promise<IResponseData<IMovie[]>> {
     return this.get<IResponseData<IMovie[]>>(`/movie/by-date/${day}`)
   }
@@ -59,10 +57,6 @@ export class PublicService extends BaseService {
 
   async fetchRoomsOfCinema(cinemaId: string): Promise<IResponseData<{ roomId: string; name: string }>> {
     return this.get<IResponseData<{ roomId: string; name: string }>>(`/room/cinema/${cinemaId}/simple`)
-  }
-
-  async deleteRoom(roomId: string): Promise<IResponseMessage> {
-    return this.delete<IResponseMessage>(`/room/${roomId}`)
   }
 
   // TODO: SHOWTIME
