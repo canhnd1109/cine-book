@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { updateProfileSchema, type IFormChangePassword, type IFormUpdateProfile } from '~/schemas/auth.schema'
-import { apiUser } from '~/services'
+import { apiPublic, apiUser } from '~/services'
+import type { IBooking } from '~/types/booking.type'
+import { getPaginationRowModel } from '@tanstack/vue-table'
+import type { TableColumn } from '@nuxt/ui'
 
+const table = useTemplateRef('table')
 const route = useRoute()
 const router = useRouter()
 const { userInfo } = storeToRefs(useAuthStore())
@@ -12,6 +16,7 @@ const { getUserInfo } = useAuthStore()
 
 const isProcessing = ref(false)
 const isOpenModalChangePassword = ref(false)
+const bookings = ref<IBooking[]>([])
 
 const formRef = ref()
 const form = ref<IFormUpdateProfile>({
@@ -77,6 +82,61 @@ const handleChangePassword = async (form: IFormChangePassword) => {
     isProcessing.value = false
   }
 }
+const pagination = ref({
+  pageIndex: 0,
+  pageSize: 50
+})
+
+const { data, pending } = await useAsyncData('booking-list', async () => {
+  const { value } = await apiPublic.fetchBooking()
+  return value
+})
+watchEffect(() => {
+  bookings.value = data.value || []
+})
+const columns: TableColumn<IBooking>[] = [
+  {
+    accessorKey: 'stt',
+    header: 'STT',
+    cell: ({ row }) => row.index + 1
+  },
+  {
+    accessorKey: 'movieName',
+    header: 'Movie Name'
+  },
+
+  {
+    accessorKey: 'genreName',
+    header: 'Genre'
+  },
+  {
+    accessorKey: 'cinemaName',
+    header: 'Cinema Name'
+  },
+  {
+    accessorKey: 'roomName',
+    header: 'Room Name'
+  },
+  {
+    accessorKey: 'seatNames',
+    header: 'Seat Names'
+  },
+  {
+    accessorKey: 'cinemaAddress',
+    header: 'Cinema Address'
+  },
+  {
+    accessorKey: 'paymentStatus',
+    header: 'Payment Status'
+  },
+  {
+    accessorKey: 'totalPrice',
+    header: () => h('div', { class: 'text-right' }, 'Total Price'),
+    cell: ({ row }) => {
+      return h('div', { class: 'text-right font-medium' }, formatPrice(row.getValue('totalPrice')))
+    }
+  }
+]
 </script>
 
 <template>
@@ -88,8 +148,8 @@ const handleChangePassword = async (form: IFormChangePassword) => {
       <BaseButton :text="t('ticket-history')" :variant="currentTab === 1 ? 'solid' : 'outline'" @click="changeTab(1)" />
     </div>
 
-    <div class="max-w-4xl mx-auto px-4">
-      <div v-if="currentTab === 0" class="animate-fade-in">
+    <div>
+      <div v-if="currentTab === 0" class="animate-fade-in max-w-4xl mx-auto px-4">
         <p class="text-xl font-semibold mb-4">{{ t('my-account') }}</p>
         <div class="rounded-lg">
           <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="onSubmit">
@@ -121,18 +181,39 @@ const handleChangePassword = async (form: IFormChangePassword) => {
         </div>
       </div>
 
-      <div v-if="currentTab === 1" class="animate-fade-in">
-        <p class="text-xl font-semibold mb-4">{{ t('ticket-history') }}</p>
-        <div class="p-6 rounded-lg">
-          <p>Nội dung lịch sử mua vé</p>
+      <div
+        v-if="currentTab === 1"
+        class="animate-fade-in mx-10 border border-solid border-border-light dark:border-border-dark p-6 rounded-lg"
+      >
+        <div class="w-full space-y-4 pb-4">
+          <UTable
+            ref="table"
+            v-model:pagination="pagination"
+            :loading="pending"
+            :data="data"
+            :columns="columns"
+            :pagination-options="{
+              getPaginationRowModel: getPaginationRowModel()
+            }"
+            class="flex-1"
+          />
+
+          <div class="flex justify-center border-t border-default pt-4">
+            <UPagination
+              :default-page="(table?.tableApi?.getState().pagination.pageIndex || 0) + 1"
+              :items-per-page="table?.tableApi?.getState().pagination.pageSize"
+              :total="table?.tableApi?.getFilteredRowModel().rows.length"
+              @update:page="p => table?.tableApi?.setPageIndex(p - 1)"
+            />
+          </div>
         </div>
       </div>
+      <AuthModalChangePassword
+        v-model:is-open="isOpenModalChangePassword"
+        :is-loading="isProcessing"
+        @submit="handleChangePassword"
+      />
     </div>
-    <AuthModalChangePassword
-      v-model:is-open="isOpenModalChangePassword"
-      :is-loading="isProcessing"
-      @submit="handleChangePassword"
-    />
   </div>
 </template>
 
