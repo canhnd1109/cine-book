@@ -10,7 +10,15 @@ const route = useRoute()
 const movieId = computed(() => route.params.id as string)
 
 // Socket setup
-const { joinShowtimeRoom, leaveShowtimeRoom, selectSeat, onSeatSelected, offSeatSelected } = useSocket()
+const {
+  joinShowtimeRoom,
+  leaveShowtimeRoom,
+  selectSeat,
+  onSeatSelected,
+  offSeatSelected,
+  onBulkSeatsUpdate,
+  offBulkSeatsUpdate
+} = useSocket()
 
 // State
 const showTime = ref<TimeSlot | null>(null)
@@ -118,12 +126,24 @@ const stopCountdown = () => {
 }
 
 onMounted(() => {
+  // Handle single seat selection (real-time updates)
   onSeatSelected(data => {
     if (data.selected) {
       lockedSeats.value.add(data.seatId)
     } else {
       lockedSeats.value.delete(data.seatId)
     }
+  })
+
+  // Handle bulk seats update (on connect/disconnect)
+  onBulkSeatsUpdate(seatIds => {
+    // Clear current locked seats
+    lockedSeats.value.clear()
+
+    // Add all seats from the array
+    seatIds.forEach(seatId => {
+      lockedSeats.value.add(seatId)
+    })
   })
 })
 
@@ -134,6 +154,7 @@ onUnmounted(() => {
     leaveShowtimeRoom(showTime.value.id)
   }
   offSeatSelected()
+  offBulkSeatsUpdate()
 })
 
 // Watch showtime changes

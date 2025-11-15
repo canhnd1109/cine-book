@@ -16,6 +16,7 @@ export const useSocket = () => {
 
   const currentShowtime = ref<string>('')
   const messageHandlers = ref<Set<(data: SeatSelection) => void>>(new Set())
+  const bulkUpdateHandlers = ref<Set<(seatIds: string[]) => void>>(new Set())
 
   const connect = (showtimeId: string) => {
     if (currentShowtime.value === showtimeId) {
@@ -30,17 +31,32 @@ export const useSocket = () => {
     const ws = socketManager.createConnection(showtimeId)
 
     ws.onmessage = (event: MessageEvent) => {
+      console.log('🚀 ~ connect ~ event:', event.data)
       // Check if it's a text message (not JSON)
-      if (typeof event.data === 'string' && !event.data.trim().startsWith('{')) {
+      if (typeof event.data === 'string' && !event.data.trim().startsWith('{') && !event.data.trim().startsWith('[')) {
         return
       }
 
       try {
-        const data: SeatSelection = JSON.parse(event.data)
+        const parsed = JSON.parse(event.data)
 
-        // Notify all registered handlers
-        messageHandlers.value.forEach(handler => {
-          handler(data)
+        // Case 1: Array of seat IDs (bulk update on connect/disconnect)
+        // Example: ["7ce1743e-0c91-4f5c-add7-7f85df6442a7", "5f0d5453-d752-4eae-86cb-c6af77285a37"]
+        if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === 'string') {
+          bulkUpdateHandlers.value.forEach(handler => {
+            handler(parsed as string[])
+          })
+          return
+        }
+
+        // Case 2: Single seat selection or array of seat selection objects
+        const dataArray: SeatSelection[] = Array.isArray(parsed) ? parsed : [parsed]
+
+        // Notify all registered handlers for each seat selection
+        dataArray.forEach(data => {
+          messageHandlers.value.forEach(handler => {
+            handler(data)
+          })
         })
       } catch (error) {
         console.error('❌ Error parsing WebSocket message:', error)
@@ -115,6 +131,24 @@ export const useSocket = () => {
   }
 
   /**
+   * Listen for bulk seat updates (on connect/disconnect)
+   */
+  const onBulkSeatsUpdate = (callback: (seatIds: string[]) => void) => {
+    bulkUpdateHandlers.value.add(callback)
+  }
+
+  /**
+   * Remove bulk seat update listener
+   */
+  const offBulkSeatsUpdate = (callback?: (seatIds: string[]) => void) => {
+    if (callback) {
+      bulkUpdateHandlers.value.delete(callback)
+    } else {
+      bulkUpdateHandlers.value.clear()
+    }
+  }
+
+  /**
    * Check connection status
    */
   const isConnected = computed(() => {
@@ -131,6 +165,8 @@ export const useSocket = () => {
     leaveShowtimeRoom,
     selectSeat,
     onSeatSelected,
-    offSeatSelected
+    offSeatSelected,
+    onBulkSeatsUpdate,
+    offBulkSeatsUpdate
   }
 }
