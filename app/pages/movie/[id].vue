@@ -373,12 +373,29 @@ const handleBooking = async () => {
           <span>{{ minutesToHours(movieDetail.duration) }}</span>
           <span>{{ movieDetail.nation }}</span>
         </p>
-        <p>{{ t('director') }}: {{ movieDetail.director }}</p>
-        <p>{{ t('cast') }}: {{ movieDetail.performer }}</p>
-        <p>{{ t('start-time') }}: {{ useFormatDate(movieDetail.releaseDate, 'DD/MM/YYYY hh:mm:ss') }}</p>
-        <p>{{ t('end-time') }}: {{ useFormatDate(movieDetail.releaseDate, 'DD/MM/YYYY hh:mm:ss') }}</p>
-        <p class="text-red-500">{{ movieDetail.note }}</p>
-        <p class="mt-6">{{ movieDetail.description }}</p>
+        <p>
+          <span class="text-[#90a1b9] text-sm">{{ t('director') }}</span
+          >: {{ movieDetail.director }}
+        </p>
+        <p>
+          <span class="text-[#90a1b9] text-sm">{{ t('cast') }}</span
+          >: {{ movieDetail.performer }}
+        </p>
+        <p>
+          <span class="text-[#90a1b9] text-sm">{{ t('start-time') }}</span
+          >: {{ useFormatDate(movieDetail.releaseDate, 'DD/MM/YYYY hh:mm:ss') }}
+        </p>
+        <p>
+          <span class="text-[#90a1b9] text-sm">{{ t('end-time') }}</span
+          >: {{ useFormatDate(movieDetail.releaseDate, 'DD/MM/YYYY hh:mm:ss') }}
+        </p>
+        <p class="flex justify-start items-center gap-2">
+          <span class="text-[#90a1b9] text-sm">{{ t('note') }}: </span>
+          <!-- eslint-disable-next-line vue/no-v-html -->
+          <span class="text-text-error line-clamp-3" v-html="movieDetail.note" />
+        </p>
+        <!-- eslint-disable-next-line vue/no-v-html -->
+        <p class="mt-6" v-html="movieDetail.description" />
       </div>
     </div>
 
