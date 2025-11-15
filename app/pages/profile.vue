@@ -2,8 +2,12 @@
 import { updateProfileSchema, type IFormChangePassword, type IFormUpdateProfile } from '~/schemas/auth.schema'
 import { apiPublic, apiUser } from '~/services'
 import type { IBooking } from '~/types/booking.type'
-import { getPaginationRowModel } from '@tanstack/vue-table'
-import type { TableColumn } from '@nuxt/ui'
+import { getPaginationRowModel, type Column } from '@tanstack/vue-table'
+import type { DropdownMenuItem, TableColumn } from '@nuxt/ui'
+import useFormatDate from '~/composables/useDateFormat'
+
+const UButton = resolveComponent('UButton')
+const UDropdownMenu = resolveComponent('UDropdownMenu')
 
 const table = useTemplateRef('table')
 const route = useRoute()
@@ -17,6 +21,8 @@ const { getUserInfo } = useAuthStore()
 const isProcessing = ref(false)
 const isOpenModalChangePassword = ref(false)
 const bookings = ref<IBooking[]>([])
+const isOpenModalDetail = ref(false)
+const bookingDetail = ref<IBooking | null>(null)
 
 const formRef = ref()
 const form = ref<IFormUpdateProfile>({
@@ -101,42 +107,164 @@ const columns: TableColumn<IBooking>[] = [
     cell: ({ row }) => row.index + 1
   },
   {
+    accessorKey: 'bookingDate',
+    header: ({ column }) => getHeader(column, 'Date'),
+    cell: ({ row }) => {
+      return new Date(row.getValue('bookingDate')).toLocaleString('en-US', {
+        day: 'numeric',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      })
+    }
+  },
+  {
     accessorKey: 'movieName',
-    header: 'Movie Name'
+    header: t('movie-name')
   },
 
-  {
-    accessorKey: 'genreName',
-    header: 'Genre'
-  },
+  // {
+  //   accessorKey: 'genreName',
+  //   header: 'Genre'
+  // },
   {
     accessorKey: 'cinemaName',
-    header: 'Cinema Name'
+    header: t('cinema-name')
   },
   {
     accessorKey: 'roomName',
-    header: 'Room Name'
+    header: t('room-show')
   },
   {
     accessorKey: 'seatNames',
-    header: 'Seat Names'
+    header: t('seat-names')
   },
   {
     accessorKey: 'cinemaAddress',
-    header: 'Cinema Address'
+    header: t('cinema-address')
   },
   {
     accessorKey: 'paymentStatus',
-    header: 'Payment Status'
+    header: t('payment-status'),
+    meta: {
+      class: {
+        th: 'text-center',
+        td: 'text-center'
+      }
+    },
+    cell: ({ row }) => {
+      const status = row.getValue('paymentStatus') as string
+      const colorMap = {
+        'Đã thanh toán thành công': 'text-success'
+        // failed: 'text-error',
+        // refunded: 'text-warning'
+      }
+      return h(
+        'span',
+        {
+          class: `font-semibold capitalize ${colorMap[status as keyof typeof colorMap]}`
+        },
+        status
+      )
+    }
   },
+
   {
     accessorKey: 'totalPrice',
-    header: () => h('div', { class: 'text-right' }, 'Total Price'),
+    header: t('total-price'),
+    // header: () => h('div', { class: 'text-right' }, 'Total Price'),
+    // cell: ({ row }) => {
+    //   return h('div', { class: 'text-right font-medium' }, formatPrice(row.getValue('totalPrice')))
+    // }
+    meta: {
+      class: {
+        th: 'text-right font-bold',
+        td: 'text-right'
+      }
+    },
     cell: ({ row }) => {
-      return h('div', { class: 'text-right font-medium' }, formatPrice(row.getValue('totalPrice')))
+      return h(
+        'span',
+        {
+          class: 'font-semibold text-success'
+        },
+        formatPrice(row.getValue('totalPrice'))
+      )
     }
+  },
+  {
+    id: 'action'
   }
 ]
+function getHeader(column: Column<IBooking>, label: string) {
+  const isSorted = column.getIsSorted()
+
+  return h(
+    UDropdownMenu,
+    {
+      content: {
+        align: 'start'
+      },
+      'aria-label': 'Actions dropdown',
+      items: [
+        {
+          label: 'Asc',
+          type: 'checkbox',
+          icon: 'i-lucide-arrow-up-narrow-wide',
+          checked: isSorted === 'asc',
+          onSelect: () => {
+            if (isSorted === 'asc') {
+              column.clearSorting()
+            } else {
+              column.toggleSorting(false)
+            }
+          }
+        },
+        {
+          label: 'Desc',
+          icon: 'i-lucide-arrow-down-wide-narrow',
+          type: 'checkbox',
+          checked: isSorted === 'desc',
+          onSelect: () => {
+            if (isSorted === 'desc') {
+              column.clearSorting()
+            } else {
+              column.toggleSorting(true)
+            }
+          }
+        }
+      ]
+    },
+    () =>
+      h(UButton, {
+        color: 'neutral',
+        variant: 'ghost',
+        label,
+        icon: isSorted
+          ? isSorted === 'asc'
+            ? 'i-lucide-arrow-up-narrow-wide'
+            : 'i-lucide-arrow-down-wide-narrow'
+          : 'i-lucide-arrow-up-down',
+        class: '-mx-2.5 data-[state=open]:bg-elevated',
+        'aria-label': `Sort by ${isSorted === 'asc' ? 'descending' : 'ascending'}`
+      })
+  )
+}
+function getDropdownActions(row: IBooking): DropdownMenuItem[][] {
+  bookingDetail.value = row
+  return [
+    [
+      {
+        label: 'View',
+        icon: 'i-lucide-eye',
+        onSelect: () => {
+          isOpenModalDetail.value = true
+        }
+      }
+    ]
+  ]
+}
 </script>
 
 <template>
@@ -185,18 +313,32 @@ const columns: TableColumn<IBooking>[] = [
         v-if="currentTab === 1"
         class="animate-fade-in mx-10 border border-solid border-border-light dark:border-border-dark p-6 rounded-lg"
       >
-        <div class="w-full space-y-4 pb-4">
+        <div v-if="bookings.length" class="w-full space-y-4 pb-4">
           <UTable
             ref="table"
             v-model:pagination="pagination"
             :loading="pending"
-            :data="data"
+            loading-color="success"
+            loading-animation="carousel"
+            :data="bookings"
             :columns="columns"
             :pagination-options="{
               getPaginationRowModel: getPaginationRowModel()
             }"
             class="flex-1"
-          />
+          >
+            <template #action-cell="{ row }">
+              <UDropdownMenu :items="getDropdownActions(row.original)" :ui="{ itemLabel: 'cursor-pointer' }">
+                <!-- deletingGenreId === row.original.id ? 'i-lucide-loader animate-spin' : -->
+                <UButton
+                  icon="i-lucide-ellipsis-vertical"
+                  color="neutral"
+                  variant="ghost"
+                  aria-label="Actions"
+                  class="hover:cursor-pointer"
+                />
+              </UDropdownMenu> </template
+          ></UTable>
 
           <div class="flex justify-center border-t border-default pt-4">
             <UPagination
@@ -207,12 +349,74 @@ const columns: TableColumn<IBooking>[] = [
             />
           </div>
         </div>
+        <BaseEmpty v-else />
       </div>
       <AuthModalChangePassword
         v-model:is-open="isOpenModalChangePassword"
         :is-loading="isProcessing"
         @submit="handleChangePassword"
       />
+      <UModal v-model:open="isOpenModalDetail" :title="t('booking-detail')" class="w-2/5">
+        <template #body>
+          <div class="space-y-1">
+            <p>
+              <span class="text-[#90a1b9] text-sm">{{ t('full-name') }}: </span>
+              <span>{{ bookingDetail?.fullName }}</span>
+            </p>
+
+            <p>
+              <span class="text-[#90a1b9] text-sm">{{ t('email') }}: </span>
+              <span>{{ bookingDetail?.email }}</span>
+            </p>
+            <p>
+              <span class="text-[#90a1b9] text-sm">{{ t('phone-number') }}: </span>
+              <span>{{ formatPhoneNumber(bookingDetail?.phone as string) }}</span>
+            </p>
+            <p>
+              <span class="text-[#90a1b9] text-sm">{{ t('movie-name') }}: </span>
+              <span>{{ bookingDetail?.movieName }}</span>
+            </p>
+            <p>
+              <span class="text-[#90a1b9] text-sm">{{ t('genres') }}: </span>
+              <span>{{ bookingDetail?.genreName }}</span>
+            </p>
+            <p>
+              <span class="text-[#90a1b9] text-sm">{{ t('cinema-name') }}: </span>
+              <span>{{ bookingDetail?.cinemaName }}</span>
+            </p>
+            <p>
+              <span class="text-[#90a1b9] text-sm">{{ t('room-show') }}: </span>
+              <span>{{ bookingDetail?.roomName }}</span>
+            </p>
+            <p>
+              <span class="text-[#90a1b9] text-sm">{{ t('seat-names') }}: </span>
+              <span>{{ bookingDetail?.seatNames }}</span>
+            </p>
+            <p>
+              <span class="text-[#90a1b9] text-sm">{{ t('cinema-address') }}: </span>
+              <span>{{ bookingDetail?.cinemaAddress }}</span>
+            </p>
+
+            <p>
+              <span class="text-[#90a1b9] text-sm">{{ t('booking-date') }}: </span>
+              <span>{{ useFormatDate(bookingDetail?.bookingDate as string, 'DD/MM/YYYY hh:mm:ss') }}</span>
+            </p>
+
+            <p>
+              <span class="text-[#90a1b9] text-sm">{{ t('payment-status') }}: </span>
+              <span>{{ bookingDetail?.paymentStatus }}</span>
+            </p>
+            <p>
+              <span class="text-[#90a1b9] text-sm">{{ t('payment-date') }}: </span>
+              <span>{{ useFormatDate(bookingDetail?.paymentDate as string, 'DD/MM/YYYY hh:mm:ss') }}</span>
+            </p>
+            <p>
+              <span class="text-[#90a1b9] text-sm">{{ t('total-price') }}: </span>
+              <span>{{ formatPrice(bookingDetail?.totalPrice as string) }}</span>
+            </p>
+          </div>
+        </template>
+      </UModal>
     </div>
   </div>
 </template>

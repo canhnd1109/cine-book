@@ -151,7 +151,7 @@
   "max-files-exceeded": "Bạn chỉ có thể tải lên tối đa {max} ảnh",
   "file-size-exceeded": "Kích thước file không được vượt quá {max}",
   "max-files-exceeded-warning": "Bạn đã chọn {selected} ảnh. Chỉ {max} ảnh đầu tiên được chọn.",
-  "cinema-name": "Tên rạp chiếu phim",
+  "cinema-name": "Tên rạp",
   "phone": "Số điện thoại",
   "province": "Tỉnh / Thành phố",
   "commune": "Xã / Phường",
@@ -255,5 +255,16 @@
   "admin": "Quản trị",
   "profile": "Thông tin cá nhân",
   "logout": "Đăng xuất",
-  "locked-by-others": "Người khác đang chọn"
+  "locked-by-others": "Người khác đang chọn",
+  "room-show": "Phòng chiếu",
+  "seat-names": "Tên ghế",
+  "cinema-address": "Địa chỉ rạp",
+  "payment-status": "Trạng thái thanh toán",
+  "total-price": "Tổng tiền",
+  "full-name": "Họ và tên",
+  "phone-number": "Số điện thoại",
+  "booking-date": "Ngày đặt vé",
+  "email": "Email",
+  "payment-date": "Ngày thanh toán",
+  "booking-detail": "Chi tiết đặt vé"
 }

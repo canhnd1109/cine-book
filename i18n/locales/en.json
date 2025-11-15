@@ -255,5 +255,16 @@
   "admin": "Admin",
   "profile": "Profile",
   "logout": "Logout",
-  "locked-by-others": "Selected by others"
+  "locked-by-others": "Selected by others",
+  "room-show": "Room name",
+  "seat-names": "Seat names",
+  "cinema-address": "Cinema address",
+  "payment-status": "Payment status",
+  "total-price": "Total price",
+  "full-name": "Full name",
+  "phone-number": "Phone number",
+  "booking-date": "Booking date",
+  "email": "Email",
+  "payment-date": "Payment date",
+  "booking-detail": "Booking detail"
 }
