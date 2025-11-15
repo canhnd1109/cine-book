@@ -254,5 +254,6 @@
   },
   "admin": "Admin",
   "profile": "Profile",
-  "logout": "Logout"
+  "logout": "Logout",
+  "locked-by-others": "Selected by others"
 }

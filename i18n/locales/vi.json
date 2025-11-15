@@ -254,5 +254,6 @@
   },
   "admin": "Quản trị",
   "profile": "Thông tin cá nhân",
-  "logout": "Đăng xuất"
+  "logout": "Đăng xuất",
+  "locked-by-others": "Người khác đang chọn"
 }

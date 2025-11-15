@@ -301,10 +301,14 @@ const handleMouseUp = () => {
       <div v-for="(type, key) in seatTypes" :key="key" class="flex items-center gap-2">
         <UIcon
           name="i-lucide-armchair"
-          :class="['w-6 h-6 rounded', type.color]"
-          :style="type.customColor ? { color: type.customColor, backgroundColor: type.customColor } : {}"
+          :class="['w-6 h-6 rounded', type?.color]"
+          :style="
+            type && 'customColor' in type && type.customColor
+              ? { color: type.customColor, backgroundColor: type.customColor }
+              : {}
+          "
         />
-        <span class="text-sm">{{ type.label }}</span>
+        <span class="text-sm">{{ type?.label }}</span>
       </div>
     </div>
   </div>
