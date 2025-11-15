@@ -31,7 +31,6 @@ export const useSocket = () => {
     const ws = socketManager.createConnection(showtimeId)
 
     ws.onmessage = (event: MessageEvent) => {
-      console.log('🚀 ~ connect ~ event:', event.data)
       // Check if it's a text message (not JSON)
       if (typeof event.data === 'string' && !event.data.trim().startsWith('{') && !event.data.trim().startsWith('[')) {
         return
