@@ -1,17 +1,20 @@
 <script setup lang="ts">
 import { updateProfileSchema, type IFormUpdateProfile } from '~/schemas/auth.schema'
+import { apiUser } from '~/services'
 
 const route = useRoute()
 const router = useRouter()
 const { userInfo } = storeToRefs(useAuthStore())
 const { schema } = useSchema(updateProfileSchema)
 const { t } = useI18n()
+const toast = useToast()
+const { getUserInfo } = useAuthStore()
+const isProcessing = ref(false)
 
 const formRef = ref()
 const form = ref<IFormUpdateProfile>({
   lastName: '',
   firstName: '',
-  email: '',
   phone: ''
 })
 
@@ -41,11 +44,18 @@ const onSubmit = async () => {
     if (!isValid) {
       return
     }
-
-    console.log('Form is valid, submitting...', form.value)
-    // Call API here
+    isProcessing.value = true
+    const { message } = await apiUser.updateProfile(form.value)
+    toast.add({
+      title: t('success'),
+      description: message,
+      color: 'success'
+    })
+    await getUserInfo()
   } catch (error) {
-    console.error('Validation error:', error)
+    console.error(error)
+  } finally {
+    isProcessing.value = false
   }
 }
 </script>
@@ -82,7 +92,13 @@ const onSubmit = async () => {
         </div>
         <div class="flex justify-end mt-6 gap-4">
           <BaseButton :text="t('change-password')" />
-          <BaseButton :text="t('update-information')" variant="solid" @click="onSubmit" />
+          <BaseButton
+            :text="t('update-information')"
+            :is-loading="isProcessing"
+            :is-disable="isProcessing"
+            variant="solid"
+            @click="onSubmit"
+          />
         </div>
       </div>
 

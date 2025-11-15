@@ -33,7 +33,7 @@ export function updateProfileSchema(t: (key: string) => string) {
     firstName: z.string().min(1, t('auth.first-name-is-required')),
     lastName: z.string().min(1, t('auth.last-name-is-required')),
     phone: z.string().min(1, t('auth.phone-number-is-required')).regex(PHONE_NUMBER_REGEX, t('auth.phone-number-invalid')),
-    email: z.string().min(1, t('auth.email-is-required')).email(t('auth.invalid-email'))
+    email: z.optional(z.string().email(t('auth.invalid-email')))
   })
 }
 export function emailSchema(t: (key: string) => string) {

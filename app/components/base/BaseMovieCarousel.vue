@@ -25,9 +25,7 @@ const handleMovieClick = (movieId: string) => {
       <p class="text-3xl font-bold">{{ title }}</p>
     </div>
 
-    <div v-if="loading" class="mt-6 flex gap-8 overflow-hidden">
-      <BaseSkeletonCard v-for="n in 6" :key="n" />
-    </div>
+    <BaseSkeletonCard v-if="loading" :skeleton-cards="6" class="mt-10" />
 
     <!-- Movie carousel -->
     <UCarousel v-else-if="movies.length" v-slot="{ item, index }" :items="movies" :ui="{ item: 'basis-1/6 ps-8' }" class="mt-6">
