@@ -37,7 +37,11 @@
     "confirm-password-is-required": "Confirm password is required",
     "passwords-do-not-match": "Passwords do not match",
     "forgot-password": "Forgot password?",
-    "don-not-have-an-account?": "Don't have an account?"
+    "don-not-have-an-account?": "Don't have an account?",
+    "old-password": "Old password",
+    "old-password-is-required": "Old password is required",
+    "new-password": "New password",
+    "confirm-new-password": "Confirm new password"
   },
   "home": {
     "content-1": "How MindInventory Designed a User-Centric Movie Ticket Booking App",
@@ -59,6 +63,7 @@
   },
   "success": "Success",
   "error": "Error",
+  "change-password": "Change Password",
   "you-do-not-have-permission-to-access-this-page": "You don't have permission to access this page",
   "add": "Add",
   "add-genre": "Add genre",
