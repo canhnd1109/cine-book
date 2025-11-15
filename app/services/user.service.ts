@@ -1,6 +1,6 @@
 import type { IResponseMessage } from '~/types/response.type'
 import BaseService from './base.service'
-import type { IFormUpdateProfile } from '~/schemas/auth.schema'
+import type { IFormChangePassword, IFormUpdateProfile } from '~/schemas/auth.schema'
 
 export class UserService extends BaseService {
   constructor() {
@@ -10,7 +10,7 @@ export class UserService extends BaseService {
     return this.put<IResponseMessage>('/profile', body)
   }
 
-  async changePassword(body: { currentPassword: string; newPassword: string }): Promise<IResponseMessage> {
+  async changePassword(body: IFormChangePassword): Promise<IResponseMessage> {
     return this.put<IResponseMessage>('/change-password', body)
   }
 }

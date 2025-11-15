@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { updateProfileSchema, type IFormUpdateProfile } from '~/schemas/auth.schema'
+import { updateProfileSchema, type IFormChangePassword, type IFormUpdateProfile } from '~/schemas/auth.schema'
 import { apiUser } from '~/services'
 
 const route = useRoute()
@@ -9,7 +9,9 @@ const { schema } = useSchema(updateProfileSchema)
 const { t } = useI18n()
 const toast = useToast()
 const { getUserInfo } = useAuthStore()
+
 const isProcessing = ref(false)
+const isOpenModalChangePassword = ref(false)
 
 const formRef = ref()
 const form = ref<IFormUpdateProfile>({
@@ -58,6 +60,23 @@ const onSubmit = async () => {
     isProcessing.value = false
   }
 }
+
+const handleChangePassword = async (form: IFormChangePassword) => {
+  try {
+    isProcessing.value = true
+    const { message } = await apiUser.changePassword(form)
+    toast.add({
+      title: t('success'),
+      description: message,
+      color: 'success'
+    })
+    isOpenModalChangePassword.value = false
+  } catch (error) {
+    console.error(error)
+  } finally {
+    isProcessing.value = false
+  }
+}
 </script>
 
 <template>
@@ -91,7 +110,7 @@ const onSubmit = async () => {
           </UForm>
         </div>
         <div class="flex justify-end mt-6 gap-4">
-          <BaseButton :text="t('change-password')" />
+          <BaseButton :text="t('change-password')" @click="isOpenModalChangePassword = true" />
           <BaseButton
             :text="t('update-information')"
             :is-loading="isProcessing"
@@ -109,6 +128,11 @@ const onSubmit = async () => {
         </div>
       </div>
     </div>
+    <AuthModalChangePassword
+      v-model:is-open="isOpenModalChangePassword"
+      :is-loading="isProcessing"
+      @submit="handleChangePassword"
+    />
   </div>
 </template>
 
