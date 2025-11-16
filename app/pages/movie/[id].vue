@@ -587,11 +587,11 @@ const onSubmit = async () => {
     <div class="max-w-4xl mx-auto space-y-4">
       <p class="flex justify-start items-center space-x-2">
         <UIcon name="i-lucide-message-circle-more" class="size-6" />
-        <span class="text-2xl">Bình luận</span>
+        <span class="text-2xl">{{ t('comment') }}</span>
       </p>
       <p v-if="!isAuthenticated">
-        Vui lòng <span class="text-primary cursor-pointer" @click="isOpenModalSignIn = true">đăng nhập</span> để tham gia bình
-        luận.
+        {{ t('please') }} <span class="text-primary cursor-pointer" @click="isOpenModalSignIn = true">{{ t('login') }}</span>
+        {{ t('to-join-comment') }}
       </p>
       <div>
         <UChatPrompt v-model="input" :rows="3" @submit="onSubmit">

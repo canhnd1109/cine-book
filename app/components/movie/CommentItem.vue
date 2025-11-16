@@ -36,7 +36,7 @@ const toggleReplies = async () => {
       const response = await apiPublic.fetchCommentsChildren(props.comment.id)
       childComments.value = response.value || []
     } catch (error) {
-      console.error('Failed to load child comments:', error)
+      console.error(error)
     } finally {
       isLoadingChildren.value = false
     }
@@ -102,7 +102,7 @@ const handleChildRefresh = async () => {
       const response = await apiPublic.fetchCommentsChildren(props.comment.id)
       childComments.value = response.value || []
     } catch (error) {
-      console.error('Failed to reload child comments:', error)
+      console.error(error)
     }
   }
   // Propagate refresh to parent
@@ -141,7 +141,7 @@ const handleChildRefresh = async () => {
             class="size-4 transition-transform duration-200"
             :class="{ 'rotate-180': isExpanded }"
           />
-          {{ comment.totalChildComment }} bình luận
+          {{ comment.totalChildComment }} {{ t('your-comment') }}
         </p>
 
         <!-- Loading State -->

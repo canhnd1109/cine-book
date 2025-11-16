@@ -266,5 +266,11 @@
   "booking-date": "Booking date",
   "email": "Email",
   "payment-date": "Payment date",
-  "booking-detail": "Booking detail"
+  "booking-detail": "Booking detail",
+  "comment": "Comment",
+  "please": "Please",
+  "login": "Login",
+  "to-join-comment": "to join the discussion.",
+  "failed-to-post-comment": "Failed to post comment",
+  "your-comment": "Your comment"
 }

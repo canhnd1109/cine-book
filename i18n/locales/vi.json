@@ -266,5 +266,11 @@
   "booking-date": "Ngày đặt vé",
   "email": "Email",
   "payment-date": "Ngày thanh toán",
-  "booking-detail": "Chi tiết đặt vé"
+  "booking-detail": "Chi tiết đặt vé",
+  "comment": "Bình luận",
+  "please": "Vui lòng",
+  "login": "đăng nhập",
+  "to-join-comment": "để tham gia bình luận.",
+  "failed-to-post-comment": "Không thể đăng bình luận",
+  "your-comment": "bình luận"
 }
