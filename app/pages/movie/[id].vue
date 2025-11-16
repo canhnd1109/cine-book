@@ -2,6 +2,7 @@
 import useFormatDate from '~/composables/useDateFormat'
 import { apiBooking, apiComment, apiPublic } from '~/services'
 import type { TypeSeat, TypeSeatStatus } from '~/types/cinema.type'
+import type { IComment } from '~/types/comment.type'
 import type { IShowtimeRoomResponse } from '~/types/show-time.type'
 
 const { t } = useI18n()
@@ -30,7 +31,8 @@ const selectedDateIndex = ref(0)
 const idCinemaActive = ref<string | null>(null)
 const lockedSeats = ref<Set<string>>(new Set()) // Ghế đang được người khác chọn
 const parentCommentId = ref<string>('')
-
+const expandedComments = ref<Set<string>>(new Set())
+const commentsChildren = ref<IComment[]>([])
 // Fetch movie detail
 const { data: movieDetail } = await useAsyncData(`movie-detail-${movieId.value}`, () =>
   apiPublic.getMovieDetail(movieId.value).then(res => res.value)
@@ -38,6 +40,15 @@ const { data: movieDetail } = await useAsyncData(`movie-detail-${movieId.value}`
 const { data: comments, refresh } = await useAsyncData(`comments-${movieId.value}`, () =>
   apiPublic.fetchComments(movieId.value).then(res => res.value)
 )
+
+const loadCommentsChildren = async (commentId: string) => {
+  const { data, refresh } = await useAsyncData(`comments-children-${commentId}`, () =>
+    apiPublic.fetchCommentsChildren(commentId).then(res => res.value)
+  )
+
+  commentsChildren.value = data.value || []
+  return { data, refresh }
+}
 
 // Fetch showtimes
 const { data: showtimeData } = await useAsyncData(
@@ -415,6 +426,15 @@ const onSubmit = async () => {
 const handleClickReply = (commentId: string) => {
   parentCommentId.value = parentCommentId.value ? '' : commentId
 }
+
+const toggleReplies = async (commentId: string) => {
+  if (expandedComments.value.has(commentId)) {
+    expandedComments.value.delete(commentId)
+  } else {
+    expandedComments.value.add(commentId)
+    await loadCommentsChildren(commentId)
+  }
+}
 </script>
 <template>
   <div>
@@ -621,6 +641,32 @@ const handleClickReply = (commentId: string) => {
               <UChatPromptSubmit />
             </UChatPrompt>
           </div>
+          <p
+            v-if="value.totalChildComment"
+            class="text-xs flex items-center gap-1 text-primary cursor-pointer"
+            @click="toggleReplies(value.id)"
+          >
+            <UIcon
+              name="i-lucide-chevron-down"
+              class="size-4 transition-transform duration-200"
+              :class="{ 'rotate-180': expandedComments.has(value.id) }"
+            />
+            {{ value.totalChildComment }} bình luận
+          </p>
+
+          <template v-if="expandedComments.has(value.id)">
+            <div v-for="value in commentsChildren" :key="value.id">
+              <div class="ml-12 mt-4 flex justify-start items-start gap-4">
+                <UAvatar :alt="value?.author" size="lg" />
+                <div class="flex flex-col items-start space-y-2 w-full">
+                  <span>{{ value.author }}</span>
+                  <div class="flex items-center gap-6">
+                    <span>{{ value.content }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
         </div>
       </div>
     </div>

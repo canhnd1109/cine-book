@@ -75,8 +75,10 @@ export class PublicService extends BaseService {
   }
 
   // TODO: COMMENT
-
   async fetchComments(movieId: string): Promise<IResponseData<IComment[]>> {
     return this.get<IResponseData<IComment[]>>(`/comment/${movieId}`)
+  }
+  async fetchCommentsChildren(parentId: string): Promise<IResponseData<IComment[]>> {
+    return this.get<IResponseData<IComment[]>>(`/comment/parent/${parentId}`)
   }
 }
