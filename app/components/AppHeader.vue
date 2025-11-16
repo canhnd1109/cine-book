@@ -11,7 +11,7 @@ import { apiAuth } from '~/services'
 import type { DropdownMenuItem } from '@nuxt/ui'
 
 const { verifyOtp, logOut } = useAuthStore()
-const { userInfo, isAuthenticated, isAdmin } = storeToRefs(useAuthStore())
+const { userInfo, isAuthenticated, isAdmin, isOpenModalSignIn } = storeToRefs(useAuthStore())
 const { schema } = useSchema(emailSchema)
 const { schema: resetPassSchema } = useSchema(resetPasswordSchema)
 
@@ -20,7 +20,6 @@ const { t } = useI18n()
 const router = useRouter()
 
 const isOpenModalSignUp = ref(false)
-const isOpenModalSignIn = ref(false)
 const isOpenModalForgotPassword = ref(false)
 const isOpenModalResetPassword = ref(false)
 const isLoading = ref(false)

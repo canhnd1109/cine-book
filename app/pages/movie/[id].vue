@@ -3,10 +3,13 @@ import useFormatDate from '~/composables/useDateFormat'
 import { apiBooking, apiPublic } from '~/services'
 import type { TypeSeat, TypeSeatStatus } from '~/types/cinema.type'
 import type { IShowtimeRoomResponse } from '~/types/show-time.type'
+import { Chat } from '@ai-sdk/vue'
+import { getTextFromMessage } from '@nuxt/ui/utils/ai'
 
 const { t } = useI18n()
 const toast = useToast()
 const route = useRoute()
+const { isAuthenticated, isOpenModalSignIn } = storeToRefs(useAuthStore())
 const movieId = computed(() => route.params.id as string)
 
 // Socket setup
@@ -361,6 +364,20 @@ const handleBooking = async () => {
     isBooking.value = false
   }
 }
+
+const input = ref('')
+
+const chat = new Chat({
+  onError(error) {
+    console.error(error)
+  }
+})
+
+function onSubmit() {
+  chat.sendMessage({ text: input.value })
+
+  input.value = ''
+}
 </script>
 <template>
   <div>
@@ -535,6 +552,18 @@ const handleBooking = async () => {
         allowfullscreen
         loading="lazy"
       />
+    </div>
+
+    <!-- Review -->
+    <div class="max-w-4xl mx-auto">
+      <p class="flex justify-start items-center space-x-2">
+        <UIcon name="i-lucide-message-circle-more" class="size-6" />
+        <span class="text-2xl">Bình luận</span>
+      </p>
+      <p v-if="!isAuthenticated">
+        Vui lòng <span class="text-primary cursor-pointer" @click="isOpenModalSignIn = true">đăng nhập</span> để tham gia bình
+        luận.
+      </p>
     </div>
   </div>
 </template>

@@ -16,6 +16,7 @@ export const useAuthStore = defineStore('auth', () => {
   const userInfo = ref<IUser | null>(null)
   const roleName = ref<'ROLE_ADMIN' | 'ROLE_USER'>('ROLE_USER')
   const isAdmin = computed(() => userInfo.value?.role === 'ROLE_ADMIN')
+  const isOpenModalSignIn = ref(false)
 
   const isAuthenticated = computed(() => {
     return !!accessTokenCookie.value
@@ -61,6 +62,7 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     isAuthenticated,
     userInfo,
+    isOpenModalSignIn,
     setTokens,
     logOut,
     verifyOtp,
