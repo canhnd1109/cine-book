@@ -5,6 +5,7 @@ import type { IMovie, IMovieFilter } from '~/types/movie.type'
 import type { ICinema, ICinemaFilter, IRoom } from '~/types/cinema.type'
 import type { IShowtime } from '~/types/show-time.type'
 import type { IBooking } from '~/types/booking.type'
+import type { IComment } from '~/types/comment.type'
 
 export class PublicService extends BaseService {
   constructor() {
@@ -71,5 +72,11 @@ export class PublicService extends BaseService {
   }
   async getBookingDetail(id: string): Promise<IResponseData<IBooking[]>> {
     return this.get<IResponseData<IBooking[]>>(`/booking/${id}`)
+  }
+
+  // TODO: COMMENT
+
+  async fetchComments(movieId: string): Promise<IResponseData<IComment[]>> {
+    return this.get<IResponseData<IComment[]>>(`/comment/${movieId}`)
   }
 }

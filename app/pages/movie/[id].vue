@@ -29,10 +29,14 @@ const selectedSeats = ref<Set<string>>(new Set())
 const selectedDateIndex = ref(0)
 const idCinemaActive = ref<string | null>(null)
 const lockedSeats = ref<Set<string>>(new Set()) // Ghế đang được người khác chọn
+const parentCommentId = ref<string>('')
 
 // Fetch movie detail
 const { data: movieDetail } = await useAsyncData(`movie-detail-${movieId.value}`, () =>
   apiPublic.getMovieDetail(movieId.value).then(res => res.value)
+)
+const { data: comments, refresh } = await useAsyncData(`comments-${movieId.value}`, () =>
+  apiPublic.fetchComments(movieId.value).then(res => res.value)
 )
 
 // Fetch showtimes
@@ -364,6 +368,7 @@ const handleBooking = async () => {
 }
 
 const input = ref('')
+const inputChildren = ref('')
 
 const onSubmit = async () => {
   if (!isAuthenticated.value) {
@@ -371,32 +376,44 @@ const onSubmit = async () => {
     return
   }
 
-  if (input.value.trim() === '') {
+  const isReply = !!parentCommentId.value
+  const content = isReply ? inputChildren.value.trim() : input.value.trim()
+
+  if (!content) {
     return
   }
 
   try {
-    await apiComment.createComment({
-      content: input.value,
+    const { message } = await apiComment.createComment({
+      content,
       movieId: movieId.value as string,
-      parentCommentId: ''
+      parentCommentId: parentCommentId.value || ''
     })
 
     toast.add({
       title: t('success'),
-      description: t('comment-posted-successfully'),
+      description: message,
       color: 'success'
     })
 
+    // Reset form
     input.value = ''
+    inputChildren.value = ''
+    parentCommentId.value = ''
+
+    await refresh()
   } catch (error) {
-    console.error('Error posting comment:', error)
+    console.log(error)
     toast.add({
       title: t('error'),
       description: t('failed-to-post-comment'),
       color: 'error'
     })
   }
+}
+
+const handleClickReply = (commentId: string) => {
+  parentCommentId.value = parentCommentId.value ? '' : commentId
 }
 </script>
 <template>
@@ -507,7 +524,7 @@ const onSubmit = async () => {
 
       <div class="bg-gray-100 dark:bg-gray-900 p-6 rounded-lg">
         <!-- Screen -->
-        <div class="w-full mb-8 h-2 bg-gradient-to-b from-gray-400 to-gray-600 rounded-t-full" />
+        <div class="w-full mb-8 h-2 bg-linear-to-b from-gray-400 to-gray-600 rounded-t-full" />
 
         <!-- Seat Grid -->
         <BaseSeatGrid
@@ -575,7 +592,7 @@ const onSubmit = async () => {
     </div>
 
     <!-- Review -->
-    <div class="max-w-4xl mx-auto">
+    <div class="max-w-4xl mx-auto space-y-4">
       <p class="flex justify-start items-center space-x-2">
         <UIcon name="i-lucide-message-circle-more" class="size-6" />
         <span class="text-2xl">Bình luận</span>
@@ -584,9 +601,28 @@ const onSubmit = async () => {
         Vui lòng <span class="text-primary cursor-pointer" @click="isOpenModalSignIn = true">đăng nhập</span> để tham gia bình
         luận.
       </p>
-      <UChatPrompt v-model="input" :rows="3" @submit="onSubmit">
-        <UChatPromptSubmit />
-      </UChatPrompt>
+      <div>
+        <UChatPrompt v-model="input" :rows="3" @submit="onSubmit">
+          <UChatPromptSubmit />
+        </UChatPrompt>
+      </div>
+      <div v-for="value in comments" :key="value.id" class="my-4 flex justify-start items-start gap-4">
+        <UAvatar :alt="value?.author" size="2xl" />
+        <div class="flex flex-col items-start space-y-2 w-full">
+          <span>{{ value.author }}</span>
+          <div class="flex items-center gap-6">
+            <span>{{ value.content }}</span>
+            <UTooltip :text="t('reply')" :delay-duration="0" class="hover:cursor-pointer" @click="handleClickReply(value.id)">
+              <UIcon name="i-lucide-reply" class="size-4 text-secondary" />
+            </UTooltip>
+          </div>
+          <div v-if="parentCommentId === value.id" class="w-3/4">
+            <UChatPrompt v-model="inputChildren" :rows="3" @submit="onSubmit">
+              <UChatPromptSubmit />
+            </UChatPrompt>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
