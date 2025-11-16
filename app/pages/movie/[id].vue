@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import useFormatDate from '~/composables/useDateFormat'
-import { apiBooking, apiPublic } from '~/services'
+import { apiBooking, apiComment, apiPublic } from '~/services'
 import type { TypeSeat, TypeSeatStatus } from '~/types/cinema.type'
 import type { IShowtimeRoomResponse } from '~/types/show-time.type'
-import { Chat } from '@ai-sdk/vue'
-import { getTextFromMessage } from '@nuxt/ui/utils/ai'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -367,16 +365,38 @@ const handleBooking = async () => {
 
 const input = ref('')
 
-const chat = new Chat({
-  onError(error) {
-    console.error(error)
+const onSubmit = async () => {
+  if (!isAuthenticated.value) {
+    isOpenModalSignIn.value = true
+    return
   }
-})
 
-function onSubmit() {
-  chat.sendMessage({ text: input.value })
+  if (input.value.trim() === '') {
+    return
+  }
 
-  input.value = ''
+  try {
+    await apiComment.createComment({
+      content: input.value,
+      movieId: movieId.value as string,
+      parentCommentId: ''
+    })
+
+    toast.add({
+      title: t('success'),
+      description: t('comment-posted-successfully'),
+      color: 'success'
+    })
+
+    input.value = ''
+  } catch (error) {
+    console.error('Error posting comment:', error)
+    toast.add({
+      title: t('error'),
+      description: t('failed-to-post-comment'),
+      color: 'error'
+    })
+  }
 }
 </script>
 <template>
@@ -564,6 +584,9 @@ function onSubmit() {
         Vui lòng <span class="text-primary cursor-pointer" @click="isOpenModalSignIn = true">đăng nhập</span> để tham gia bình
         luận.
       </p>
+      <UChatPrompt v-model="input" :rows="3" @submit="onSubmit">
+        <UChatPromptSubmit />
+      </UChatPrompt>
     </div>
   </div>
 </template>
