@@ -2,7 +2,6 @@
 import useFormatDate from '~/composables/useDateFormat'
 import { apiBooking, apiComment, apiPublic } from '~/services'
 import type { TypeSeat, TypeSeatStatus } from '~/types/cinema.type'
-import type { IComment } from '~/types/comment.type'
 import type { IShowtimeRoomResponse } from '~/types/show-time.type'
 
 const { t } = useI18n()
@@ -30,24 +29,17 @@ const selectedSeats = ref<Set<string>>(new Set())
 const selectedDateIndex = ref(0)
 const idCinemaActive = ref<string | null>(null)
 const lockedSeats = ref<Set<string>>(new Set()) // Ghế đang được người khác chọn
-const parentCommentId = ref<string>('')
-const expandedComments = ref<Set<string>>(new Set())
-const commentsChildren = ref<IComment[]>([])
+
 // Fetch movie detail
 const { data: movieDetail } = await useAsyncData(`movie-detail-${movieId.value}`, () =>
   apiPublic.getMovieDetail(movieId.value).then(res => res.value)
 )
-const { data: comments, refresh } = await useAsyncData(`comments-${movieId.value}`, () =>
+const { data: comments, refresh: refreshComments } = await useAsyncData(`comments-${movieId.value}`, () =>
   apiPublic.fetchComments(movieId.value).then(res => res.value)
 )
 
-const loadCommentsChildren = async (commentId: string) => {
-  const { data, refresh } = await useAsyncData(`comments-children-${commentId}`, () =>
-    apiPublic.fetchCommentsChildren(commentId).then(res => res.value)
-  )
-
-  commentsChildren.value = data.value || []
-  return { data, refresh }
+const handleRefreshComments = async () => {
+  await refreshComments()
 }
 
 // Fetch showtimes
@@ -379,7 +371,6 @@ const handleBooking = async () => {
 }
 
 const input = ref('')
-const inputChildren = ref('')
 
 const onSubmit = async () => {
   if (!isAuthenticated.value) {
@@ -387,18 +378,14 @@ const onSubmit = async () => {
     return
   }
 
-  const isReply = !!parentCommentId.value
-  const content = isReply ? inputChildren.value.trim() : input.value.trim()
-
-  if (!content) {
-    return
-  }
+  const content = input.value.trim()
+  if (!content) return
 
   try {
     const { message } = await apiComment.createComment({
       content,
       movieId: movieId.value as string,
-      parentCommentId: parentCommentId.value || ''
+      parentCommentId: ''
     })
 
     toast.add({
@@ -409,10 +396,8 @@ const onSubmit = async () => {
 
     // Reset form
     input.value = ''
-    inputChildren.value = ''
-    parentCommentId.value = ''
 
-    await refresh()
+    await handleRefreshComments()
   } catch (error) {
     console.log(error)
     toast.add({
@@ -420,19 +405,6 @@ const onSubmit = async () => {
       description: t('failed-to-post-comment'),
       color: 'error'
     })
-  }
-}
-
-const handleClickReply = (commentId: string) => {
-  parentCommentId.value = parentCommentId.value ? '' : commentId
-}
-
-const toggleReplies = async (commentId: string) => {
-  if (expandedComments.value.has(commentId)) {
-    expandedComments.value.delete(commentId)
-  } else {
-    expandedComments.value.add(commentId)
-    await loadCommentsChildren(commentId)
   }
 }
 </script>
@@ -626,49 +598,15 @@ const toggleReplies = async (commentId: string) => {
           <UChatPromptSubmit />
         </UChatPrompt>
       </div>
-      <div v-for="value in comments" :key="value.id" class="my-4 flex justify-start items-start gap-4">
-        <UAvatar :alt="value?.author" size="2xl" />
-        <div class="flex flex-col items-start space-y-2 w-full">
-          <span>{{ value.author }}</span>
-          <div class="flex items-center gap-6">
-            <span>{{ value.content }}</span>
-            <UTooltip :text="t('reply')" :delay-duration="0" class="hover:cursor-pointer" @click="handleClickReply(value.id)">
-              <UIcon name="i-lucide-reply" class="size-4 text-secondary" />
-            </UTooltip>
-          </div>
-          <div v-if="parentCommentId === value.id" class="w-3/4">
-            <UChatPrompt v-model="inputChildren" :rows="3" @submit="onSubmit">
-              <UChatPromptSubmit />
-            </UChatPrompt>
-          </div>
-          <p
-            v-if="value.totalChildComment"
-            class="text-xs flex items-center gap-1 text-primary cursor-pointer"
-            @click="toggleReplies(value.id)"
-          >
-            <UIcon
-              name="i-lucide-chevron-down"
-              class="size-4 transition-transform duration-200"
-              :class="{ 'rotate-180': expandedComments.has(value.id) }"
-            />
-            {{ value.totalChildComment }} bình luận
-          </p>
 
-          <template v-if="expandedComments.has(value.id)">
-            <div v-for="value in commentsChildren" :key="value.id">
-              <div class="ml-12 mt-4 flex justify-start items-start gap-4">
-                <UAvatar :alt="value?.author" size="lg" />
-                <div class="flex flex-col items-start space-y-2 w-full">
-                  <span>{{ value.author }}</span>
-                  <div class="flex items-center gap-6">
-                    <span>{{ value.content }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </template>
-        </div>
-      </div>
+      <!-- Recursive Comment List -->
+      <MovieCommentItem
+        v-for="comment in comments"
+        :key="comment.id"
+        :comment="comment"
+        :movie-id="movieId"
+        @refresh="handleRefreshComments"
+      />
     </div>
   </div>
 </template>
