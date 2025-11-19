@@ -38,6 +38,7 @@ export const useSocket = () => {
 
       try {
         const parsed = JSON.parse(event.data)
+        console.log('🚀 ~ connect ~ parsed:', parsed)
 
         // Case 1: Array of seat IDs (bulk update on connect/disconnect)
         // Example: ["7ce1743e-0c91-4f5c-add7-7f85df6442a7", "5f0d5453-d752-4eae-86cb-c6af77285a37"]

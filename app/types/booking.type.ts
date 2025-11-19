@@ -16,4 +16,7 @@ export interface IBooking {
   email: string
   phone: string
   totalPrice: string
+  startTime: string
+  endTime: string
+  posterUrl: string
 }

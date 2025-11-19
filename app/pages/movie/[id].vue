@@ -72,7 +72,8 @@ const showTimeData = computed(() => {
   const timelineItems = selectedCinema.showtimeDetails.map(item => ({
     id: item.id,
     timeline: item.startTime,
-    date: item.date
+    date: item.date,
+    roomName: item.roomResponse.name
   }))
 
   return processTimelineArray(timelineItems)
@@ -225,7 +226,7 @@ const seatsRecord = computed(() => {
     record[key] = {
       row: seat.rowIdx,
       col: seat.colIdx,
-      type: seat.seatName.toUpperCase() as TypeSeat,
+      type: seat.seatType.toUpperCase() as TypeSeat,
       price: seat.price || 0,
       status: seat.booked
         ? 'BOOKED'
@@ -337,6 +338,7 @@ const handleCinemaSelect = (cinemaId: string) => {
 
 const handleChangeShowTimeId = (_showTime: TimeSlot) => {
   showTime.value = _showTime
+  console.log('🚀 ~ handleChangeShowTimeId ~ showTime.value:', showTime.value)
 }
 
 const handleBack = () => {
@@ -489,7 +491,7 @@ const onSubmit = async () => {
           <BaseButton
             v-for="timeSlot in selectedDate.timeSlots"
             :key="timeSlot.id"
-            :text="timeSlot.time"
+            :text="`${timeSlot.time} (${timeSlot?.roomName})`"
             :variant="showTime?.id === timeSlot.id ? 'solid' : 'outline'"
             class-name="min-w-[100px]"
             @click="handleChangeShowTimeId(timeSlot)"

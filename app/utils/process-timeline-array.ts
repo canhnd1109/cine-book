@@ -2,11 +2,13 @@ export interface BookingItem {
   id: string
   date: string
   timeline: string
+  roomName: string
 }
 
 export interface TimeSlot {
   time: string
   id: string
+  roomName: string
 }
 
 export interface CalendarDay {
@@ -61,7 +63,7 @@ function getDatesFromData(bookingArray: BookingItem[]): Omit<CalendarDay, 'timeS
 export default function processTimelineArray(bookingArray: BookingItem[], referenceDate?: string): CalendarDay[] {
   const calendarDates = getDatesFromData(bookingArray)
 
-  const timelinesByDate: { [key: string]: { [time: string]: string } } = {}
+  const timelinesByDate: { [key: string]: { [time: string]: { id: string; roomName: string } } } = {}
 
   bookingArray.forEach(item => {
     const dateKey = item.date
@@ -70,7 +72,11 @@ export default function processTimelineArray(bookingArray: BookingItem[], refere
     if (!timelinesByDate[dateKey]) {
       timelinesByDate[dateKey] = {}
     }
-    timelinesByDate[dateKey][timeKey as string] = item.id
+    // Store both id and roomName together
+    timelinesByDate[dateKey][timeKey as string] = {
+      id: item.id,
+      roomName: item.roomName
+    }
   })
 
   const calendarDays: CalendarDay[] = calendarDates.map(dayInfo => {
@@ -80,10 +86,14 @@ export default function processTimelineArray(bookingArray: BookingItem[], refere
     const sortedTimes = Object.keys(timesForDay).sort()
 
     sortedTimes.forEach(time => {
-      timeSlots.push({
-        time,
-        id: timesForDay[time] as string
-      })
+      const slotData = timesForDay[time]
+      if (slotData) {
+        timeSlots.push({
+          time,
+          id: slotData.id,
+          roomName: slotData.roomName
+        })
+      }
     })
 
     return {
