@@ -29,6 +29,7 @@ export interface IMovie {
   price: number
   trailerUrl: string
   posterUrl: string
+  totalComment: number
   genres: string[]
 }
 

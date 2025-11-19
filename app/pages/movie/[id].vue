@@ -384,8 +384,8 @@ const onSubmit = async () => {
   try {
     const { message } = await apiComment.createComment({
       content,
-      movieId: movieId.value as string,
-      parentCommentId: ''
+      movieId: movieId.value as string
+      // parentCommentId: ''
     })
 
     toast.add({
@@ -584,7 +584,7 @@ const onSubmit = async () => {
     </div>
 
     <!-- Review -->
-    <div class="max-w-4xl mx-auto space-y-4">
+    <div class="max-w-4xl mx-auto space-y-4 my-10">
       <p class="flex justify-start items-center space-x-2">
         <UIcon name="i-lucide-message-circle-more" class="size-6" />
         <span class="text-2xl">{{ t('comment') }}</span>
@@ -594,7 +594,7 @@ const onSubmit = async () => {
         {{ t('to-join-comment') }}
       </p>
       <div>
-        <UChatPrompt v-model="input" :rows="3" @submit="onSubmit">
+        <UChatPrompt v-model="input" :rows="3" :autofocus="false" @submit="onSubmit">
           <UChatPromptSubmit />
         </UChatPrompt>
       </div>

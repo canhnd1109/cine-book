@@ -28,7 +28,7 @@ const handleMovieClick = (movieId: string) => {
     <BaseSkeletonCard v-if="loading" :skeleton-cards="6" class="mt-10" />
 
     <!-- Movie carousel -->
-    <UCarousel v-else-if="movies.length" v-slot="{ item, index }" :items="movies" :ui="{ item: 'basis-1/6 ps-8' }" class="mt-6">
+    <UCarousel v-else-if="movies.length" v-slot="{ item, index }" :items="movies" :ui="{ item: 'basis-1/5 ps-8' }" class="mt-6">
       <div class="cursor-pointer group" @click="handleMovieClick(item.id)">
         <div class="relative overflow-hidden">
           <img
@@ -42,16 +42,18 @@ const handleMovieClick = (movieId: string) => {
           <!-- Hover overlay -->
           <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition duration-300" />
         </div>
-
-        <p class="flex justify-between items-center text-[#999] mt-2 text-sm">
-          <span class="truncate">{{ item.genres.join(', ') }}</span>
-          <span class="flex-shrink-0 ml-2">{{ useDateFormat(item.releaseDate, 'DD/MM/YYYY') }}</span>
-        </p>
-
-        <p class="flex justify-between items-center mt-1">
-          <span class="text-xl font-bold truncate">{{ item.name }}</span>
-          <span class="flex-shrink-0 ml-2 text-sm">{{ minutesToHours(item.duration) }}</span>
-        </p>
+        <div class="space-y-1">
+          <p class="text-xl font-bold truncate mt-2">{{ item.name }}</p>
+          <div class="flex justify-between items-center">
+            <p class="flex gap-1 items-center text-[#999]">
+              <UIcon name="i-lucide-message-circle-more" class="size-4" />
+              <span>{{ formatNumber(item.totalComment) }}</span>
+            </p>
+            <p class="text-sm text-[#999]">{{ minutesToHours(item.duration) }}</p>
+            <p class="text-sm text-[#999]">{{ useDateFormat(item.releaseDate, 'DD/MM/YYYY') }}</p>
+          </div>
+          <p class="truncate text-sm text-[#999]">{{ item.genres.join(', ') }}</p>
+        </div>
       </div>
     </UCarousel>
 

@@ -68,7 +68,7 @@ const handleMovieClick = (movieId: string) => {
         class="border border-solid border-border-light dark:border-border-dark hover:cursor-pointer hover:border-primary rounded-lg overflow-hidden flex gap-4 p-4"
       >
         <!-- Movie Poster -->
-        <div class="flex-shrink-0">
+        <div class="shrink-0">
           <img
             :src="movie.posterUrl"
             :alt="movie.name"
