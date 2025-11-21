@@ -4,7 +4,7 @@ export const useLocation = () => {
   const runtimeConfig = useRuntimeConfig()
 
   const getProvinces = () => {
-    return useAsyncData<IProvince>(
+    return useAsyncData<IProvince[]>(
       'location:provinces',
       () =>
         $fetch(`${runtimeConfig.public.baseApiUrlLocation}/`, {

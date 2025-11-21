@@ -4,13 +4,16 @@ import type { ICinema, ICinemaFilter, IRoom } from '~/types/cinema.type'
 
 export const useCinemaFilterSync = createFilterSync<ICinemaFilter>({
   defaults: {
-    keyWord: ''
+    keyWord: '',
+    province: ''
   },
   mapping: {
-    keyWord: 'keyWord'
+    keyWord: 'keyWord',
+    province: 'province'
   },
   coerce: {
-    keyWord: 'string'
+    keyWord: 'string',
+    province: 'string'
   },
   debounceMs: 400
 })
@@ -120,6 +123,16 @@ export function useCinemaData() {
     roomsOfCinema.value = data.value ?? []
   }
 
+  const resetFilter = () => {
+    applyWithRefresh(
+      {
+        keyWord: '',
+        province: ''
+      },
+      { resetPage: true }
+    )
+  }
+
   return {
     // State
     filters,
@@ -140,6 +153,7 @@ export function useCinemaData() {
     restSeat,
     fetchRooms,
     fetchAllCinemas,
-    fetchRoomsOfCinema
+    fetchRoomsOfCinema,
+    resetFilter
   }
 }

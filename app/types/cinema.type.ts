@@ -2,6 +2,7 @@ import type { IFormCinema } from '~/schemas/cinema.chema'
 
 export interface ICinemaFilter {
   keyWord: string
+  province: string
 }
 
 export type IFormState = Omit<IFormCinema, 'province' | 'commune'> & {

@@ -39,7 +39,7 @@ const handleClickCinema = (cinemaId: string) => {
         @input="apply({ keyWord: filters.keyWord }, { debounce: true, resetPage: true })"
       />
       <BaseSelectMenu
-        v-model="provinceModel"
+        v-model="filters.province"
         :items="provinceOptions"
         label-key="label"
         value-key="value"
