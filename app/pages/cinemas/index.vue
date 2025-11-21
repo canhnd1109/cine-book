@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { apiPublic } from '~/services'
-
+const { t } = useI18n()
 const { filters, cinemas, apply } = useCinemaData()
+const { getProvinces } = useLocation()
+const { data: provinces, pending: loadingProvinces } = getProvinces()
 
 const hoveredItem = ref<string | null>(null)
 
@@ -13,7 +15,14 @@ const { data, pending } = await useAsyncData('cinemas-list', async () => {
 watchEffect(() => {
   cinemas.value = data.value || []
 })
-
+const provinceOptions = computed(() => {
+  if (!provinces.value) return []
+  return provinces.value.map(p => ({
+    label: p.name,
+    value: p.code,
+    ...p
+  }))
+})
 const handleClickCinema = (cinemaId: string) => {
   navigateTo(`/cinema/${cinemaId}`)
 }
@@ -22,11 +31,23 @@ const handleClickCinema = (cinemaId: string) => {
   <div class="container mx-auto space-y-6 mb-10">
     <p class="text-3xl font-bold text-center">Danh sách rạp chiếu phim</p>
 
-    <BaseInput
-      v-model="filters.keyWord"
-      :is-show-clear="true"
-      @input="apply({ keyWord: filters.keyWord }, { debounce: true, resetPage: true })"
-    />
+    <div class="flex items-center mb-4 gap-3">
+      <BaseInput
+        v-model="filters.keyWord"
+        :is-show-clear="true"
+        base-style="w-68"
+        @input="apply({ keyWord: filters.keyWord }, { debounce: true, resetPage: true })"
+      />
+      <BaseSelectMenu
+        v-model="provinceModel"
+        :items="provinceOptions"
+        label-key="label"
+        value-key="value"
+        :placeholder="t('select-province')"
+        :disabled="loadingProvinces"
+        class="w-60"
+      />
+    </div>
     <BaseSkeletonCard v-if="pending" />
     <BaseEmpty v-else-if="!cinemas.length" />
     <div v-else class="grid-cols-4 gap-6 grid max-lg:grid-cols-3 max-md:grid-cols-2 max-sm:grid-cols-1">

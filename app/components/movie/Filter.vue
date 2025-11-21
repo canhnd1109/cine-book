@@ -62,7 +62,7 @@ const resetFilter = () => {
         :model-value="filters.orderBy"
         :items="ORDER_BY_MOVIE"
         :placeholder="t('order-by')"
-        @change="apply({ orderBy: $event }, { resetPage: true })"
+        @change="apply({ orderBy: $event as typeof filters.orderBy }, { resetPage: true })"
       />
       <BaseSelect
         v-model="filters.genre"
@@ -70,13 +70,13 @@ const resetFilter = () => {
         label-key="name"
         value-key="id"
         :placeholder="t('genre')"
-        @change="apply({ genre: $event }, { resetPage: true })"
+        @change="apply({ genre: $event as string }, { resetPage: true })"
       />
       <BaseSelect
         v-model="filters.rangePrice"
         :items="LIST_PRICE_MOVIE"
         :placeholder="t('price-ticket')"
-        @change="handleSelectedPrice($event)"
+        @change="handleSelectedPrice($event as string)"
       />
       <UTooltip :text="t('reset-filter')" :delay-duration="0">
         <UIcon name="i-lucide-rotate-ccw" class="size-5 hover:cursor-pointer" @click="resetFilter" />

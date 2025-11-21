@@ -1,7 +1,12 @@
 <script setup lang="ts">
-const { modelValue = '', isShowClear = false } = defineProps<{
+const {
+  modelValue = '',
+  isShowClear = false,
+  baseStyle = ''
+} = defineProps<{
   modelValue?: string
   isShowClear?: boolean
+  baseStyle?: string
 }>()
 
 const emits = defineEmits<{
@@ -38,6 +43,7 @@ const clearInput = () => {
     variant="outline"
     loading-icon="i-lucide-loader"
     :placeholder="t('search')"
+    :ui="{ base: `w-68 ${baseStyle}` }"
     @update:model-value="onInput"
   >
     <template v-if="isShowClear && inputValue?.length" #trailing>
