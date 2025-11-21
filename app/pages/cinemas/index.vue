@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { apiPublic } from '~/services'
 const { t } = useI18n()
-const { filters, cinemas, apply } = useCinemaData()
+const { filters, cinemas, apply, resetFilter } = useCinemaData()
 const { getProvinces } = useLocation()
-const { data: provinces, pending: loadingProvinces } = getProvinces()
+const { data: provinces } = getProvinces()
 
 const hoveredItem = ref<string | null>(null)
 
@@ -22,6 +22,11 @@ const provinceOptions = computed(() => {
     value: p.code,
     ...p
   }))
+})
+const selectedProvinceName = computed(() => {
+  return (
+    provinceOptions.value.find((p: { label: string; value: number }) => p.value === Number(filters.value.province))?.label || ''
+  )
 })
 const handleClickCinema = (cinemaId: string) => {
   navigateTo(`/cinema/${cinemaId}`)
@@ -44,9 +49,13 @@ const handleClickCinema = (cinemaId: string) => {
         label-key="label"
         value-key="value"
         :placeholder="t('select-province')"
-        :disabled="loadingProvinces"
         class="w-60"
+        @change="apply({ province: selectedProvinceName as typeof filters.province }, { resetPage: true })"
       />
+
+      <UTooltip :text="t('reset-filter')" :delay-duration="0">
+        <UIcon name="i-lucide-rotate-ccw" class="size-5 hover:cursor-pointer" @click="resetFilter" />
+      </UTooltip>
     </div>
     <BaseSkeletonCard v-if="pending" />
     <BaseEmpty v-else-if="!cinemas.length" />

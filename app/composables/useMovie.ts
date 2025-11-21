@@ -63,6 +63,22 @@ export function useMovieData() {
     }
   }
 
+  const resetFilter = () => {
+    applyWithRefresh(
+      {
+        ...DEFAULT_QUERY_PAGINATION,
+        searchName: '',
+        genre: '',
+        rangePrice: '',
+        maxPrice: '',
+        minPrice: '',
+        orderBy: '',
+        orderType: ''
+      },
+      { resetPage: true }
+    )
+  }
+
   return {
     // State
     filters,
@@ -77,6 +93,7 @@ export function useMovieData() {
     apply: applyWithRefresh,
     setRefreshCallback: (cb: () => Promise<void>) => {
       refreshCallback.value = cb
-    }
+    },
+    resetFilter
   }
 }

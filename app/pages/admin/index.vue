@@ -1,26 +1,8 @@
 <script setup lang="ts">
-import { DEFAULT_QUERY_PAGINATION } from '~/constants'
-
 definePageMeta({ layout: 'admin', middleware: ['admin'] })
-const { apply } = useMovieData()
-const { apply: applyCinema } = useCinemaData()
-const resetFilter = () => {
-  apply(
-    {
-      ...DEFAULT_QUERY_PAGINATION,
-      searchName: '',
-      genre: '',
-      rangePrice: '',
-      maxPrice: '',
-      minPrice: '',
-      orderBy: '',
-      orderType: ''
-    },
-    { resetPage: true }
-  )
-  applyCinema({ keyWord: '' }, { resetPage: true })
-}
-resetFilter()
+const { resetFilter: resetMovieFilter } = useMovieData()
+const { resetFilter: resetCinemaFilter } = useCinemaData()
+Promise.all([resetMovieFilter(), resetCinemaFilter()])
 </script>
 
 <template>
