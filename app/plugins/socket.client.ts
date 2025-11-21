@@ -1,5 +1,4 @@
 export default defineNuxtPlugin(() => {
-  // WebSocket connection manager
   const connections = new Map<string, WebSocket>()
   const runtimeConfig = useRuntimeConfig()
   const createConnection = (showtimeId: string) => {
