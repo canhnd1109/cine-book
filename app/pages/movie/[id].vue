@@ -34,6 +34,7 @@ const lockedSeats = ref<Set<string>>(new Set()) // Ghế đang được người
 const { data: movieDetail } = await useAsyncData(`movie-detail-${movieId.value}`, () =>
   apiPublic.getMovieDetail(movieId.value).then(res => res.value)
 )
+
 const { data: comments, refresh: refreshComments } = await useAsyncData(`comments-${movieId.value}`, () =>
   apiPublic.fetchComments(movieId.value).then(res => res.value)
 )
@@ -67,6 +68,7 @@ const showTimeData = computed(() => {
   if (!showtimeData.value || !idCinemaActive.value) return []
 
   const selectedCinema = showtimeData.value.find(item => item.cinemaId === idCinemaActive.value)
+  console.log('🚀 ~ showtimeData.value:', showtimeData.value)
   if (!selectedCinema?.showtimeDetails) return []
 
   const timelineItems = selectedCinema.showtimeDetails.map(item => ({
@@ -154,6 +156,16 @@ onMounted(() => {
       lockedSeats.value.add(seatId)
     })
   })
+
+  if (route.query.cinemaId) {
+    idCinemaActive.value = route.query.cinemaId as string
+  }
+  if (route.query.date) {
+    const dateIndex = showTimeData.value.findIndex(item => item.fullDate === (route.query.date as string).replace(/-/g, ':'))
+    if (dateIndex !== -1) {
+      selectedDateIndex.value = dateIndex
+    }
+  }
 })
 
 onUnmounted(() => {

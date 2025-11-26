@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { apiPublic } from '~/services'
+import type { IMovie } from '~/types/movie.type'
 
 const route = useRoute()
 const router = useRouter()
@@ -13,6 +14,7 @@ const getInitialDate = () => {
 }
 const activeDate = ref<DateItem>(getInitialDate())
 const { data: movies, pending, refresh } = useFetchMoviesByCinemaByDay(route.params.id as string, selectedDateApi)
+console.log('🚀 ~ movies:', movies.value)
 
 watch(selectedDateApi, () => refresh(), { immediate: true })
 
@@ -21,8 +23,12 @@ const changeDate = (item: DateItem) => {
   router.push({ query: { date: item.apiFormat } })
 }
 
-const handleMovieClick = (movieId: string) => {
-  router.push({ name: 'cinema-id', params: { id: movieId } })
+const handleMovieClick = (movie: IMovie) => {
+  router.push({
+    name: 'movie-id',
+    params: { id: movie.id },
+    query: { cinemaId: route.params.id, date: activeDate.value.apiFormat }
+  })
 }
 
 const { data } = await useAsyncData(`cinema-detail-${route.params.id}`, async () => {
@@ -76,7 +82,7 @@ const mapUrl = computed(() => {
       <BaseSkeletonCard v-if="pending" />
       <BaseEmpty v-else-if="!(movies && movies.length)" />
       <UCarousel v-else v-slot="{ item, index }" :items="movies" :ui="{ item: 'basis-1/5 ps-8' }" class="mt-6">
-        <div class="cursor-pointer group" @click="handleMovieClick(item.id)">
+        <div class="cursor-pointer group" @click="handleMovieClick(item)">
           <div class="relative overflow-hidden">
             <img
               :src="item.posterUrl"
