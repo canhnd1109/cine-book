@@ -1,3 +1,7 @@
+<script setup lang="ts">
+const { t } = useI18n()
+</script>
+
 <template>
   <div class="dark:bg-[#0B0D13] bg-bg-light p-8 mx-auto space-y-6 background">
     <p class="flex justify-center items-center gap-8 text-base">
@@ -64,10 +68,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-const { t } = useI18n()
-</script>
 
 <style scoped>
 .background {

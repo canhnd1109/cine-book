@@ -131,12 +131,11 @@ export const useFetchMoviesByCinemaByDay = (cinemaId: string | Ref<string>, star
   const date = computed(() => unref(startDate))
 
   return useFetch<IMovieByDay[]>(
-    computed(() => `/public-api/cinema/${id.value}/movies`),
+    computed(() => `/public-api/cinema/${id.value}/movies/by-date/${date.value}`),
     {
       ...createBaseFetchOptions<IMovieByDay[]>({
         immediate: true,
         key: computed(() => `movies-cinema-${id.value}-${date.value}`),
-        query: computed(() => ({ startDate: date.value })),
         watch: [id, date],
         transform: (data: unknown) => {
           const response = data as { value?: IMovieByDay[] }

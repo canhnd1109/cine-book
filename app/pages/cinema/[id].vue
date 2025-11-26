@@ -72,7 +72,39 @@ const mapUrl = computed(() => {
         @click="changeDate(item)"
       />
     </div>
-    {{ movies }}
+    <div class="container mx-auto my-10 space-y-6">
+      <BaseSkeletonCard v-if="pending" />
+      <BaseEmpty v-else-if="!(movies && movies.length)" />
+      <UCarousel v-else v-slot="{ item, index }" :items="movies" :ui="{ item: 'basis-1/5 ps-8' }" class="mt-6">
+        <div class="cursor-pointer group" @click="handleMovieClick(item.id)">
+          <div class="relative overflow-hidden">
+            <img
+              :src="item.posterUrl"
+              :alt="item.name"
+              class="object-cover image max-sm:object-center h-[445px] hover:scale-105 transition duration-500"
+              :class="index % 2 === 0 ? 'clip-shape-right' : 'clip-shape-left'"
+              loading="lazy"
+            />
+
+            <!-- Hover overlay -->
+            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition duration-300" />
+          </div>
+
+          <div class="space-y-1">
+            <p class="text-xl font-bold truncate mt-2">{{ item.name }}</p>
+            <div class="flex justify-between items-center">
+              <p class="flex gap-1 items-center text-[#999]">
+                <UIcon name="i-lucide-message-circle-more" class="size-4" />
+                <span>{{ formatNumber(item.totalComment) }}</span>
+              </p>
+              <p class="text-sm text-[#999]">{{ minutesToHours(item.duration) }}</p>
+              <p class="text-sm text-[#999]">{{ useDateFormat(item.releaseDate, 'DD/MM/YYYY') }}</p>
+            </div>
+            <p class="truncate text-sm text-[#999]">{{ item.genres.join(', ') }}</p>
+          </div>
+        </div>
+      </UCarousel>
+    </div>
     <div class="w-5xl container mx-auto">
       <iframe
         :src="mapUrl"
