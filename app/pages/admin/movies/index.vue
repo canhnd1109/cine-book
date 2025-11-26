@@ -8,6 +8,7 @@ import type { IMovie } from '~/types/movie.type'
 
 definePageMeta({ layout: 'admin', middleware: ['admin'] })
 
+const router = useRouter()
 const toast = useToast()
 const { t } = useI18n()
 const { filters, movies, totalRecords, movieDetail, setRefreshCallback } = useMovieData()
@@ -110,6 +111,13 @@ const handleAction = (action: IActionCard, item: IMovie) => {
     isConfirmOpen.value = true
   } else if (action === 'VIEW') {
     isOpenModalDetail.value = true
+    router.push({
+      query: {
+        ...router.currentRoute.value.query,
+        movieId: item.id,
+        modal: 'detail'
+      }
+    })
   }
 }
 

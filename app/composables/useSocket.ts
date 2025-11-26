@@ -31,18 +31,23 @@ export const useSocket = () => {
     const ws = socketManager.createConnection(showtimeId)
 
     ws.onmessage = (event: MessageEvent) => {
+      console.log('📥 Raw message from server:', event.data)
+
       // Check if it's a text message (not JSON)
       if (typeof event.data === 'string' && !event.data.trim().startsWith('{') && !event.data.trim().startsWith('[')) {
+        console.log('ℹ️ Plain text message (ignored):', event.data)
         return
       }
 
       try {
         const parsed = JSON.parse(event.data)
-        console.log('🚀 ~ connect ~ parsed:', parsed)
+        console.log('📦 Parsed message:', parsed)
 
         // Case 1: Array of seat IDs (bulk update on connect/disconnect)
-        // Example: ["7ce1743e-0c91-4f5c-add7-7f85df6442a7", "5f0d5453-d752-4eae-86cb-c6af77285a37"]
-        if (Array.isArray(parsed) && parsed.length > 0 && typeof parsed[0] === 'string') {
+        // Check if it's an array AND either empty OR first element is string (UUID)
+        // Empty array means no seats locked (user disconnected)
+        if (Array.isArray(parsed) && (parsed.length === 0 || typeof parsed[0] === 'string')) {
+          console.log('🔄 Bulk update:', parsed)
           bulkUpdateHandlers.value.forEach(handler => {
             handler(parsed as string[])
           })
@@ -51,6 +56,7 @@ export const useSocket = () => {
 
         // Case 2: Single seat selection or array of seat selection objects
         const dataArray: SeatSelection[] = Array.isArray(parsed) ? parsed : [parsed]
+        console.log('💺 Seat selections:', dataArray)
 
         // Notify all registered handlers for each seat selection
         dataArray.forEach(data => {

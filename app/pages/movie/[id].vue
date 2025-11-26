@@ -68,7 +68,6 @@ const showTimeData = computed(() => {
   if (!showtimeData.value || !idCinemaActive.value) return []
 
   const selectedCinema = showtimeData.value.find(item => item.cinemaId === idCinemaActive.value)
-  console.log('🚀 ~ showtimeData.value:', showtimeData.value)
   if (!selectedCinema?.showtimeDetails) return []
 
   const timelineItems = selectedCinema.showtimeDetails.map(item => ({
@@ -148,6 +147,8 @@ onMounted(() => {
 
   // Handle bulk seats update (on connect/disconnect)
   onBulkSeatsUpdate(seatIds => {
+    console.log('🔄 Bulk update received, seat IDs:', seatIds)
+
     // Clear current locked seats
     lockedSeats.value.clear()
 
@@ -155,6 +156,8 @@ onMounted(() => {
     seatIds.forEach(seatId => {
       lockedSeats.value.add(seatId)
     })
+
+    console.log('🔒 Updated locked seats:', Array.from(lockedSeats.value))
   })
 
   if (route.query.cinemaId) {
@@ -350,7 +353,6 @@ const handleCinemaSelect = (cinemaId: string) => {
 
 const handleChangeShowTimeId = (_showTime: TimeSlot) => {
   showTime.value = _showTime
-  console.log('🚀 ~ handleChangeShowTimeId ~ showTime.value:', showTime.value)
 }
 
 const handleBack = () => {
