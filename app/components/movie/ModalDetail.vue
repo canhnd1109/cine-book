@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import useFormatDate from '~/composables/useDateFormat'
 import { apiPublic } from '~/services'
-import type { IShowtime } from '~/types/show-time.type'
 
 const { t } = useI18n()
 const { movieDetail } = useMovieData()
@@ -9,51 +8,77 @@ const route = useRoute()
 const router = useRouter()
 
 const isOpen = defineModel('isOpen', { type: Boolean, default: false })
-const showTime = ref<IShowtime[]>([])
-const isLoading = ref(false)
 const tabs = computed(() => [
-  { key: 'create', label: t('setting-showtime') as string },
-  { key: 'manage', label: t('manage-showtimes') as string }
+  { key: 'detail', label: t('movie-detail') as string },
+  { key: 'showtimes', label: t('manage-showtimes') as string }
 ])
 
-const activeTab = ref('create')
+const activeTab = ref('detail')
 
+// Fetch showtimes with lazy loading
+const {
+  data,
+  pending,
+  execute: fetchShowtimes
+} = await useAsyncData(
+  () => `showtimes-${route.query.movieId}`,
+  async () => {
+    if (!route.query.movieId) return []
+    const res = await apiPublic.fetchShowtimesByMovie(route.query.movieId as string)
+    return res.value || []
+  },
+  {
+    immediate: false,
+    default: () => []
+  }
+)
+
+// Sync tab from query and handle data fetching
+const syncTabAndFetch = async (queryTab?: string) => {
+  if (queryTab && tabs.value.some((tab: { key: string }) => tab.key === queryTab)) {
+    activeTab.value = queryTab
+  } else {
+    activeTab.value = 'detail'
+  }
+
+  // Fetch showtimes if on showtimes tab and no data yet
+  if (activeTab.value === 'showtimes' && (!data.value || data.value.length === 0)) {
+    await fetchShowtimes()
+  }
+}
+
+// Watch modal open/close
 watch(
   () => isOpen.value,
-  newValue => {
+  async newValue => {
     if (newValue) {
-      // Sync tab from query or set default
       const queryTab = route.query.tab as string
-      if (queryTab && tabs.value.some((tab: { key: string }) => tab.key === queryTab)) {
-        activeTab.value = queryTab
-      } else {
-        activeTab.value = 'create'
-        updateQuery('create')
+      await syncTabAndFetch(queryTab)
+
+      if (!queryTab || queryTab !== activeTab.value) {
+        updateQuery(activeTab.value)
       }
     } else {
-      // Remove query when modal closes
       removeQuery()
     }
   }
 )
 
-// Watch activeTab and update query
+// Watch tab changes
 watch(activeTab, async newTab => {
   if (isOpen.value) {
     updateQuery(newTab)
+
+    if (newTab === 'showtimes' && (!data.value || data.value.length === 0)) {
+      await fetchShowtimes()
+    }
   }
 })
 
-onMounted(() => {
+// Auto-open modal from query on mount
+onMounted(async () => {
   if (route.query.modal === 'detail' && route.query.movieId) {
     isOpen.value = true
-    const queryTab = route.query.tab as string
-    if (queryTab && tabs.value.some((tab: { key: string }) => tab.key === queryTab)) {
-      activeTab.value = queryTab
-    } else {
-      activeTab.value = 'create'
-      updateQuery('create')
-    }
   }
 })
 
@@ -73,39 +98,9 @@ const removeQuery = () => {
   const { tab, modal, movieId, ...restQuery } = route.query
   router.push({ query: restQuery })
 }
-
-const handleOpen = () => {
-  if (activeTab.value === 'manage') {
-    const { data, pending } = useAsyncData(
-      `showtimes-${route.query.movieId}`,
-      async () => {
-        if (!route.query.movieId) return null
-        return apiPublic.fetchShowtimesByMovie(route.query.movieId as string).then(res => res.value)
-      },
-      { watch: [() => route.query.movieId] }
-    )
-
-    showTime.value = data.value || []
-
-    watch(
-      pending,
-      value => {
-        isLoading.value = value
-      },
-      { immediate: true }
-    )
-    watch(
-      data,
-      value => {
-        showTime.value = value || []
-      },
-      { immediate: true }
-    )
-  }
-}
 </script>
 <template>
-  <UModal v-model:open="isOpen" :title="t('movie-detail')" @after:enter="handleOpen">
+  <UModal v-model:open="isOpen" :title="t('movie-detail')">
     <template #body>
       <!-- Tabs Navigation -->
       <div class="mb-6">
@@ -126,7 +121,8 @@ const handleOpen = () => {
         </div>
       </div>
 
-      <div v-if="activeTab === 'create'">
+      <!-- Tab: Movie Detail -->
+      <div v-if="activeTab === 'detail'">
         <img :src="movieDetail.posterUrl" :alt="movieDetail.name" class="w-1/2 h-96 mx-auto rounded-lg shadow-md object-cover" />
 
         <p class="mt-2 line-clamp-2 text-center font-medium">
@@ -178,18 +174,20 @@ const handleOpen = () => {
         <!-- eslint-disable-next-line vue/no-v-html -->
         <p class="line-clamp-3" v-html="movieDetail.description" />
       </div>
-      <!-- Tab 2: Manage Showtimes -->
-      <div v-else-if="activeTab === 'manage'">
-        <div class="min-h-[300px] flex items-center justify-center text-gray-500">
-          <div v-if="isLoading">
-            <p>fds</p>
-          </div>
-          <div v-else>
-            {{ showTime }}
-          </div>
+
+      <!-- Tab: Showtimes -->
+      <div v-else-if="activeTab === 'showtimes'">
+        <div v-if="pending" class="min-h-[300px] flex items-center justify-center">
+          <UIcon name="i-lucide-loader-circle" class="size-8 animate-spin text-primary" />
         </div>
-      </div></template
-    >
+        <div v-else-if="!data || data.length === 0" class="min-h-[300px] flex items-center justify-center text-gray-500">
+          <p>{{ t('no-showtimes-available') }}</p>
+        </div>
+        <div v-else class="space-y-4">
+          {{ data }}
+        </div>
+      </div>
+    </template>
   </UModal>
 </template>
 
