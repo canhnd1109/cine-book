@@ -276,5 +276,11 @@
   "manage-showtimes": "Manage showtimes",
   "delete-showtime-title": "Delete Showtime",
   "delete-showtime-confirm": "Are you sure you want to delete the showtime at \"{time}\"?",
-  "day": "Day"
+  "day": "Day",
+  "movie": "Movie",
+  "total-movies": "Total movies",
+  "total-cinemas": "Total cinemas",
+  "total-rooms": "Total rooms",
+  "total-bookings": "Total bookings",
+  "total-revenue": "Total revenue"
 }

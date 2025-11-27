@@ -276,5 +276,11 @@
   "manage-showtimes": "Quản lý lịch chiếu",
   "delete-showtime-title": "Xóa lịch chiếu",
   "delete-showtime-confirm": "Bạn có chắc chắn muốn xóa lịch chiếu vào lúc \"{time}\" không?",
-  "day": "Ngày"
+  "day": "Ngày",
+  "movie": "Phim",
+  "total-movies": "Tổng số phim",
+  "total-cinemas": "Tổng số rạp chiếu",
+  "total-rooms": "Tổng số phòng chiếu",
+  "total-bookings": "Tổng số đặt vé",
+  "total-revenue": "Tổng doanh thu"
 }

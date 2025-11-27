@@ -91,7 +91,6 @@ watch(activeTab, async newTab => {
   }
 })
 
-// Auto-open modal from query on mount
 onMounted(async () => {
   if (route.query.modal === 'detail' && route.query.movieId) {
     isOpen.value = true
@@ -147,6 +146,11 @@ const columns = computed<TableColumn<IShowtimeTable>[]>(() => [
     accessorKey: 'stt',
     header: 'STT',
     cell: ({ row }) => row.index + 1
+  },
+  {
+    key: 'movie',
+    header: t('movie'),
+    cell: () => movieDetail.value.name
   },
   {
     key: 'cinema',
@@ -228,12 +232,16 @@ const handleDelete = async () => {
     showTimeDetail.value = {} as IShowtimeTable
   }
 }
+
+const handleClose = () => {
+  localStorage.clear()
+}
 defineExpose({
   fetchShowtimes
 })
 </script>
 <template>
-  <UModal v-model:open="isOpen" :title="t('movie-detail')">
+  <UModal v-model:open="isOpen" :title="t('movie-detail')" @close:prevent="handleClose">
     <template #body>
       <!-- Tabs Navigation -->
       <div class="mb-6">

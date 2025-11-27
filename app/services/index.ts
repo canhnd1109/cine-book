@@ -9,6 +9,7 @@ import { ShowtimeService } from './showtime.service'
 import { BookingService } from './booking.service'
 import { UserService } from './user.service'
 import { CommentService } from './comment.service'
+import { StatisticsService } from './statistics.service'
 
 const apiAuth: AuthService = new AuthService()
 const apiGenre: GenreService = new GenreService()
@@ -21,5 +22,19 @@ const apiShowtime: ShowtimeService = new ShowtimeService()
 const apiBooking: BookingService = new BookingService()
 const apiUser: UserService = new UserService()
 const apiComment: CommentService = new CommentService()
+const apiStatistics: StatisticsService = new StatisticsService()
 
-export { apiAuth, apiGenre, apiShared, apiMovie, apiPublic, apiCinema, apiRoom, apiShowtime, apiBooking, apiUser, apiComment }
+export {
+  apiAuth,
+  apiGenre,
+  apiShared,
+  apiMovie,
+  apiPublic,
+  apiCinema,
+  apiRoom,
+  apiShowtime,
+  apiBooking,
+  apiUser,
+  apiComment,
+  apiStatistics
+}

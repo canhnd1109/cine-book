@@ -1,12 +1,53 @@
 <script setup lang="ts">
+import { apiStatistics } from '~/services'
+
 definePageMeta({ layout: 'admin', middleware: ['admin'] })
+
+const { t } = useI18n()
 const { resetFilter: resetMovieFilter } = useMovieData()
 const { resetFilter: resetCinemaFilter } = useCinemaData()
-Promise.all([resetMovieFilter(), resetCinemaFilter()])
+
+const { data, pending, refresh } = useLazyAsyncData('genres-list', async () => {
+  const res = await apiStatistics.getSummary()
+  return res.value
+})
+
+await Promise.all([resetMovieFilter(), resetCinemaFilter()])
+const summaries = computed(() => {
+  return [
+    {
+      label: t('total-movies'),
+      value: data.value?.totalMovies || 0
+    },
+    {
+      label: t('total-cinemas'),
+      value: data.value?.totalCinemas || 0
+    },
+    {
+      label: t('total-rooms'),
+      value: data.value?.totalRooms || 0
+    },
+    {
+      label: t('total-bookings'),
+      value: formatNumber(data.value?.totalBookings || 0)
+    },
+    {
+      label: t('total-revenue'),
+      value: formatPrice(data.value?.totalRevenue || 0)
+    }
+  ]
+})
 </script>
 
 <template>
-  <div class="bg-bg-light dark:bg-bg-primary-dark flex-1 rounded-lg mr-6">Admin Dashboard</div>
+  <div class="space-y-4 m-6 rounded-lg">
+    <UCarousel v-slot="{ item }" wheel-gestures :items="summaries" :ui="{ item: 'basis-1/4' }">
+      <div class="dark:bg-bg-seconary-dark bg-white rounded-xl p-6 space-y-2">
+        <p class="font-medium">{{ item.label }}</p>
+        <p class="text-3xl text-secondary font-semibold">{{ item.value }}</p>
+      </div>
+    </UCarousel>
+  </div>
 </template>
 
 <style scoped></style>
