@@ -30,7 +30,7 @@ const actionClick = (action: IActionCard, data: ICinema) => {
 <template>
   <BaseSkeletonCard v-if="isFetching" />
   <BaseEmpty v-else-if="!cinemas.length" />
-  <div v-else class="grid-cols-5 gap-6 grid max-lg:grid-cols-4 max-md:grid-cols-3 max-sm:grid-cols-2">
+  <div v-else class="grid-cols-4 gap-6 grid max-lg:grid-cols-3 max-md:grid-cols-2 max-sm:grid-cols-1">
     <div v-for="item in cinemas" :key="item.id">
       <BaseCard :item="item" :index="0" class="w-full" :visible-actions="['VIEW', 'EDIT', 'DELETE']" @action-click="actionClick">
         <template #image>

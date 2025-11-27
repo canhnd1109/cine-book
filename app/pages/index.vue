@@ -10,7 +10,9 @@ const { t } = useI18n()
 const { top10MostViewedMovies, showingMovies, upcomingMovies } = useMovieData()
 
 const items = [
-  '/images/phim-9.png',
+  '/images/0019436.png',
+  '/images/0019421.png',
+  '/images/0019423.png',
   '/images/phim-8.png',
   '/images/phim-7.png',
   '/images/phim-6.png',

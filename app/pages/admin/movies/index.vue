@@ -103,6 +103,7 @@ const handleEditMovie = async (_: boolean, formData?: ICreateMovie) => {
 
 const handleAction = (action: IActionCard, item: IMovie) => {
   movieDetail.value = item
+  localStorage.setItem('movieDetail', JSON.stringify(item))
   if (action === 'SETTING') {
     modalSettingRef.value?.resetForm()
     isOpenModalSetting.value = true
@@ -115,7 +116,6 @@ const handleAction = (action: IActionCard, item: IMovie) => {
     isConfirmOpen.value = true
   } else if (action === 'VIEW') {
     isOpenModalDetail.value = true
-    localStorage.setItem('movieDetail', JSON.stringify(item))
     router.push({
       query: {
         ...router.currentRoute.value.query,

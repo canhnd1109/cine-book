@@ -55,6 +55,7 @@ const handleAction = async (isOpenModal: boolean = false) => {
         description: message,
         color: 'success'
       })
+      form.value.genreName = ''
       isOpen.value = false
       isEditMode.value = false
       await refresh()

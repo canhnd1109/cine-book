@@ -86,6 +86,7 @@ const handleDelete = async () => {
       description: message,
       color: 'success'
     })
+    isConfirmOpen.value = false
     await refresh()
   } catch (error) {
     console.log(error)
