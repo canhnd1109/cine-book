@@ -85,7 +85,7 @@ watch(activeTab, async newTab => {
   if (isOpen.value) {
     updateQuery(newTab)
 
-    if (newTab === 'showtimes' && (!rawData.value || rawData.value.length === 0)) {
+    if (newTab === 'showtimes') {
       await fetchShowtimes()
     }
   }
@@ -331,7 +331,7 @@ defineExpose({
     variant="danger"
     :title="t('delete-showtime-title')"
     :description="
-      formatConfirmContent(t('delete-showtime-confirm', { name: `${showTimeDetail.startTime}` }), showTimeDetail.startTime)
+      formatConfirmContent(t('delete-showtime-confirm', { time: `${showTimeDetail.startTime}` }), showTimeDetail.startTime)
     "
     :confirm-text="t('delete')"
     :cancel-text="t('cancel-button')"

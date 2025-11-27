@@ -272,5 +272,9 @@
   "login": "Login",
   "to-join-comment": "to join the discussion.",
   "failed-to-post-comment": "Failed to post comment",
-  "your-comment": "Your comment"
+  "your-comment": "Your comment",
+  "manage-showtimes": "Manage showtimes",
+  "delete-showtime-title": "Delete Showtime",
+  "delete-showtime-confirm": "Are you sure you want to delete the showtime at \"{time}\"?",
+  "day": "Day"
 }
