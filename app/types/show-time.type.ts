@@ -32,3 +32,20 @@ export interface IShowtimeRoomResponse {
     booked: boolean
   }[]
 }
+
+export interface IShowtimeTable {
+  cinemaId: string
+  cinemaName: string
+  province: string
+  district: string
+  commune: string
+  detailAddress: string
+  id: string
+  date: string
+  startTime: string
+  endTime: string
+  roomId: string
+  name: string
+  totalRow: number
+  totalCol: number
+}

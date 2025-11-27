@@ -9,4 +9,8 @@ export class ShowtimeService extends BaseService {
   async addShowtime(form: ICreateShowtime): Promise<IResponseMessage> {
     return this.post<IResponseMessage>('', form)
   }
+
+  async deleteShowtime(id: string): Promise<IResponseMessage> {
+    return this.delete<IResponseMessage>(`/${id}`)
+  }
 }

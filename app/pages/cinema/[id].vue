@@ -14,7 +14,6 @@ const getInitialDate = () => {
 }
 const activeDate = ref<DateItem>(getInitialDate())
 const { data: movies, pending, refresh } = useFetchMoviesByCinemaByDay(route.params.id as string, selectedDateApi)
-console.log('🚀 ~ movies:', movies.value)
 
 watch(selectedDateApi, () => refresh(), { immediate: true })
 

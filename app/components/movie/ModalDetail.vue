@@ -1,13 +1,20 @@
 <script setup lang="ts">
+import type { DropdownMenuItem, TableColumn } from '@nuxt/ui'
 import useFormatDate from '~/composables/useDateFormat'
-import { apiPublic } from '~/services'
+import { apiPublic, apiShowtime } from '~/services'
+import type { IShowtime, IShowtimeTable } from '~/types/show-time.type'
 
 const { t } = useI18n()
 const { movieDetail } = useMovieData()
 const route = useRoute()
 const router = useRouter()
+const toast = useToast()
 
 const isOpen = defineModel('isOpen', { type: Boolean, default: false })
+const isConfirmOpen = ref(false)
+const showTimeDetail = ref<IShowtimeTable>({} as IShowtimeTable)
+const isDeleting = ref(false)
+
 const tabs = computed(() => [
   { key: 'detail', label: t('movie-detail') as string },
   { key: 'showtimes', label: t('manage-showtimes') as string }
@@ -17,7 +24,7 @@ const activeTab = ref('detail')
 
 // Fetch showtimes with lazy loading
 const {
-  data,
+  data: rawData,
   pending,
   execute: fetchShowtimes
 } = await useAsyncData(
@@ -33,6 +40,12 @@ const {
   }
 )
 
+// Flatten cinema data for table display
+const data = computed(() => {
+  if (!rawData.value) return []
+  return flattenCinemaData(rawData.value)
+})
+
 // Sync tab from query and handle data fetching
 const syncTabAndFetch = async (queryTab?: string) => {
   if (queryTab && tabs.value.some((tab: { key: string }) => tab.key === queryTab)) {
@@ -42,7 +55,7 @@ const syncTabAndFetch = async (queryTab?: string) => {
   }
 
   // Fetch showtimes if on showtimes tab and no data yet
-  if (activeTab.value === 'showtimes' && (!data.value || data.value.length === 0)) {
+  if (activeTab.value === 'showtimes' && (!rawData.value || rawData.value.length === 0)) {
     await fetchShowtimes()
   }
 }
@@ -69,7 +82,7 @@ watch(activeTab, async newTab => {
   if (isOpen.value) {
     updateQuery(newTab)
 
-    if (newTab === 'showtimes' && (!data.value || data.value.length === 0)) {
+    if (newTab === 'showtimes' && (!rawData.value || rawData.value.length === 0)) {
       await fetchShowtimes()
     }
   }
@@ -97,6 +110,118 @@ const updateQuery = (tab: string) => {
 const removeQuery = () => {
   const { tab, modal, movieId, ...restQuery } = route.query
   router.push({ query: restQuery })
+}
+
+function flattenCinemaData(data: IShowtime[]) {
+  const result: IShowtimeTable[] = []
+
+  data.forEach(cinema => {
+    cinema.showtimeDetails.forEach(showtime => {
+      result.push({
+        cinemaId: cinema.cinemaId,
+        cinemaName: cinema.cinemaName,
+        province: cinema.province,
+        district: cinema.district,
+        commune: cinema.commune,
+        detailAddress: cinema.detailAddress,
+        id: showtime.id,
+        date: showtime.date,
+        startTime: showtime.startTime,
+        endTime: showtime.endTime,
+        roomId: showtime.roomResponse.roomId,
+        name: showtime.roomResponse.name,
+        totalRow: showtime.roomResponse.totalRow,
+        totalCol: showtime.roomResponse.totalCol
+      })
+    })
+  })
+
+  return result
+}
+
+const columns = computed<TableColumn<IShowtimeTable>[]>(() => [
+  {
+    accessorKey: 'stt',
+    header: 'STT',
+    cell: ({ row }) => row.index + 1
+  },
+  {
+    key: 'cinema',
+    header: t('cinema'),
+    cell: ({ row }) =>
+      h('div', { class: 'space-y-1' }, [
+        h('p', { class: 'font-medium' }, row.original.cinemaName),
+        h(
+          'p',
+          { class: 'text-xs text-gray-500' },
+          `${row.original.province} - ${row.original.commune} - ${row.original.detailAddress}`
+        )
+      ])
+  },
+  {
+    key: 'room',
+    header: t('room'),
+    cell: ({ row }) => row.original.name
+  },
+  {
+    key: 'date',
+    header: t('day'),
+    cell: ({ row }) => row.original.date.replace(/:/g, '-')
+  },
+  {
+    key: 'startTime',
+    header: t('start-time'),
+    cell: ({ row }) => row.original.startTime
+  },
+  {
+    id: 'action',
+    header: ''
+  }
+])
+
+function getDropdownActions(row: IShowtimeTable): DropdownMenuItem[][] {
+  showTimeDetail.value = row
+  return [
+    [
+      {
+        label: t('edit'),
+        icon: 'i-lucide-edit',
+        onSelect: () => {
+          // Handle edit showtime
+          console.log('Edit showtime:', row.id)
+        }
+      },
+      {
+        label: isDeleting.value ? t('deleting') + '...' : t('delete'),
+        icon: isDeleting.value ? 'i-lucide-loader spin' : 'i-lucide-trash',
+        color: 'error',
+        disabled: isDeleting.value,
+        onSelect: async () => {
+          isConfirmOpen.value = true
+        }
+      }
+    ]
+  ]
+}
+
+const handleDelete = async () => {
+  if (!showTimeDetail.value.id) return
+  isDeleting.value = true
+  try {
+    const { message } = await apiShowtime.deleteShowtime(showTimeDetail.value.id)
+    toast.add({
+      title: t('success'),
+      description: message,
+      color: 'success'
+    })
+    isConfirmOpen.value = false
+    await fetchShowtimes()
+  } catch (error) {
+    console.log(error)
+  } finally {
+    isDeleting.value = false
+    showTimeDetail.value = {} as IShowtimeTable
+  }
 }
 </script>
 <template>
@@ -177,18 +302,34 @@ const removeQuery = () => {
 
       <!-- Tab: Showtimes -->
       <div v-else-if="activeTab === 'showtimes'">
-        <div v-if="pending" class="min-h-[300px] flex items-center justify-center">
-          <UIcon name="i-lucide-loader-circle" class="size-8 animate-spin text-primary" />
-        </div>
-        <div v-else-if="!data || data.length === 0" class="min-h-[300px] flex items-center justify-center text-gray-500">
-          <p>{{ t('no-showtimes-available') }}</p>
-        </div>
-        <div v-else class="space-y-4">
-          {{ data }}
-        </div>
+        <UTable ref="table" :data="data" :columns="columns" :loading="pending">
+          <template #action-cell="{ row }">
+            <UDropdownMenu :items="getDropdownActions(row.original)" :ui="{ itemLabel: 'cursor-pointer' }">
+              <UButton
+                icon="i-lucide-ellipsis-vertical"
+                color="neutral"
+                variant="ghost"
+                aria-label="Actions"
+                class="hover:cursor-pointer"
+              />
+            </UDropdownMenu>
+          </template>
+        </UTable>
       </div>
     </template>
   </UModal>
+  <BaseConfirmModal
+    v-model:open="isConfirmOpen"
+    variant="danger"
+    :title="t('delete-showtime-title')"
+    :description="
+      formatConfirmContent(t('delete-showtime-confirm', { name: `${showTimeDetail.startTime}` }), showTimeDetail.startTime)
+    "
+    :confirm-text="t('delete')"
+    :cancel-text="t('cancel-button')"
+    :is-loading="isDeleting"
+    @confirm="handleDelete"
+  />
 </template>
 
 <style scoped></style>
