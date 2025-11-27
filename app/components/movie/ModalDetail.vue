@@ -5,7 +5,7 @@ import { apiPublic, apiShowtime } from '~/services'
 import type { IShowtime, IShowtimeTable } from '~/types/show-time.type'
 
 const { t } = useI18n()
-const { movieDetail } = useMovieData()
+const { movieDetail, movieShowtimeSetting } = useMovieData()
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
@@ -22,13 +22,16 @@ const tabs = computed(() => [
 
 const activeTab = ref('detail')
 
-// Fetch showtimes with lazy loading
+const emit = defineEmits<{
+  edit: []
+}>()
+
 const {
   data: rawData,
   pending,
   execute: fetchShowtimes
-} = await useAsyncData(
-  () => `showtimes-${route.query.movieId}`,
+} = useAsyncData(
+  `showtimes-${route.query.movieId}`,
   async () => {
     if (!route.query.movieId) return []
     const res = await apiPublic.fetchShowtimesByMovie(route.query.movieId as string)
@@ -180,15 +183,15 @@ const columns = computed<TableColumn<IShowtimeTable>[]>(() => [
 ])
 
 function getDropdownActions(row: IShowtimeTable): DropdownMenuItem[][] {
-  showTimeDetail.value = row
   return [
     [
       {
         label: t('edit'),
         icon: 'i-lucide-edit',
         onSelect: () => {
-          // Handle edit showtime
-          console.log('Edit showtime:', row.id)
+          showTimeDetail.value = row
+          movieShowtimeSetting.value = row
+          emit('edit')
         }
       },
       {
@@ -197,6 +200,8 @@ function getDropdownActions(row: IShowtimeTable): DropdownMenuItem[][] {
         color: 'error',
         disabled: isDeleting.value,
         onSelect: async () => {
+          showTimeDetail.value = row
+          movieShowtimeSetting.value = row
           isConfirmOpen.value = true
         }
       }
@@ -223,6 +228,9 @@ const handleDelete = async () => {
     showTimeDetail.value = {} as IShowtimeTable
   }
 }
+defineExpose({
+  fetchShowtimes
+})
 </script>
 <template>
   <UModal v-model:open="isOpen" :title="t('movie-detail')">

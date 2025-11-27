@@ -252,7 +252,6 @@ function getHeader(column: Column<IBooking>, label: string) {
   )
 }
 function getDropdownActions(row: IBooking): DropdownMenuItem[][] {
-  bookingDetail.value = row
   return [
     [
       {
@@ -260,6 +259,7 @@ function getDropdownActions(row: IBooking): DropdownMenuItem[][] {
         icon: 'i-lucide-eye',
         onSelect: () => {
           isOpenModalDetail.value = true
+          bookingDetail.value = row
         }
       }
     ]

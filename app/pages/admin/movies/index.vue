@@ -18,10 +18,12 @@ const isOpen = ref(false)
 const isOpenModalSetting = ref(false)
 const isProcessing = ref(false)
 const modalSettingRef = ref()
+const modalDetailRef = ref()
 const modalAddRef = ref()
 const isConfirmOpen = ref(false)
 const isEditMode = ref(false)
 const isOpenModalDetail = ref(false)
+const isSettingShowtimeMode = ref(false)
 
 const {
   data,
@@ -102,7 +104,9 @@ const handleEditMovie = async (_: boolean, formData?: ICreateMovie) => {
 const handleAction = (action: IActionCard, item: IMovie) => {
   movieDetail.value = item
   if (action === 'SETTING') {
+    modalSettingRef.value?.resetForm()
     isOpenModalSetting.value = true
+    isSettingShowtimeMode.value = true
   } else if (action === 'EDIT') {
     isEditMode.value = true
     isOpen.value = true
@@ -111,6 +115,7 @@ const handleAction = (action: IActionCard, item: IMovie) => {
     isConfirmOpen.value = true
   } else if (action === 'VIEW') {
     isOpenModalDetail.value = true
+    localStorage.setItem('movieDetail', JSON.stringify(item))
     router.push({
       query: {
         ...router.currentRoute.value.query,
@@ -129,7 +134,9 @@ const handleSetting = async (form: ICreateShowtime) => {
   }
   isProcessing.value = true
   try {
-    const { message } = await apiShowtime.addShowtime(fd)
+    const { message } = isSettingShowtimeMode.value
+      ? await apiShowtime.addShowtime(fd)
+      : await apiShowtime.updateShowtime(movieDetail.value.id, fd)
     toast.add({
       title: t('success'),
       description: message,
@@ -137,6 +144,9 @@ const handleSetting = async (form: ICreateShowtime) => {
     })
     isOpenModalSetting.value = false
     modalSettingRef.value?.resetForm()
+    if (!isSettingShowtimeMode.value) {
+      modalDetailRef.value?.fetchShowtimes()
+    }
   } catch (error) {
     console.log(error)
   } finally {
@@ -161,6 +171,11 @@ const handleDelete = async () => {
     isConfirmOpen.value = false
   }
 }
+
+const handleEditShowtime = () => {
+  isOpenModalSetting.value = true
+  isSettingShowtimeMode.value = false
+}
 onMounted(() => {
   fetchAllCinemas()
 })
@@ -179,13 +194,13 @@ onMounted(() => {
       @edit="handleEditMovie"
     />
     <MovieList :is-fetching="isFetching" @action-click="handleAction" />
+    <MovieModalDetail ref="modalDetailRef" v-model:is-open="isOpenModalDetail" @edit="handleEditShowtime" />
     <MovieModalSetting
       ref="modalSettingRef"
       v-model="isOpenModalSetting"
       :is-processing="isProcessing"
       @setting="handleSetting"
     />
-    <MovieModalDetail v-model:is-open="isOpenModalDetail" />
     <BaseConfirmModal
       v-model:open="isConfirmOpen"
       variant="danger"

@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { createShowtimeSchema, type ICreateShowtime } from '~/schemas/movie.chema'
+import type { IMovie } from '~/types/movie.type'
+import type { IShowtimeTable } from '~/types/show-time.type'
 
 const { t } = useI18n()
 const { schema } = useSchema(createShowtimeSchema)
 const { allCinemas, roomsOfCinema, fetchRoomsOfCinema } = useCinemaData()
-const { movieDetail } = useMovieData()
+const { movieDetail, movieShowtimeSetting } = useMovieData()
 
 const { isProcessing = false } = defineProps<{
   isProcessing?: boolean
@@ -23,14 +25,6 @@ const initialFormState: ICreateShowtime = {
   startTime: '',
   endTime: ''
 }
-watch(
-  () => isOpen.value,
-  newValue => {
-    if (newValue && movieDetail.value?.id) {
-      form.value.movieId = movieDetail.value.id
-    }
-  }
-)
 
 const form = ref<ICreateShowtime>({ ...initialFormState })
 
@@ -96,11 +90,40 @@ const formRef = ref()
 const resetForm = () => {
   form.value = { ...initialFormState }
   formRef.value?.clear()
+  movieDetail.value = {} as IMovie
+  movieShowtimeSetting.value = {} as IShowtimeTable
 }
 
 const submitForm = () => {
   if (formRef.value) {
     formRef.value.submit()
+  }
+}
+const handleOpen = async () => {
+  movieDetail.value = JSON.parse(localStorage.getItem('movieDetail') || '{}')
+
+  if (movieDetail.value?.id) {
+    form.value.movieId = movieDetail.value.id
+  }
+  // Check if movieShowtimeSetting has value and fill the form
+  if (movieShowtimeSetting.value) {
+    form.value.cinemaId = movieShowtimeSetting.value.cinemaId || ''
+    form.value.startTime =
+      // eslint-disable-next-line no-constant-binary-expression
+      `${movieShowtimeSetting.value.date.replace(/:/g, '-')}T${movieShowtimeSetting.value.startTime}` || ''
+
+    // Fetch rooms if cinemaId exists, then fill roomId
+    if (movieShowtimeSetting.value.cinemaId) {
+      loadingRooms.value = true
+      try {
+        await fetchRoomsOfCinema(movieShowtimeSetting.value.cinemaId)
+        form.value.roomId = movieShowtimeSetting.value.roomId || ''
+      } catch (error) {
+        console.error(error)
+      } finally {
+        loadingRooms.value = false
+      }
+    }
   }
 }
 
@@ -110,7 +133,13 @@ defineExpose({
 </script>
 
 <template>
-  <UModal v-model:open="isOpen" :title="t('setting-movie')" class="!w-[800px]" @close:prevent="resetForm">
+  <UModal
+    v-model:open="isOpen"
+    :title="t('setting-movie')"
+    class="w-[800px]"
+    @close:prevent="resetForm"
+    @after:enter="handleOpen"
+  >
     <template #body>
       <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="emit('setting', form)">
         <div class="grid grid-cols-2 gap-6">

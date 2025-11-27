@@ -1,6 +1,7 @@
 import { useDebounceFn } from '@vueuse/core'
 import { DEFAULT_QUERY_PAGINATION } from '~/constants'
 import type { IMovie, IMovieFilter } from '~/types/movie.type'
+import type { IShowtimeTable } from '~/types/show-time.type'
 
 export const useMovieFilterSync = createFilterSync<IMovieFilter>({
   defaults: {
@@ -41,6 +42,7 @@ const top10MostViewedMovies = ref<IMovie[]>([])
 const showingMovies = ref<IMovie[]>([])
 const upcomingMovies = ref<IMovie[]>([])
 const movieDetail = ref<IMovie>({} as IMovie)
+const movieShowtimeSetting = ref<IShowtimeTable>({} as IShowtimeTable)
 
 export function useMovieData() {
   const { apply, filters } = useMovieFilterSync()
@@ -88,6 +90,7 @@ export function useMovieData() {
     movieDetail,
     showingMovies,
     upcomingMovies,
+    movieShowtimeSetting,
 
     // Method
     apply: applyWithRefresh,
