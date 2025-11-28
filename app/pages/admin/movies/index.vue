@@ -11,7 +11,7 @@ definePageMeta({ layout: 'admin', middleware: ['admin'] })
 const router = useRouter()
 const toast = useToast()
 const { t } = useI18n()
-const { filters, movies, totalRecords, movieDetail, setRefreshCallback } = useMovieData()
+const { filters, movies, totalRecords, movieDetail, movieShowtimeSetting, setRefreshCallback } = useMovieData()
 const { fetchAllCinemas } = useCinemaData()
 
 const isOpen = ref(false)
@@ -136,7 +136,7 @@ const handleSetting = async (form: ICreateShowtime) => {
   try {
     const { message } = isSettingShowtimeMode.value
       ? await apiShowtime.addShowtime(fd)
-      : await apiShowtime.updateShowtime(movieDetail.value.id, fd)
+      : await apiShowtime.updateShowtime(movieShowtimeSetting.value.id, fd)
     toast.add({
       title: t('success'),
       description: message,
