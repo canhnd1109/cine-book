@@ -102,9 +102,8 @@ const handleMovieClick = (movieId: string) => {
                 <span class="text-white font-semibold">Khởi chiếu:</span>
                 {{ useDateFormat(movie.releaseDate, 'DD/MM/YYYY') }}
               </p>
-              <p v-if="movie.note" class="text-red-500 text-xs mt-2">
-                {{ movie.note }}
-              </p>
+              <!-- eslint-disable-next-line vue/no-v-html -->
+              <p v-if="movie.note" class="text-red-500 text-xs mt-2" v-html="movie.note" />
             </div>
           </div>
 

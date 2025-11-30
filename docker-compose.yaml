@@ -70,7 +70,7 @@ services:
       SPRING_ELS_HOST: elasticsearch:9200
       SPRING_ELS_USER: elastic
       SPRING_ELS_PASSWORD: elastic
-      WEB_URL: http://localhost:3000
+      WEB_URL: http://localhost:3000/profile?tab=1
     networks:
       - app_network
 

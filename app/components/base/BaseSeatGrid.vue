@@ -31,7 +31,7 @@ const props = withDefaults(defineProps<Props>(), {
   mode: 'admin',
   selectionMode: 'click',
   enableMultiSelect: true,
-  maxSeatsSelect: null
+  maxSeatsSelect: 8
 })
 
 const emit = defineEmits<{
@@ -45,10 +45,12 @@ const seatTypes = computed(() => ({
   VIP: { label: t('vip'), color: 'bg-yellow-500 text-yellow-500' },
   COUPLE: { label: t('couple'), color: 'bg-pink-500 text-pink-500' },
   DISABLED: { label: t('disabled'), color: 'bg-gray-400 text-gray-400' },
-  BOOKED: { label: t('booked-seats'), color: 'bg-red-600 text-red-600' },
-  SELECTED: { label: t('your-selected-seats'), color: 'bg-orange-500 text-orange-500' },
   ...(props.mode === 'booking'
-    ? { LOCKED: { label: t('locked-by-others') || 'Người khác đang chọn', color: '', customColor: '#00e080' } }
+    ? {
+        LOCKED: { label: t('locked-by-others') || 'Người khác đang chọn', color: '', customColor: '#00e080' },
+        BOOKED: { label: t('booked-seats'), color: 'bg-red-600 text-red-600' },
+        SELECTED: { label: t('your-selected-seats'), color: 'bg-orange-500 text-orange-500' }
+      }
     : {})
 }))
 
