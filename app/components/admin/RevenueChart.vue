@@ -14,11 +14,28 @@ const groupTypeOptions = [
   { label: t('by-month'), value: 3 },
   { label: t('by-year'), value: 4 }
 ]
+const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000
+const ONE_MONTH_MS = 30 * 24 * 60 * 60 * 1000
+const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000
+
+const getDefaultGroupType = (fromDate: string, toDate: string): number => {
+  const from = new Date(fromDate).getTime()
+  const to = new Date(toDate).getTime()
+  const diff = to - from
+
+  if (diff > ONE_YEAR_MS) return 4 // By year
+  if (diff > ONE_MONTH_MS) return 3 // By month
+  if (diff > ONE_WEEK_MS) return 2 // By week
+  return 1 // By day
+}
+
+const defaultFromDate = new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split('T')[0] || ''
+const defaultToDate = new Date().toISOString().split('T')[0] || ''
 
 const filters = ref<IRevenueReportParams>({
-  groupType: 1,
-  fromDate: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split('T')[0] || '',
-  toDate: new Date().toISOString().split('T')[0] || ''
+  fromDate: defaultFromDate,
+  toDate: defaultToDate,
+  groupType: getDefaultGroupType(defaultFromDate, defaultToDate)
 })
 
 const { data, pending, execute } = await useLazyAsyncData(
@@ -165,8 +182,20 @@ const focusToDateInput = () => {
   focusDateInput(toDate)
 }
 
+// Auto-update groupType when date range changes
 watch(
-  () => [filters.value.groupType, filters.value.fromDate, filters.value.toDate],
+  () => [filters.value.fromDate, filters.value.toDate],
+  async ([newFromDate, newToDate]) => {
+    if (newFromDate && newToDate) {
+      filters.value.groupType = getDefaultGroupType(newFromDate, newToDate)
+      await execute()
+    }
+  }
+)
+
+// Re-fetch when groupType changes manually
+watch(
+  () => filters.value.groupType,
   async () => {
     if (filters.value.fromDate && filters.value.toDate) {
       await execute()
@@ -183,18 +212,6 @@ watch(
 
     <!-- Filters -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <div class="space-y-2">
-        <label class="text-sm font-medium">{{ t('group-type') }}</label>
-        <BaseSelectMenu
-          v-model="filters.groupType"
-          :items="groupTypeOptions"
-          label-key="label"
-          value-key="value"
-          :placeholder="t('select-group-type')"
-          class="w-full"
-        />
-      </div>
-
       <div class="space-y-2">
         <label class="text-sm font-medium">{{ t('from-date') }}</label>
         <UInput
