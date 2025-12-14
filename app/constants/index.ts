@@ -86,6 +86,10 @@ const SEAT_TYPE = [
   }
 ]
 
+const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000
+const ONE_MONTH_MS = 30 * 24 * 60 * 60 * 1000
+const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000
+
 export {
   MAX_SIZE_IMAGE_UPLOAD,
   DEFAULT_QUERY_PAGINATION,
@@ -95,5 +99,8 @@ export {
   PHONE_NUMBER_REGEX,
   ACCEPTED_IMAGE_TYPES,
   MAX_FILES,
-  SEAT_TYPE
+  SEAT_TYPE,
+  ONE_YEAR_MS,
+  ONE_MONTH_MS,
+  ONE_WEEK_MS
 }

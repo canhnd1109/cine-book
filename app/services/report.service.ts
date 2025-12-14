@@ -10,4 +10,7 @@ export class ReportService extends BaseService {
   async getRevenueReport(params: IRevenueReportParams): Promise<IResponseData<IRevenueReport[]>> {
     return this.get<IResponseData<IRevenueReport[]>>('/price', normalizedParams(params))
   }
+  async getRevenueBooking(params: IRevenueReportParams): Promise<IResponseData<IRevenueReport[]>> {
+    return this.get<IResponseData<IRevenueReport[]>>('/booking', normalizedParams(params))
+  }
 }
