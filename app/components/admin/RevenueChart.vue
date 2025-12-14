@@ -1,19 +1,10 @@
 <script setup lang="ts">
-import VueApexCharts from 'vue3-apexcharts'
 import type { ApexOptions } from 'apexcharts'
 import { apiReport } from '~/services'
 import type { IRevenueReportParams, IRevenueReport } from '~/types/statistics.type'
 
 const { t } = useI18n()
-const colorMode = useColorMode()
-const isDark = computed(() => colorMode.value === 'dark')
 
-const groupTypeOptions = [
-  { label: t('by-day'), value: 1 },
-  { label: t('by-week'), value: 2 },
-  { label: t('by-month'), value: 3 },
-  { label: t('by-year'), value: 4 }
-]
 const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000
 const ONE_MONTH_MS = 30 * 24 * 60 * 60 * 1000
 const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000
@@ -50,15 +41,9 @@ const { data, pending, execute } = await useLazyAsyncData(
   }
 )
 
-const hasData = computed(() => data.value && Array.isArray(data.value) && data.value.length > 0)
-
 const chartOptions = computed<ApexOptions>(() => {
-  if (!hasData.value || !data.value) {
+  if (!data.value || data.value.length === 0) {
     return {
-      chart: {
-        type: 'area',
-        background: isDark.value ? '#0f172a' : '#ffffff'
-      },
       xaxis: {
         categories: []
       }
@@ -67,9 +52,6 @@ const chartOptions = computed<ApexOptions>(() => {
 
   return {
     chart: {
-      type: 'area',
-      height: 350,
-      background: isDark.value ? '#0f172a' : '#ffffff',
       toolbar: {
         show: true,
         tools: {
@@ -99,31 +81,14 @@ const chartOptions = computed<ApexOptions>(() => {
       }
     },
     xaxis: {
-      categories: data.value.map((item: IRevenueReport) => item.time),
-      title: {
-        // text: t('time-period'),
-        style: {
-          color: isDark.value ? '#9ca3af' : '#6b7280'
-        }
-      },
-      labels: {
-        style: {
-          colors: isDark.value ? '#9ca3af' : '#6b7280'
-        }
-      }
+      categories: data.value.map((item: IRevenueReport) => item.time)
     },
     yaxis: {
       labels: {
-        formatter: (value: number) => formatPrice(value),
-        style: {
-          colors: isDark.value ? '#9ca3af' : '#6b7280'
-        }
+        formatter: (value: number) => formatPrice(value)
       },
       title: {
-        text: t('revenue') + ' (VNĐ)',
-        style: {
-          color: isDark.value ? '#9ca3af' : '#6b7280'
-        }
+        text: t('revenue') + ' (VNĐ)'
       }
     },
     tooltip: {
@@ -135,31 +100,18 @@ const chartOptions = computed<ApexOptions>(() => {
     },
     legend: {
       position: 'top',
-      horizontalAlign: 'left',
-      labels: {
-        colors: isDark.value ? '#d1d5db' : '#374151'
-      }
+      horizontalAlign: 'left'
     },
     colors: ['#00e080'],
     fill: {
       type: 'gradient',
-      gradient: {
-        // shade: isDark.value ? 'dark' : 'light',
-        // shadeIntensity: isDark.value ? 0.5 : 1,
-        // opacityFrom: isDark.value ? 0.7 : 0.7,
-        // opacityTo: isDark.value ? 0.1 : 0.3,
-        // stops: [0, 90, 100]
-      }
-    },
-    grid: {
-      borderColor: isDark.value ? '#374151' : '#e5e7eb',
-      strokeDashArray: 4
+      gradient: {}
     }
   }
 })
 
 const series = computed(() => {
-  if (!hasData.value || !data.value) {
+  if (!data.value || data.value.length === 0) {
     return []
   }
 
@@ -236,26 +188,7 @@ watch(
     </div>
 
     <!-- Chart -->
-    <div v-if="!pending && hasData" class="w-full rounded-lg overflow-hidden">
-      <ClientOnly>
-        <VueApexCharts
-          v-if="series.length > 0"
-          :key="`chart-${filters.groupType}-${data?.length}-${isDark}`"
-          type="line"
-          :options="chartOptions"
-          :series="series"
-          height="360"
-        />
-      </ClientOnly>
-    </div>
-
-    <!-- Empty State -->
-    <BaseEmpty v-else-if="!pending && (!data || data.length === 0)" />
-
-    <!-- Loading State -->
-    <div v-else class="flex items-center justify-center py-12">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
-    </div>
+    <BaseChart type="area" :options="chartOptions" :series="series" :loading="pending" height="360" />
   </div>
 </template>
 
