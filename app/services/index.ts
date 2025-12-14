@@ -10,6 +10,7 @@ import { BookingService } from './booking.service'
 import { UserService } from './user.service'
 import { CommentService } from './comment.service'
 import { StatisticsService } from './statistics.service'
+import { ReportService } from './report.service'
 
 const apiAuth: AuthService = new AuthService()
 const apiGenre: GenreService = new GenreService()
@@ -23,6 +24,7 @@ const apiBooking: BookingService = new BookingService()
 const apiUser: UserService = new UserService()
 const apiComment: CommentService = new CommentService()
 const apiStatistics: StatisticsService = new StatisticsService()
+const apiReport: ReportService = new ReportService()
 
 export {
   apiAuth,
@@ -36,5 +38,6 @@ export {
   apiBooking,
   apiUser,
   apiComment,
-  apiStatistics
+  apiStatistics,
+  apiReport
 }

@@ -282,5 +282,20 @@
   "total-cinemas": "Total cinemas",
   "total-rooms": "Total rooms",
   "total-bookings": "Total bookings",
-  "total-revenue": "Total revenue"
+  "total-revenue": "Total revenue",
+  "revenue-statistics": "Revenue Statistics",
+  "group-type": "Group by",
+  "select-group-type": "Select grouping",
+  "by-day": "By Day",
+  "by-week": "By Week",
+  "by-month": "By Month",
+  "by-year": "By Year",
+  "from-date": "From date",
+  "to-date": "To date",
+  "apply": "Apply",
+  "reset": "Reset",
+  "time-period": "Time Period",
+  "revenue": "Revenue",
+  "bookings": "Bookings",
+  "no-data-available": "No data available"
 }

@@ -282,5 +282,20 @@
   "total-cinemas": "Tổng số rạp chiếu",
   "total-rooms": "Tổng số phòng chiếu",
   "total-bookings": "Tổng số đặt vé",
-  "total-revenue": "Tổng doanh thu"
+  "total-revenue": "Tổng doanh thu",
+  "revenue-statistics": "Thống kê doanh thu",
+  "group-type": "Nhóm theo",
+  "select-group-type": "Chọn cách nhóm",
+  "by-day": "Theo ngày",
+  "by-week": "Theo tuần",
+  "by-month": "Theo tháng",
+  "by-year": "Theo năm",
+  "from-date": "Từ ngày",
+  "to-date": "Đến ngày",
+  "apply": "Áp dụng",
+  "reset": "Đặt lại",
+  "time-period": "Thời gian",
+  "revenue": "Doanh thu",
+  "bookings": "Số lượt đặt vé",
+  "no-data-available": "Không có dữ liệu"
 }

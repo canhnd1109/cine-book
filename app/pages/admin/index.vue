@@ -40,13 +40,17 @@ const summaries = computed(() => {
 </script>
 
 <template>
-  <div class="space-y-4 m-6 rounded-lg">
+  <div class="space-y-6 m-6 rounded-lg">
+    <!-- Summary Cards -->
     <UCarousel v-slot="{ item }" wheel-gestures :items="summaries" :ui="{ item: 'basis-1/4' }">
       <div class="dark:bg-bg-seconary-dark bg-white rounded-xl p-6 space-y-2">
         <p class="font-medium">{{ item.label }}</p>
         <p class="text-3xl text-secondary font-semibold">{{ item.value }}</p>
       </div>
     </UCarousel>
+
+    <!-- Revenue Chart -->
+    <AdminRevenueChart />
   </div>
 </template>
 
