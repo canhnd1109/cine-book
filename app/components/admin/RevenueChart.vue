@@ -5,6 +5,8 @@ import { apiReport } from '~/services'
 import type { IRevenueReportParams, IRevenueReport } from '~/types/statistics.type'
 
 const { t } = useI18n()
+const colorMode = useColorMode()
+const isDark = computed(() => colorMode.value === 'dark')
 
 const groupTypeOptions = [
   { label: t('by-day'), value: 1 },
@@ -37,7 +39,8 @@ const chartOptions = computed<ApexOptions>(() => {
   if (!hasData.value || !data.value) {
     return {
       chart: {
-        type: 'area'
+        type: 'area',
+        background: isDark.value ? '#0f172a' : '#ffffff'
       },
       xaxis: {
         categories: []
@@ -49,6 +52,7 @@ const chartOptions = computed<ApexOptions>(() => {
     chart: {
       type: 'area',
       height: 350,
+      background: isDark.value ? '#0f172a' : '#ffffff',
       toolbar: {
         show: true,
         tools: {
@@ -67,20 +71,42 @@ const chartOptions = computed<ApexOptions>(() => {
     },
     stroke: {
       curve: 'smooth',
-      width: 2
+      width: 2,
+      colors: ['#00e080']
+    },
+    markers: {
+      size: 0,
+      hover: {
+        size: 5,
+        sizeOffset: 3
+      }
     },
     xaxis: {
       categories: data.value.map((item: IRevenueReport) => item.time),
       title: {
-        text: t('time-period')
+        // text: t('time-period'),
+        style: {
+          color: isDark.value ? '#9ca3af' : '#6b7280'
+        }
+      },
+      labels: {
+        style: {
+          colors: isDark.value ? '#9ca3af' : '#6b7280'
+        }
       }
     },
     yaxis: {
       labels: {
-        formatter: (value: number) => formatPrice(value)
+        formatter: (value: number) => formatPrice(value),
+        style: {
+          colors: isDark.value ? '#9ca3af' : '#6b7280'
+        }
       },
       title: {
-        text: t('revenue') + ' (VNĐ)'
+        text: t('revenue') + ' (VNĐ)',
+        style: {
+          color: isDark.value ? '#9ca3af' : '#6b7280'
+        }
       }
     },
     tooltip: {
@@ -92,17 +118,25 @@ const chartOptions = computed<ApexOptions>(() => {
     },
     legend: {
       position: 'top',
-      horizontalAlign: 'left'
+      horizontalAlign: 'left',
+      labels: {
+        colors: isDark.value ? '#d1d5db' : '#374151'
+      }
     },
-    colors: ['#3b82f6'],
+    colors: ['#00e080'],
     fill: {
       type: 'gradient',
       gradient: {
-        shadeIntensity: 1,
-        opacityFrom: 0.7,
-        opacityTo: 0.3,
-        stops: [0, 90, 100]
+        // shade: isDark.value ? 'dark' : 'light',
+        // shadeIntensity: isDark.value ? 0.5 : 1,
+        // opacityFrom: isDark.value ? 0.7 : 0.7,
+        // opacityTo: isDark.value ? 0.1 : 0.3,
+        // stops: [0, 90, 100]
       }
+    },
+    grid: {
+      borderColor: isDark.value ? '#374151' : '#e5e7eb',
+      strokeDashArray: 4
     }
   }
 })
@@ -131,18 +165,14 @@ const focusToDateInput = () => {
   focusDateInput(toDate)
 }
 
-const handleApplyFilter = async () => {
-  await execute()
-}
-
-const handleResetFilter = async () => {
-  filters.value = {
-    groupType: 1,
-    fromDate: new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().split('T')[0] || '',
-    toDate: new Date().toISOString().split('T')[0] || ''
+watch(
+  () => [filters.value.groupType, filters.value.fromDate, filters.value.toDate],
+  async () => {
+    if (filters.value.fromDate && filters.value.toDate) {
+      await execute()
+    }
   }
-  await execute()
-}
+)
 </script>
 
 <template>
@@ -186,31 +216,24 @@ const handleResetFilter = async () => {
           @click="focusToDateInput"
         />
       </div>
-
-      <div class="space-y-2 flex items-end gap-2">
-        <BaseButton :text="t('apply')" class="flex-1" variant="solid" :is-loading="pending" @click="handleApplyFilter" />
-        <BaseButton :text="t('reset')" class="flex-1" variant="outline" @click="handleResetFilter" />
-      </div>
     </div>
 
     <!-- Chart -->
-    <div v-if="!pending && hasData" class="w-full">
+    <div v-if="!pending && hasData" class="w-full rounded-lg overflow-hidden">
       <ClientOnly>
         <VueApexCharts
           v-if="series.length > 0"
-          :key="`chart-${filters.groupType}-${data?.length}`"
+          :key="`chart-${filters.groupType}-${data?.length}-${isDark}`"
           type="line"
           :options="chartOptions"
           :series="series"
-          height="350"
+          height="360"
         />
       </ClientOnly>
     </div>
 
     <!-- Empty State -->
-    <div v-else-if="!pending && (!data || data.length === 0)" class="flex flex-col items-center justify-center py-12">
-      <p class="text-gray-500">{{ t('no-data-available') }}</p>
-    </div>
+    <BaseEmpty v-else-if="!pending && (!data || data.length === 0)" />
 
     <!-- Loading State -->
     <div v-else class="flex items-center justify-center py-12">
