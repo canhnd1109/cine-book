@@ -2,16 +2,7 @@
 import svgLoader from 'vite-svg-loader'
 
 export default defineNuxtConfig({
-  modules: [
-    '@nuxt/eslint',
-    '@nuxt/ui',
-    '@nuxtjs/mdc',
-    '@nuxtjs/i18n',
-    '@nuxt/image',
-    'nuxt-security',
-    '@pinia/nuxt',
-    '@nuxtjs/color-mode'
-  ],
+  modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxtjs/mdc', '@nuxtjs/i18n', '@nuxt/image', '@pinia/nuxt', '@nuxtjs/color-mode'],
   ssr: true,
 
   devtools: {
@@ -133,72 +124,5 @@ export default defineNuxtConfig({
         vi: '/lien-he'
       }
     }
-  },
-
-  security: {
-    headers: {
-      crossOriginEmbedderPolicy: process.env.NODE_ENV === 'production' ? 'credentialless' : false,
-      contentSecurityPolicy: {
-        'default-src': ["'self'"],
-        'img-src': ["'self'", 'data:', 'https:', 'http:', '*'],
-        'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'https:', 'http:', '*'],
-        'style-src': ["'self'", "'unsafe-inline'", 'https:', 'http:', '*'],
-        'font-src': ["'self'", 'https:', 'http:', 'data:', '*'],
-        'connect-src': ["'self'", 'https:', 'http:', 'wss:', 'ws:', '*'],
-        'frame-src': ["'self'", 'https:', 'http:', '*'],
-        'media-src': ["'self'", 'https:', 'http:', 'data:', '*'],
-        'object-src': ["'none'"],
-        'base-uri': ["'self'"],
-        'form-action': ["'self'"],
-        'frame-ancestors': ["'none'"],
-        'upgrade-insecure-requests': process.env.NODE_ENV === 'production'
-      },
-      crossOriginOpenerPolicy: 'same-origin',
-      crossOriginResourcePolicy: 'cross-origin',
-      referrerPolicy: 'strict-origin-when-cross-origin',
-      strictTransportSecurity: {
-        maxAge: 63072000,
-        includeSubdomains: true,
-        preload: true
-      },
-      xContentTypeOptions: 'nosniff',
-      xDNSPrefetchControl: 'off',
-      xDownloadOptions: 'noopen',
-      xFrameOptions: 'DENY',
-      xPermittedCrossDomainPolicies: 'none',
-      xXSSProtection: '1; mode=block',
-      permissionsPolicy: false
-    },
-    csrf: {
-      enabled: true,
-      https: process.env.NODE_ENV === 'production',
-      methodsToProtect: ['POST', 'PUT', 'PATCH', 'DELETE'],
-      cookie: {
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production'
-      }
-    },
-    corsHandler: {
-      origin: '*',
-      credentials: true,
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-      allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'App-Code', 'Accept']
-    },
-    rateLimiter: {
-      tokensPerInterval: 100,
-      interval: 300000,
-      headers: false,
-      driver: {
-        name: 'memory'
-      },
-      throwError: true
-    },
-    allowedMethodsRestricter: {
-      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
-    },
-    hidePoweredBy: true,
-    basicAuth: false,
-    enabled: process.env.NODE_ENV === 'production'
   }
 })
