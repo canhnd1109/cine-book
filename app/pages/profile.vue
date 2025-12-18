@@ -360,58 +360,58 @@ function getDropdownActions(row: IBooking): DropdownMenuItem[][] {
         <template #body>
           <div class="space-y-1">
             <p>
-              <span class="text-[#90a1b9] text-sm">{{ t('full-name') }}: </span>
+              <span class="`text-text-seconary text-sm">{{ t('full-name') }}: </span>
               <span>{{ bookingDetail?.fullName }}</span>
             </p>
 
             <p>
-              <span class="text-[#90a1b9] text-sm">{{ t('email') }}: </span>
+              <span class="`text-text-seconary text-sm">{{ t('email') }}: </span>
               <span>{{ bookingDetail?.email }}</span>
             </p>
             <p>
-              <span class="text-[#90a1b9] text-sm">{{ t('phone-number') }}: </span>
+              <span class="`text-text-seconary text-sm">{{ t('phone-number') }}: </span>
               <span>{{ formatPhoneNumber(bookingDetail?.phone as string) }}</span>
             </p>
             <p>
-              <span class="text-[#90a1b9] text-sm">{{ t('movie-name') }}: </span>
+              <span class="`text-text-seconary text-sm">{{ t('movie-name') }}: </span>
               <span>{{ bookingDetail?.movieName }}</span>
             </p>
             <p>
-              <span class="text-[#90a1b9] text-sm">{{ t('genres') }}: </span>
+              <span class="`text-text-seconary text-sm">{{ t('genres') }}: </span>
               <span>{{ bookingDetail?.genreName }}</span>
             </p>
             <p>
-              <span class="text-[#90a1b9] text-sm">{{ t('cinema-name') }}: </span>
+              <span class="`text-text-seconary text-sm">{{ t('cinema-name') }}: </span>
               <span>{{ bookingDetail?.cinemaName }}</span>
             </p>
             <p>
-              <span class="text-[#90a1b9] text-sm">{{ t('room-show') }}: </span>
+              <span class="`text-text-seconary text-sm">{{ t('room-show') }}: </span>
               <span>{{ bookingDetail?.roomName }}</span>
             </p>
             <p>
-              <span class="text-[#90a1b9] text-sm">{{ t('seat-names') }}: </span>
+              <span class="`text-text-seconary text-sm">{{ t('seat-names') }}: </span>
               <span>{{ bookingDetail?.seatNames }}</span>
             </p>
             <p>
-              <span class="text-[#90a1b9] text-sm">{{ t('cinema-address') }}: </span>
+              <span class="`text-text-seconary text-sm">{{ t('cinema-address') }}: </span>
               <span>{{ bookingDetail?.cinemaAddress }}</span>
             </p>
 
             <p>
-              <span class="text-[#90a1b9] text-sm">{{ t('booking-date') }}: </span>
+              <span class="`text-text-seconary text-sm">{{ t('booking-date') }}: </span>
               <span>{{ useFormatDate(bookingDetail?.bookingDate as string, 'DD/MM/YYYY hh:mm:ss') }}</span>
             </p>
 
             <p>
-              <span class="text-[#90a1b9] text-sm">{{ t('payment-status') }}: </span>
+              <span class="`text-text-seconary text-sm">{{ t('payment-status') }}: </span>
               <span>{{ bookingDetail?.paymentStatus }}</span>
             </p>
             <p>
-              <span class="text-[#90a1b9] text-sm">{{ t('payment-date') }}: </span>
+              <span class="`text-text-seconary text-sm">{{ t('payment-date') }}: </span>
               <span>{{ useFormatDate(bookingDetail?.paymentDate as string, 'DD/MM/YYYY hh:mm:ss') }}</span>
             </p>
             <p>
-              <span class="text-[#90a1b9] text-sm">{{ t('total-price') }}: </span>
+              <span class="`text-text-seconary text-sm">{{ t('total-price') }}: </span>
               <span>{{ formatPrice(bookingDetail?.totalPrice as string) }}</span>
             </p>
           </div>

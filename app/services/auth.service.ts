@@ -1,6 +1,6 @@
 import type { IFormSignIn, IFormSignUp } from '~/schemas/auth.schema'
 import BaseService from '~/services/base.service'
-import type { IResponseLogin, IResponseOtpLogin, IUser, VerifyOtpForgotPasswordResponse } from '~/types/auth.types'
+import type { IResponseLogin, IResponseOtpLogin, IUser } from '~/types/auth.types'
 import type { IResponseData, IResponseMessage } from '~/types/response.type'
 
 export class AuthService extends BaseService {
@@ -21,11 +21,9 @@ export class AuthService extends BaseService {
       }
     })
   }
-  async verifyOtpForgotPassword(payload: string, token: string): Promise<IResponseData<IResponseLogin>> {
-    return this.post<IResponseData<IResponseLogin>>(`/verify-forgot-password/${payload}`, undefined, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+  async verifyOtpForgotPassword(payload: string, email: string): Promise<IResponseMessage> {
+    return this.post<IResponseMessage>(`/verify-forgot-password/${payload}`, undefined, {
+      params: { email }
     })
   }
 
@@ -41,18 +39,16 @@ export class AuthService extends BaseService {
     return this.post<IResponseLogin>('/refresh-token', { refreshToken })
   }
 
-  async forgotPassword(email: string): Promise<IResponseData<VerifyOtpForgotPasswordResponse>> {
-    return this.post<IResponseData<VerifyOtpForgotPasswordResponse>>(`/forgot-password?email=${email}`)
+  async forgotPassword(email: string): Promise<IResponseMessage> {
+    return this.post<IResponseMessage>(`/forgot-password?email=${email}`)
   }
 
-  async resetPassword(newPassword: string, token: string): Promise<IResponseMessage> {
+  async resetPassword(newPassword: string, email: string): Promise<IResponseMessage> {
     return this.post<IResponseMessage>(
       `/reset-password`,
       { newPassword },
       {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        params: { email }
       }
     )
   }

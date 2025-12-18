@@ -32,7 +32,11 @@ export default class BaseService {
     return this.handleRequest<T>(url, { method: 'get', query: params })
   }
 
-  async post<T>(url: string, body?: RequestBody, config?: { headers?: Record<string, string> }): Promise<T> {
+  async post<T>(
+    url: string,
+    body?: RequestBody,
+    config?: { headers?: Record<string, string>; params?: Record<string, any> }
+  ): Promise<T> {
     return this.handleRequest<T>(url, { method: 'post', body, ...config })
   }
 

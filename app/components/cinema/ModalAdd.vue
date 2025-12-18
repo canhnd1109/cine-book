@@ -234,12 +234,7 @@ defineExpose({
 </script>
 
 <template>
-  <UModal
-    v-model:open="isOpen"
-    :title="isEditMode ? t('edit-cinema') : t('add-cinema')"
-    class="w-[1000px]"
-    @close:prevent="resetForm"
-  >
+  <UModal v-model:open="isOpen" :title="isEditMode ? t('edit-cinema') : t('add-cinema')" class="w-250" @close:prevent="resetForm">
     <template #body>
       <UForm ref="formRef" :schema :state="form" class="space-y-4" @submit="onSubmit">
         <!-- Existing Images (Edit mode) -->

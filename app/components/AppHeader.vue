@@ -89,6 +89,7 @@ const handelSignIn = async (form: IFormSignIn) => {
     })
 
     if (rs.value.tokenContent) {
+      otp.value = []
       tokenOtp.value = rs.value.tokenContent
       isOpenModalSignIn.value = false
       isOpenModalOtp.value = true
@@ -107,8 +108,7 @@ const handleVedifyOtp = async () => {
     isLoading.value = true
     const _otp = otp.value.join('')
     if (isForgotPasswordMode.value) {
-      const { value, message } = await apiAuth.verifyOtpForgotPassword(_otp, tokenOtp.value)
-      tokenOtp.value = value.tokenContent
+      const { message } = await apiAuth.verifyOtpForgotPassword(_otp, form.value.email)
       toast.add({
         title: t('success'),
         description: message,
@@ -221,13 +221,13 @@ const submitFormResetPass = () => {
 const handleForgotPassword = async () => {
   try {
     isLoading.value = true
-    const { message, value } = await apiAuth.forgotPassword(form.value.email)
+    const { message } = await apiAuth.forgotPassword(form.value.email)
     toast.add({
       title: t('success'),
       description: message,
       color: 'success'
     })
-    tokenOtp.value = value.tokenContent
+    otp.value = []
     isOpenModalForgotPassword.value = false
     isOpenModalOtp.value = true
   } catch (error) {
@@ -272,7 +272,7 @@ function handleConfirmPasswordEnter() {
 const handleResetPassword = async () => {
   try {
     isLoading.value = true
-    const { message } = await apiAuth.resetPassword(formResetPass.value.password, tokenOtp.value)
+    const { message } = await apiAuth.resetPassword(formResetPass.value.password, form.value.email)
     toast.add({
       title: t('success'),
       description: message,

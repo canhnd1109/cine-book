@@ -68,7 +68,7 @@ export class PublicService extends BaseService {
 
   // TODO: BOOKING
   async fetchBooking(): Promise<IResponseData<IBooking[]>> {
-    return this.get<IResponseData<IBooking[]>>(`/booking/`)
+    return this.get<IResponseData<IBooking[]>>(`/booking`)
   }
   async getBookingDetail(id: string): Promise<IResponseData<IBooking[]>> {
     return this.get<IResponseData<IBooking[]>>(`/booking/${id}`)
