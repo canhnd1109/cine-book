@@ -50,13 +50,10 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  function logOut(options: { redirect?: string } = {}) {
+  function logOut() {
     accessTokenCookie.value = null
     refreshTokenCookie.value = null
-
-    if (options.redirect) {
-      navigateTo(options.redirect)
-    }
+    navigateTo('/')
   }
 
   return {
