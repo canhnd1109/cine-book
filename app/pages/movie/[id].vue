@@ -201,9 +201,6 @@ watch(showTime, async (newShowTime, oldShowTime) => {
 
   try {
     isLoadingRoom.value = true
-    console.log('🎬 Selected showtime:', newShowTime)
-    console.log('🎬 Cinema ID:', idCinemaActive.value)
-    console.log('🎬 Showtime data:', showtimeData.value)
 
     // Join new room
     joinShowtimeRoom(newShowTime.id)
@@ -212,15 +209,10 @@ watch(showTime, async (newShowTime, oldShowTime) => {
       ?.find(item => item.cinemaId === idCinemaActive.value)
       ?.showtimeDetails.find(detail => detail.id === newShowTime.id)?.roomResponse
 
-    console.log('🎬 Room response:', roomResponse)
-
     if (roomResponse) {
       room.value = roomResponse
-      console.log('✅ Room loaded successfully:', room.value)
-      console.log('✅ Total seats:', room.value.seats?.length)
       startCountdown()
     } else {
-      console.error('❌ Room response not found!')
       toast.add({
         title: t('error'),
         description: 'Không thể tải thông tin phòng chiếu',
@@ -228,7 +220,7 @@ watch(showTime, async (newShowTime, oldShowTime) => {
       })
     }
   } catch (error) {
-    console.error('❌ Error loading room:', error)
+    console.error(error)
     toast.add({
       title: t('error'),
       description: 'Có lỗi xảy ra khi tải thông tin phòng chiếu',

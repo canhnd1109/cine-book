@@ -8,23 +8,15 @@ export default defineNuxtPlugin(() => {
       existing.close()
     }
 
-    // Create new WebSocket connection
-    const wsUrl = `${runtimeConfig.public.baseSocketUrl}/socket/seat?showtimeId=${showtimeId}`
-    console.log('🔌 Connecting to WebSocket:', wsUrl)
+    // Create WebSocket URL with automatic protocol detection
+    let wsUrl = `${runtimeConfig.public.baseSocketUrl}/socket/seat?showtimeId=${showtimeId}`
+
+    // Auto-upgrade to WSS if page is HTTPS (Mixed Content Security)
+    if (typeof window !== 'undefined' && window.location.protocol === 'https:') {
+      wsUrl = wsUrl.replace(/^ws:/, 'wss:')
+    }
 
     const ws = new WebSocket(wsUrl)
-
-    ws.onopen = () => {
-      console.log('✅ WebSocket connected successfully for showtime:', showtimeId)
-    }
-
-    ws.onerror = error => {
-      console.error('❌ WebSocket error for showtime:', showtimeId, error)
-    }
-
-    ws.onclose = event => {
-      console.log('🔌 WebSocket closed for showtime:', showtimeId, 'Code:', event.code, 'Reason:', event.reason)
-    }
 
     connections.set(showtimeId, ws)
     return ws
