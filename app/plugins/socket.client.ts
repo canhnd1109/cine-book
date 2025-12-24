@@ -10,7 +10,21 @@ export default defineNuxtPlugin(() => {
 
     // Create new WebSocket connection
     const wsUrl = `${runtimeConfig.public.baseSocketUrl}/socket/seat?showtimeId=${showtimeId}`
+    console.log('🔌 Connecting to WebSocket:', wsUrl)
+
     const ws = new WebSocket(wsUrl)
+
+    ws.onopen = () => {
+      console.log('✅ WebSocket connected successfully for showtime:', showtimeId)
+    }
+
+    ws.onerror = error => {
+      console.error('❌ WebSocket error for showtime:', showtimeId, error)
+    }
+
+    ws.onclose = event => {
+      console.log('🔌 WebSocket closed for showtime:', showtimeId, 'Code:', event.code, 'Reason:', event.reason)
+    }
 
     connections.set(showtimeId, ws)
     return ws

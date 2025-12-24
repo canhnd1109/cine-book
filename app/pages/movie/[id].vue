@@ -25,6 +25,7 @@ const {
 const showTime = ref<TimeSlot | null>(null)
 const room = ref<IShowtimeRoomResponse | null>(null)
 const isBooking = ref(false)
+const isLoadingRoom = ref(false)
 const selectedSeats = ref<Set<string>>(new Set())
 const selectedDateIndex = ref(0)
 const idCinemaActive = ref<string | null>(null)
@@ -182,7 +183,7 @@ onUnmounted(() => {
 })
 
 // Watch showtime changes
-watch(showTime, (newShowTime, oldShowTime) => {
+watch(showTime, async (newShowTime, oldShowTime) => {
   selectedSeats.value = new Set()
 
   // Leave old room
@@ -194,19 +195,47 @@ watch(showTime, (newShowTime, oldShowTime) => {
     stopCountdown()
     room.value = null
     lockedSeats.value.clear()
+    isLoadingRoom.value = false
     return
   }
 
-  // Join new room
-  joinShowtimeRoom(newShowTime.id)
+  try {
+    isLoadingRoom.value = true
+    console.log('🎬 Selected showtime:', newShowTime)
+    console.log('🎬 Cinema ID:', idCinemaActive.value)
+    console.log('🎬 Showtime data:', showtimeData.value)
 
-  const roomResponse = showtimeData.value
-    ?.find(item => item.cinemaId === idCinemaActive.value)
-    ?.showtimeDetails.find(detail => detail.id === newShowTime.id)?.roomResponse
+    // Join new room
+    joinShowtimeRoom(newShowTime.id)
 
-  if (roomResponse) {
-    room.value = roomResponse
-    startCountdown()
+    const roomResponse = showtimeData.value
+      ?.find(item => item.cinemaId === idCinemaActive.value)
+      ?.showtimeDetails.find(detail => detail.id === newShowTime.id)?.roomResponse
+
+    console.log('🎬 Room response:', roomResponse)
+
+    if (roomResponse) {
+      room.value = roomResponse
+      console.log('✅ Room loaded successfully:', room.value)
+      console.log('✅ Total seats:', room.value.seats?.length)
+      startCountdown()
+    } else {
+      console.error('❌ Room response not found!')
+      toast.add({
+        title: t('error'),
+        description: 'Không thể tải thông tin phòng chiếu',
+        color: 'error'
+      })
+    }
+  } catch (error) {
+    console.error('❌ Error loading room:', error)
+    toast.add({
+      title: t('error'),
+      description: 'Có lỗi xảy ra khi tải thông tin phòng chiếu',
+      color: 'error'
+    })
+  } finally {
+    isLoadingRoom.value = false
   }
 })
 
@@ -514,75 +543,93 @@ const onSubmit = async () => {
     </div>
 
     <!-- Seat Selection -->
-    <div v-if="showTime?.id && room?.roomId" class="max-w-4xl mx-auto">
-      <!-- Countdown Timer Header -->
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2">
-          <span class="text-sm">{{ t('screening-time') }}:</span>
-          <span class="font-bold text-lg">{{ showTime?.time }}</span>
+    <ClientOnly>
+      <div v-if="showTime?.id" class="max-w-4xl mx-auto">
+        <!-- Countdown Timer Header -->
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-sm">{{ t('screening-time') }}:</span>
+            <span class="font-bold text-lg">{{ showTime?.time }}</span>
+          </div>
+          <div class="flex items-center gap-2 border border-solid border-primary px-4 py-2 rounded-lg">
+            <span class="text-sm">{{ t('seat-selection-time') }}:</span>
+            <span class="font-bold text-lg" :class="countdownSeconds <= 60 ? 'text-red-500 animate-pulse' : ''">
+              {{ formattedCountdown }}
+            </span>
+          </div>
         </div>
-        <div class="flex items-center gap-2 border border-solid border-primary px-4 py-2 rounded-lg">
-          <span class="text-sm">{{ t('seat-selection-time') }}:</span>
-          <span class="font-bold text-lg" :class="countdownSeconds <= 60 ? 'text-red-500 animate-pulse' : ''">
-            {{ formattedCountdown }}
-          </span>
-        </div>
-      </div>
 
-      <div class="bg-gray-100 dark:bg-gray-900 p-6 rounded-lg">
-        <!-- Screen -->
-        <div class="w-full mb-8 h-2 bg-linear-to-b from-gray-400 to-gray-600 rounded-t-full" />
+        <!-- Loading State -->
+        <div v-if="isLoadingRoom" class="bg-gray-100 dark:bg-gray-900 p-6 rounded-lg my-6">
+          <div class="flex flex-col items-center justify-center space-y-4 py-20">
+            <UIcon name="i-lucide-loader-circle" class="size-12 animate-spin text-primary" />
+            <p class="text-lg">Đang tải sơ đồ ghế...</p>
+          </div>
+        </div>
+
+        <!-- Error State -->
+        <div v-else-if="!room || !room.roomId" class="bg-gray-100 dark:bg-gray-900 p-6 rounded-lg my-6">
+          <div class="flex flex-col items-center justify-center space-y-4 py-20">
+            <UIcon name="i-lucide-alert-circle" class="size-12 text-red-500" />
+            <p class="text-lg text-red-500">Không thể tải thông tin phòng chiếu</p>
+            <BaseButton text="Thử lại" @click="handleChangeShowTimeId(showTime!)" />
+          </div>
+        </div>
 
         <!-- Seat Grid -->
-        <BaseSeatGrid
-          v-if="room"
-          :rows="room.totalRow"
-          :cols="room.totalCol"
-          :seats="seatsRecord"
-          :selected-seats="selectedSeats"
-          :selection-mode="selectionMode"
-          mode="booking"
-          @update:selected-seats="selectedSeats = $event"
-        />
+        <div v-else class="bg-gray-100 dark:bg-gray-900 p-6 rounded-lg">
+          <!-- Screen -->
+          <div class="w-full mb-8 h-2 bg-linear-to-b from-gray-400 to-gray-600 rounded-t-full" />
 
-        <!-- Selected Info Summary -->
-        <div class="mt-6 p-4 bg-white dark:bg-gray-800 rounded-lg">
-          <div class="space-y-4">
-            <!-- Selected Seats -->
-            <div>
-              <p class="text-sm font-medium mb-2">{{ t('selected-seats') }}:</p>
-              <div class="flex flex-wrap gap-2">
-                <span
-                  v-for="seat in selectedSeatsInfo.seats"
-                  :key="seat.id"
-                  class="px-3 py-1 bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 rounded-full text-sm font-medium"
-                >
-                  {{ seat.name }}
-                </span>
-              </div>
-            </div>
+          <BaseSeatGrid
+            :rows="room.totalRow"
+            :cols="room.totalCol"
+            :seats="seatsRecord"
+            :selected-seats="selectedSeats"
+            :selection-mode="selectionMode"
+            mode="booking"
+            @update:selected-seats="selectedSeats = $event"
+          />
 
-            <!-- Total and Payment -->
-            <div class="flex flex-wrap gap-4 items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
-              <div class="flex items-center gap-2">
-                <span class="text-lg font-semibold">Tổng tiền:</span>
-                <span class="text-2xl font-bold text-red-500">{{ formatPrice(selectedSeatsInfo.totalPrice) }}</span>
+          <!-- Selected Info Summary -->
+          <div class="mt-6 p-4 bg-white dark:bg-gray-800 rounded-lg">
+            <div class="space-y-4">
+              <!-- Selected Seats -->
+              <div>
+                <p class="text-sm font-medium mb-2">{{ t('selected-seats') }}:</p>
+                <div class="flex flex-wrap gap-2">
+                  <span
+                    v-for="seat in selectedSeatsInfo.seats"
+                    :key="seat.id"
+                    class="px-3 py-1 bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 rounded-full text-sm font-medium"
+                  >
+                    {{ seat.name }}
+                  </span>
+                </div>
               </div>
-              <div class="flex justify-end gap-4">
-                <BaseButton :text="t('go-back')" class-name="px-4" @click="handleBack" />
-                <BaseButton
-                  :text="t('payment')"
-                  variant="solid"
-                  :is-loading="isBooking"
-                  class-name="px-4"
-                  @click="handleBooking"
-                />
+
+              <!-- Total and Payment -->
+              <div class="flex flex-wrap gap-4 items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg font-semibold">Tổng tiền:</span>
+                  <span class="text-2xl font-bold text-red-500">{{ formatPrice(selectedSeatsInfo.totalPrice) }}</span>
+                </div>
+                <div class="flex justify-end gap-4">
+                  <BaseButton :text="t('go-back')" class-name="px-4" @click="handleBack" />
+                  <BaseButton
+                    :text="t('payment')"
+                    variant="solid"
+                    :is-loading="isBooking"
+                    class-name="px-4"
+                    @click="handleBooking"
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </ClientOnly>
 
     <div
       v-if="isValidTrailerUrl"

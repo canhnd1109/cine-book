@@ -30,6 +30,26 @@ Make sure to install the dependencies:
 pnpm install
 ```
 
+## Environment Configuration
+
+Create a `.env` file in the root directory and configure the following variables:
+
+```env
+# API Configuration (Required)
+NUXT_PUBLIC_BASE_API_URL=http://localhost:8080
+NUXT_PUBLIC_BASE_SOCKET_URL=ws://localhost:8080
+
+# For Production (use wss:// for secure WebSocket)
+# NUXT_PUBLIC_BASE_API_URL=https://api.yourdomain.com
+# NUXT_PUBLIC_BASE_SOCKET_URL=wss://api.yourdomain.com
+```
+
+**Important for Production:**
+
+- Make sure to set `NUXT_PUBLIC_BASE_SOCKET_URL` with the correct WebSocket URL
+- Use `wss://` (secure WebSocket) instead of `ws://` in production
+- Both API and WebSocket URLs must be accessible from the client browser
+
 ## Development Server
 
 Start the development server on `http://localhost:3000`:
