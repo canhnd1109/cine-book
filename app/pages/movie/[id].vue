@@ -382,8 +382,18 @@ const handleBack = () => {
 }
 
 const handleBooking = async () => {
-  if (!showTime.value?.id || selectedSeatsInfo.value.count === 0) return
-
+  if (!showTime.value?.id || selectedSeatsInfo.value.count === 0) {
+    toast.add({
+      title: t('error'),
+      description: 'Vui lòng chọn ghế trước khi đặt vé',
+      color: 'error'
+    })
+    return
+  }
+  if (!isAuthenticated.value) {
+    isOpenModalSignIn.value = true
+    return
+  }
   const seatIds = selectedSeatsInfo.value.seats.map(seat => seat.backendSeatId)
 
   isBooking.value = true
@@ -448,7 +458,7 @@ const onSubmit = async () => {
 <template>
   <div>
     <div v-if="movieDetail" class="max-w-4xl mx-auto flex justify-start gap-10">
-      <img :src="movieDetail.posterUrl" alt="" class="h-[333px] w-[238px] rounded-lg" loading="lazy" />
+      <img :src="movieDetail.posterUrl" alt="" class="h-83.25 w-59.5 rounded-lg" loading="lazy" />
       <div class="flex-1 space-y-1">
         <p class="text-2xl font-bold">{{ movieDetail.name }}</p>
         <p class="flex justify-between items-center">
@@ -505,7 +515,7 @@ const onSubmit = async () => {
           v-for="(day, dayIndex) in showTimeData"
           :key="dayIndex"
           :class="[
-            'flex flex-col items-center justify-center min-w-[100px] px-4 py-3 rounded-lg transition-colors',
+            'flex flex-col items-center justify-center min-w-25 px-4 py-3 rounded-lg transition-colors',
             showTime?.id && room?.roomId ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
             selectedDateIndex === dayIndex
               ? 'bg-red-500 text-white'
