@@ -76,12 +76,18 @@ async function handleSignUp(form: IFormSignUp) {
   }
 }
 
-const handelSignIn = async (form: IFormSignIn) => {
+const formSignIn = ref<IFormSignIn>({
+  email: '',
+  password: ''
+})
+const handelSendOTP = async (form: IFormSignIn, resend: boolean = false) => {
   if (isLoading.value) return
+  formSignIn.value = form
+
   try {
     isLoading.value = true
     email.value = form.email
-    const rs = await apiAuth.login(form)
+    const rs = await apiAuth.login(form || formSignIn.value)
     toast.add({
       title: t('success'),
       description: rs.message,
@@ -91,8 +97,10 @@ const handelSignIn = async (form: IFormSignIn) => {
     if (rs.value.tokenContent) {
       otp.value = []
       tokenOtp.value = rs.value.tokenContent
-      isOpenModalSignIn.value = false
-      isOpenModalOtp.value = true
+      if (!resend) {
+        isOpenModalSignIn.value = false
+        isOpenModalOtp.value = true
+      }
       startTimer()
     }
   } catch (error) {
@@ -148,7 +156,13 @@ const formattedTime = computed(() => {
 
 // Start the timer interval
 const startTimer = () => {
-  if (intervalId !== null) return
+  // Clear existing interval if any
+  if (intervalId !== null) {
+    window.clearInterval(intervalId)
+  }
+
+  // Reset timer to 90 seconds
+  remainingSeconds.value = 90
 
   intervalId = window.setInterval(() => {
     if (remainingSeconds.value > 0) {
@@ -296,7 +310,7 @@ const handleResetPassword = async () => {
         <img src="/images/logo.png" alt="logo" />
       </div>
       <nav aria-label="Primary" class="flex justify-end items-center gap-x-8 text-lg">
-        <NuxtLink to="/" class="hover:text-primary">{{ t('navigation.home') }}</NuxtLink>
+        <NuxtLink to="/" class="hover:text-primry">{{ t('navigation.home') }}</NuxtLink>
         <NuxtLink to="/movies" class="hover:text-primary">{{ t('navigation.movies') }}</NuxtLink>
         <NuxtLink to="/showtimes" class="hover:text-primary">{{ t('navigation.showtimes') }}</NuxtLink>
         <NuxtLink to="/cinemas" class="hover:text-primary">{{ t('navigation.cinemas') }}</NuxtLink>
@@ -329,7 +343,7 @@ const handleResetPassword = async () => {
     v-model:is-open="isOpenModalSignIn"
     :is-loading="isLoading"
     @sign-up="openModalSignUp"
-    @sign-in="handelSignIn"
+    @sign-in="handelSendOTP"
     @forgot-password="forgotPassword"
   />
 
@@ -456,6 +470,9 @@ const handleResetPassword = async () => {
             @click="handleVedifyOtp"
           />
         </div>
+        <p class="mt-4 underline text-center text-primary hover:cursor-pointer" @click="handelSendOTP(formSignIn, true)">
+          {{ t('auth.resent-otp') }}
+        </p>
       </div>
     </template>
   </UModal>

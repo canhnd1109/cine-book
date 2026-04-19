@@ -41,7 +41,8 @@
     "old-password": "Old password",
     "old-password-is-required": "Old password is required",
     "new-password": "New password",
-    "confirm-new-password": "Confirm new password"
+    "confirm-new-password": "Confirm new password",
+    "resent-otp": "Resent OTP"
   },
   "home": {
     "content-1": "How MindInventory Designed a User-Centric Movie Ticket Booking App",
