@@ -14,6 +14,7 @@ export const useAuthStore = defineStore('auth', () => {
   })
 
   const userInfo = ref<IUser | null>(null)
+  const fetchedForToken = ref<string | null>(null)
   const roleName = ref<'ROLE_ADMIN' | 'ROLE_USER'>('ROLE_USER')
   const isAdmin = computed(() => userInfo.value?.role === 'ROLE_ADMIN')
   const isOpenModalSignIn = ref(false)
@@ -26,31 +27,51 @@ export const useAuthStore = defineStore('auth', () => {
     const { value } = await apiAuth.verifyOtp(otp, tokenOtp)
     setTokens(value)
 
-    // Wait for cookies to be set properly
-    await new Promise(resolve => setTimeout(resolve, 100))
-
-    await getUserInfo()
+    await getUserInfo(true)
   }
 
   function setTokens(response: IResponseLogin) {
+    if (accessTokenCookie.value !== response.tokenContent) {
+      userInfo.value = null
+      fetchedForToken.value = null
+      roleName.value = 'ROLE_USER'
+    }
+
     accessTokenCookie.value = response.tokenContent
     refreshTokenCookie.value = response.refreshToken
   }
 
-  const getUserInfo = async () => {
+  const getUserInfo = async (force = false) => {
     try {
-      if (userInfo.value) return userInfo.value
+      if (!accessTokenCookie.value) {
+        userInfo.value = null
+        fetchedForToken.value = null
+        roleName.value = 'ROLE_USER'
+        return null
+      }
+
+      if (!force && userInfo.value && fetchedForToken.value === accessTokenCookie.value) {
+        return userInfo.value
+      }
+
       const { value } = await apiAuth.getUserInfo()
       if (value) {
         roleName.value = value.role
         userInfo.value = value
+        fetchedForToken.value = accessTokenCookie.value
       }
+
+      return value
     } catch (error) {
       console.log(error)
+      return null
     }
   }
 
   function logOut() {
+    userInfo.value = null
+    fetchedForToken.value = null
+    roleName.value = 'ROLE_USER'
     accessTokenCookie.value = null
     refreshTokenCookie.value = null
     navigateTo('/')

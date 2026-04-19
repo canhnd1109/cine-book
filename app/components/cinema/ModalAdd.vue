@@ -7,7 +7,7 @@ import type { IFormState } from '~/types/cinema.type'
 
 const { t } = useI18n()
 
-const { schema } = useSchema(createCinemaSchema)
+const { getSchema } = useSchema(createCinemaSchema)
 const { getProvinces, getWards } = useLocation()
 const { cinameDetail } = useCinemaData()
 
@@ -63,6 +63,7 @@ const emit = defineEmits<{
 }>()
 
 const uploadError = ref('')
+const schema = computed(() => getSchema({ requireFiles: !isEditMode }))
 
 const getProvinceCodeByName = (provinceName: string) => {
   return provinceOptions.value.find((p: { label: string; value: number }) => p.label === provinceName)?.value || ''
@@ -195,7 +196,7 @@ const onSubmit = () => {
 }
 
 const canSubmit = computed(() => {
-  const hasImages = isEditMode ? existingImages.value.length > 0 || form.value.files.length > 0 : form.value.files.length > 0
+  const hasImages = isEditMode ? true : form.value.files.length > 0
 
   return (
     form.value.commune &&
@@ -313,7 +314,7 @@ defineExpose({
       <div class="flex justify-end w-full">
         <BaseButton
           :text="isEditMode ? t('update') : t('add')"
-          class="w-20"
+          class="w-fit"
           variant="solid"
           class-name="rounded "
           :is-loading="isProcessing"

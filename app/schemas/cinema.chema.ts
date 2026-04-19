@@ -1,7 +1,27 @@
 import { z } from 'zod'
 import { ACCEPTED_IMAGE_TYPES, MAX_SIZE_IMAGE_UPLOAD, PHONE_NUMBER_REGEX } from '~/constants'
 
-export function createCinemaSchema(t: (key: string, params?: Record<string, any>) => string) {
+interface CreateCinemaSchemaOptions {
+  requireFiles?: boolean
+}
+
+export function createCinemaSchema(
+  t: (key: string, params?: Record<string, unknown>) => string,
+  options?: CreateCinemaSchemaOptions
+) {
+  const filesSchema = z
+    .array(
+      z
+        .instanceof(File)
+        .refine(file => file.size <= MAX_SIZE_IMAGE_UPLOAD, {
+          message: t('files.maxSize', { size: '5MB' })
+        })
+        .refine(file => ACCEPTED_IMAGE_TYPES.includes(file.type), {
+          message: t('files.invalidType')
+        })
+    )
+    .max(5, { message: t('files.maxLength', { count: 5 }) })
+
   return z.object({
     name: z
       .string()
@@ -25,23 +45,11 @@ export function createCinemaSchema(t: (key: string, params?: Record<string, any>
 
     description: z.string().optional(),
 
-    files: z
-      .array(
-        z
-          .instanceof(File)
-          .refine(file => file.size <= MAX_SIZE_IMAGE_UPLOAD, {
-            message: t('files.maxSize', { size: '5MB' })
-          })
-          .refine(file => ACCEPTED_IMAGE_TYPES.includes(file.type), {
-            message: t('files.invalidType')
-          })
-      )
-      .min(1, { message: t('files.required') })
-      .max(5, { message: t('files.maxLength', { count: 5 }) })
+    files: options?.requireFiles === false ? filesSchema : filesSchema.min(1, { message: t('files.required') })
   })
 }
 
-export function cinemaRoomSchema(t: (key: string, params?: Record<string, any>) => string) {
+export function cinemaRoomSchema(t: (key: string, params?: Record<string, unknown>) => string) {
   return z
     .object({
       name: z.string().min(1, t('name-room-required')),
