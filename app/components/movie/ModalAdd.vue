@@ -159,6 +159,26 @@ const canSubmit = computed(() => {
   )
 })
 
+// Các trường bắt buộc theo schema createMovieSchema
+const requiredFields = new Set([
+  'name',
+  'director',
+  'performer',
+  'description',
+  'releaseDate',
+  'closeDate',
+  'nation',
+  'duration',
+  'price',
+  'trailerUrl',
+  'genreIds'
+])
+
+const label = (i18nKey: string, fieldName: string) => {
+  const base = t(i18nKey)
+  return requiredFields.has(fieldName) ? `${base} *` : base
+}
+
 const formattedPrice = computed({
   get: () => {
     if (!form.value.price) return 0
@@ -219,16 +239,16 @@ defineExpose({
         </UFormField>
 
         <div class="grid grid-cols-2 gap-4">
-          <UFormField :label="t('movie-name')" name="name">
+          <UFormField :label="label('movie-name','name')" name="name">
             <UInput v-model="form.name" :placeholder="t('movie-name')" :ui="{ base: 'h-10' }" class="w-full" />
           </UFormField>
-          <UFormField :label="t('movie-duration')" name="duration">
+          <UFormField :label="label('movie-duration','duration')" name="duration">
             <UInput v-model="formattedDuration" :placeholder="t('movie-duration')" :ui="{ base: 'h-10' }" class="w-full" />
           </UFormField>
-          <UFormField :label="t('director-name')" name="director">
+          <UFormField :label="label('director-name','director')" name="director">
             <UInput v-model="form.director" :placeholder="t('enter-director-movie-name')" :ui="{ base: 'h-10' }" class="w-full" />
           </UFormField>
-          <UFormField :label="t('performer-name')" name="performer">
+          <UFormField :label="label('performer-name','performer')" name="performer">
             <UInput
               v-model="form.performer"
               :placeholder="t('enter-performer-movie-name')"
@@ -237,7 +257,7 @@ defineExpose({
             />
           </UFormField>
 
-          <UFormField :label="t('release-date')" name="releaseDate">
+          <UFormField :label="label('release-date','releaseDate')" name="releaseDate">
             <UInput
               ref="dateReleaseInput"
               v-model="form.releaseDate"
@@ -248,7 +268,7 @@ defineExpose({
               @click="handleReleaseDateClick"
             />
           </UFormField>
-          <UFormField :label="t('close-date')" name="closeDate">
+          <UFormField :label="label('close-date','closeDate')" name="closeDate">
             <UInput
               ref="dateCloseInput"
               v-model="form.closeDate"
@@ -260,14 +280,14 @@ defineExpose({
             />
           </UFormField>
 
-          <UFormField :label="t('nation')" name="nation">
+          <UFormField :label="label('nation','nation')" name="nation">
             <UInput v-model="form.nation" :placeholder="t('nation')" :ui="{ base: 'h-10' }" class="w-full" />
           </UFormField>
-          <UFormField :label="t('price')" name="price">
+          <UFormField :label="label('price','price')" name="price">
             <UInput v-model="formattedPrice" :placeholder="t('price')" :ui="{ base: 'h-10' }" class="w-full" />
           </UFormField>
         </div>
-        <UFormField :label="t('genre')" name="genreIds">
+        <UFormField :label="label('genre','genreIds')" name="genreIds">
           <BaseSelect
             v-model="form.genreIds"
             :items="genres"
@@ -279,13 +299,13 @@ defineExpose({
           />
         </UFormField>
 
-        <UFormField :label="t('trailer')" name="trailerUrl">
+        <UFormField :label="label('trailer','trailerUrl')" name="trailerUrl">
           <UInput v-model="form.trailerUrl" :placeholder="t('enter-trailer')" :ui="{ base: 'h-10' }" class="w-full" />
         </UFormField>
-        <UFormField :label="t('note-movie')" name="note">
+        <UFormField :label="label('note-movie','note')" name="note">
           <BaseTextEditor v-model="form.note" :placeholder="t('note-movie')" />
         </UFormField>
-        <UFormField :label="t('description-movie')" name="description">
+        <UFormField :label="label('description-movie','description')" name="description">
           <BaseTextEditor v-model="form.description" :placeholder="t('description-movie')" />
         </UFormField>
       </UForm>
