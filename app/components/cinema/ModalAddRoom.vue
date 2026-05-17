@@ -227,23 +227,13 @@ const isColSelected = (colIndex: number): boolean => {
 }
 
 const handleSave = async () => {
-  // Validate all seats have price (except DISABLED)
-  const seatsWithoutPrice = Object.values(seats.value).filter(seat => seat.type !== 'DISABLED' && seat.price <= 0)
-
-  if (seatsWithoutPrice.length > 0) {
-    toast.add({
-      title: t('error'),
-      description: t('please-enter-price-for-all-seats') || 'Vui lòng nhập giá cho tất cả các ghế',
-      color: 'error'
-    })
-    return
-  }
+  // Không bắt buộc nhập giá ghế ở đây — nếu không nhập, giá mặc định là 0
 
   // Format seats data for API
   const formattedSeats = Object.values(seats.value).map(seat => ({
     seatName: `${seat.rowLabel}-${seat.colLabel}`,
     seatType: seat.type,
-    price: seat.price,
+    price: Number(seat.price) || 0,
     rowIdx: seat.row,
     colIdx: seat.col
   }))

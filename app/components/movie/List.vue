@@ -31,14 +31,14 @@ const action = (action: IActionCard, item: IMovie) => {
           <div class="flex items-center justify-center">
             <div class="relative flex items-center justify-center overflow-hidden rounded-lg w-full h-60">
               <div class="image-container" :class="{ 'slide-active': hoveredItem }">
-                <img :src="item.posterUrl" class="absolute top-0 left-0 h-full w-full object-cover max-sm:object-center image" />
+                <img :src="item.posterUrl" class="absolute top-0 left-0 h-full w-full object-cover max-sm:object-center image" >
               </div>
             </div>
           </div>
         </template>
 
         <template #content>
-          <p class="mt-2 line-clamp-2 text-center font-medium">
+          <p class="mt-2 truncate text-center font-medium" :title="item.name">
             {{ item.name }}
           </p>
           <!-- <p>
@@ -63,7 +63,7 @@ const action = (action: IActionCard, item: IMovie) => {
           </p>
           <p>
             <span class="text-[#90a1b9] text-sm">{{ $t('duration') }}: </span>
-            <span>{{ item.duration }}</span>
+            <span>{{ item.duration }} phút</span>
           </p>
           <!-- <p>
             <span class="text-[#90a1b9] text-sm">{{ $t('note') }}: </span>
@@ -73,9 +73,9 @@ const action = (action: IActionCard, item: IMovie) => {
             <span class="text-[#90a1b9] text-sm">{{ $t('price-ticket') }}: </span>
             <span>{{ formatPrice(item.price) }}</span>
           </p>
-          <p>
-            <span class="text-[#90a1b9] text-sm">{{ $t('genres') }}: </span>
-            <span>{{ item.genres.join(', ') }}</span>
+          <p class="flex items-center gap-2">
+            <span class="text-[#90a1b9] text-sm whitespace-nowrap">{{ $t('genres') }}:</span>
+            <span class="truncate min-w-0 overflow-hidden" :title="item.genres.join(', ')">{{ item.genres.join(', ') }}</span>
           </p>
 
           <!-- eslint-disable-next-line vue/no-v-html -->

@@ -279,6 +279,7 @@ const seatsRecord = computed(() => {
 
 const selectedSeatsInfo = computed(() => {
   const seats: Array<{ id: string; backendSeatId: string; name: string; type: string; price: number }> = []
+  const movieBasePrice = movieDetail.value?.price || 0
   let totalPrice = 0
 
   selectedSeats.value.forEach(seatId => {
@@ -292,7 +293,9 @@ const selectedSeatsInfo = computed(() => {
         type: seat.type,
         price: seat.price
       })
-      totalPrice += seat.price
+
+      // Mỗi ghế tính: giá ghế (phụ thu) + 1 x giá vé phim
+      totalPrice += seat.price + movieBasePrice
     }
   })
 
