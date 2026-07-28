@@ -13,7 +13,7 @@ services:
       - app_network
 
   mysql:
-    image: mysql:8.4
+    image: mysql:9.6
     container_name: mysql
     platform: linux/arm64
     environment:
